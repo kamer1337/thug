@@ -47,30 +47,25 @@ include_directories(
 )
 
 # Collect source files
+# We don't follow symlinks to avoid duplicates from case-insensitive symlinks
 file(GLOB_RECURSE CORE_SOURCES 
-    "Code/Core/*.cpp"
-    "Code/Core/Debug/*.cpp"
-    "Code/Core/List/*.cpp"
-    "Code/Core/Math/*.cpp"
-    "Code/Core/String/*.cpp"
-    "Code/Core/Support/*.cpp"
-    "Code/Core/Task/*.cpp"
+    "${CMAKE_SOURCE_DIR}/Code/Core/*.cpp"
 )
 
 file(GLOB_RECURSE GEL_SOURCES 
-    "Code/Gel/*.cpp"
+    "${CMAKE_SOURCE_DIR}/Code/Gel/*.cpp"
 )
 
 file(GLOB_RECURSE GFX_SOURCES 
-    "Code/Gfx/*.cpp"
+    "${CMAKE_SOURCE_DIR}/Code/Gfx/*.cpp"
 )
 
 file(GLOB_RECURSE SK_SOURCES 
-    "Code/Sk/*.cpp"
+    "${CMAKE_SOURCE_DIR}/Code/Sk/*.cpp"
 )
 
 file(GLOB_RECURSE SYS_SOURCES 
-    "Code/Sys/*.cpp"
+    "${CMAKE_SOURCE_DIR}/Code/Sys/*.cpp"
 )
 
 # Exclude platform-specific files
@@ -116,6 +111,13 @@ set(ALL_SOURCES
     ${SK_SOURCES}
     ${SYS_SOURCES}
 )
+
+# Debug: Print source count
+list(LENGTH ALL_SOURCES SOURCE_COUNT)
+message(STATUS "Found ${SOURCE_COUNT} source files")
+if(SOURCE_COUNT EQUAL 0)
+    message(FATAL_ERROR "No source files found! Check the Code directory structure.")
+endif()
 
 # Create executable
 add_executable(thug ${ALL_SOURCES})

@@ -1,1 +1,0 @@
-BlurEffect.cpp

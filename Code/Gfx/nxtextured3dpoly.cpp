@@ -1,1 +1,0 @@
-NxTextured3dPoly.cpp

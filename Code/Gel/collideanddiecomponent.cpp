@@ -1,1 +1,0 @@
-CollideAndDieComponent.cpp

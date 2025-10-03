@@ -1,1 +1,0 @@
-MovingObject.cpp

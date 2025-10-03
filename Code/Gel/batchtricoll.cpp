@@ -1,1 +1,0 @@
-BatchTriColl.cpp

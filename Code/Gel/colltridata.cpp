@@ -1,1 +1,0 @@
-CollTriData.cpp

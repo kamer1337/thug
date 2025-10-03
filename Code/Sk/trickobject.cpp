@@ -1,1 +1,0 @@
-TrickObject.cpp

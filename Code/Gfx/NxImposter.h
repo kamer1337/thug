@@ -48,7 +48,7 @@ class CImposterGroup
 	protected:
 
 	float						m_switch_distance;			// Distance at which the imposter switches in/out.
-	Mth::CBBox					m_composite_bbox;			// Composite bounding box from all geometey added to the group.
+	Mth::CBBox					m_composite_bbox;			// Composite bounding box from all geometry added to the group.
 	Mth::Vector					m_composite_bbox_mid;		// Mid point of composite bounding box (for speed).
 	float						m_composite_bsphere_radius;	// Composite bounding sphere radius (mid point is same as box).
 	Lst::Head <Nx::CGeom> *		mp_geom_list;				// List of geometry for this imposter group.

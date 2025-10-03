@@ -366,7 +366,7 @@ typedef	sint64				nID64;
 #elif defined( __PLAT_XBOX__ )
 #include <gfx/xbox/p_memview.h>
 #elif defined( __PLAT_WN32__ )
-// PC platform - stub memview for now
+#include <gfx/win32/p_memview.h>
 #endif
 
 

@@ -35,7 +35,7 @@
 #elif defined( __PLAT_NGC__ )
 #include <gel/soundfx/ngc/p_sfx.h>
 #elif defined( __PLAT_WN32__ )
-// PC platform - use generic sound interface
+#include <gel/soundfx/win32/p_sfx.h>
 #endif
 
 /*****************************************************************************

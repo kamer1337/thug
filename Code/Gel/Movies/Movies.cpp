@@ -34,7 +34,7 @@
 #elif defined( __PLAT_NGC__ )
 #include <gel/movies/ngc/p_movies.h>
 #elif defined( __PLAT_WN32__ )
-// PC platform - use generic movie interface
+#include <gel/movies/win32/p_movies.h>
 #endif
 
 #include <sys/profiler.h>

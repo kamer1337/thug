@@ -1,0 +1,1 @@
+CollideAndDieComponent.h

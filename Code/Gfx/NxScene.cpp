@@ -19,17 +19,17 @@
 #include <gel/scripting/symboltable.h>
 #include <gel/scripting/checksum.h>
 
-#include <gfx\nxgeom.h>
+#include <gfx/nxgeom.h>
 
 #ifdef	__PLAT_NGPS__
 // For wireframe debuging mode
-#include <gfx\ngps\nx\line.h>
-#include <gfx\ngps\nx\geomnode.h>
-#include <gfx\ngps\p_nxgeom.h>
-#include <gfx\ngps\p_nxscene.h>
+#include <gfx/ngps/nx/line.h>
+#include <gfx/ngps/nx/geomnode.h>
+#include <gfx/ngps/p_nxgeom.h>
+#include <gfx/ngps/p_nxscene.h>
 #endif
 
-#include <gfx\nxweather.h>
+#include <gfx/nxweather.h>
 
 namespace	Nx
 {

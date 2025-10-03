@@ -25,7 +25,7 @@
 
 #include <core/defines.h>
 #include "pile.h"
-#include <sys\mem\region.h>
+#include <sys/mem/region.h>
 
 /*****************************************************************************
 **							  DBG Information								**

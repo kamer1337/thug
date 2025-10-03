@@ -35,9 +35,9 @@
 #include <gfx/ngps/nx/line.h>
 #endif
 #ifdef	__PLAT_NGC__	
-#include <sys\ngc\p_gx.h>
-#include <sys\ngc\p_prim.h>
-#include <sys\ngc\p_camera.h>
+#include <sys/ngc/p_gx.h>
+#include <sys/ngc/p_prim.h>
+#include <sys/ngc/p_camera.h>
 #endif
 
 

@@ -4,8 +4,8 @@
 #ifndef __OBJECTS_Emitter_H
 #define __OBJECTS_Emitter_H
 
-#include <core\hashtable.h>
-#include <core\math\geometry.h>
+#include <core/hashtable.h>
+#include <core/math/geometry.h>
 
 namespace Nx
 {

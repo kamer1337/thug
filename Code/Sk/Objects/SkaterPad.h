@@ -7,7 +7,7 @@
 #include <core/defines.h>
 #include <core/support.h>
 #include <core/math.h>
-#include <sk\objects\skaterbutton.h>
+#include <sk/objects/skaterbutton.h>
 
 namespace Inp
 {

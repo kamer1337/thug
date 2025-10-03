@@ -28,7 +28,7 @@
 #endif
 #include <core/singleton.h>
 #include <core/list.h>
-#include <sys\mem\region.h>
+#include <sys/mem/region.h>
 #include "heap.h"
 #include "alloc.h"
 //#ifndef __PLAT_XBOX__

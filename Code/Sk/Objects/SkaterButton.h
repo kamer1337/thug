@@ -5,7 +5,7 @@
 
 #include <core/defines.h>
 #include <core/support.h>
-#include <sys\timer.h>
+#include <sys/timer.h>
 
 
 // A SkaterButton contains the state of a single pad button

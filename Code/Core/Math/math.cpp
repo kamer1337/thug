@@ -39,7 +39,7 @@
 
 #if DEBUGGING_REPLAY_RND
 
-#include <sys\timer.h>
+#include <sys/timer.h>
 
 #include <string.h>
 

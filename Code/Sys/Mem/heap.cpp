@@ -39,7 +39,7 @@
 #include <core/defines.h>
 #include "memman.h"
 #include "heap.h"
-#include <sys\mem\region.h>
+#include <sys/mem/region.h>
 
 #define DUMP_HEAP 0			// Change to 1 to have a handy text dump in memory of the heap status.
 							// Use the debugger to see it - look at gMemStatus, 64 bytes per line.

@@ -4,7 +4,7 @@
 #ifndef __OBJECTS_Proxim_H
 #define __OBJECTS_Proxim_H
 
-#include <core\math\geometry.h>
+#include <core/math/geometry.h>
 
 #include <gfx/camera.h>
 

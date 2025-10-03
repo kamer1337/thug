@@ -30,8 +30,8 @@
 #include <core/thread.h>
 #include <core/string/stringutils.h>
 #include "memman.h"
-#include <sys\mem\region.h>
-#include <sys\config\config.h>	// for memory profiling, to see if we ahve the extra memory
+#include <sys/mem/region.h>
+#include <sys/config/config.h>	// for memory profiling, to see if we ahve the extra memory
 #include "heap.h"
 #include "alloc.h"
 #include <sys/profiler.h>

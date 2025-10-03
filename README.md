@@ -22,53 +22,54 @@ Code/
 
 ## Building
 
-This project now includes a modern CMake build system for cross-platform compilation on modern systems.
+This repository includes a CMake build system infrastructure. However, **the code cannot be built as-is** on modern systems due to several factors:
 
-### Prerequisites
+### Why It Can't Be Built Directly
 
+1. **Platform-Specific Dependencies**: The code was written for PlayStation 2, GameCube, and Xbox using their proprietary SDKs and hardware-specific features
+2. **Console-Specific Code**: Extensive use of platform-specific libraries (VU1 code, GS registers, etc.)
+3. **Missing Assets**: Game assets (models, textures, sounds, scripts) are not included
+4. **Compiler Extensions**: Uses MSVC/CodeWarrior specific extensions and syntax
+5. **Binary Dependencies**: Requires proprietary middleware and libraries
+
+### Prerequisites (If You Had Everything)
+
+- Original platform SDKs (PS2, GameCube, or Xbox)
 - CMake 3.10 or higher
-- A C++11 compatible compiler (GCC, Clang, MSVC)
-- Make or Ninja build system
+- Platform-specific compilers
+- Game assets and data files
+- Proprietary middleware licenses
 
-### Build Instructions
+### Build System
 
-#### Linux/macOS
+A CMakeLists.txt is provided as a starting point for modern compilation efforts:
 
 ```bash
-# Create build directory
 mkdir build
 cd build
-
-# Configure
 cmake ..
-
-# Build
 cmake --build .
-
-# The executable will be in the build directory
-./thug
 ```
 
-#### Windows
+**Note**: This will fail with numerous compilation errors due to the reasons listed above. The build system is provided for documentation and as a framework for potential porting efforts.
 
-```bash
-# Create build directory
-mkdir build
-cd build
+### What Was Done to Make It "Executable"
 
-# Configure (for Visual Studio)
-cmake .. -G "Visual Studio 16 2019"
+This repository has been enhanced with:
 
-# Build
-cmake --build . --config Debug
+1. **CMake Build System**: A modern `CMakeLists.txt` for cross-platform configuration
+2. **Case-Insensitive Symlinks**: Symbolic links created for Linux compatibility (Windows code used case-insensitive paths)
+3. **Path Separator Fixes**: Converted backslash (`\`) to forward slash (`/`) in include paths
+4. **Documentation**: Comprehensive README explaining the codebase structure
+5. **.gitignore**: Proper exclusion of build artifacts
 
-# Or open the generated .sln file in Visual Studio
-```
+### Known Issues
 
-#### Build Options
-
-- Debug build (default): `cmake .. -DCMAKE_BUILD_TYPE=Debug`
-- Release build: `cmake .. -DCMAKE_BUILD_TYPE=Release`
+- Variadic macro syntax incompatible with ISO C++
+- Missing fundamental type definitions (platform-specific)
+- Platform-specific assembly and hardware code
+- Console SDK dependencies
+- Missing game assets and data files
 
 ## Important Notes
 

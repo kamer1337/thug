@@ -34,6 +34,8 @@
 #include <gel/soundfx/xbox/p_sfx.h>
 #elif defined( __PLAT_NGC__ )
 #include <gel/soundfx/ngc/p_sfx.h>
+#elif defined( __PLAT_WN32__ )
+// PC platform - use generic sound interface
 #endif
 
 /*****************************************************************************
@@ -72,7 +74,7 @@
 #define DEFAULT_DROPOFF_DIST						FEET_TO_INCHES( 85.0f )
 
 // When a voice is set to negative volume on some platforms, it puts the sound 'out of phase' to sound like it's behind you...
-#if defined( __PLAT_NGPS__ ) || defined( __PLAT_XBOX__ )
+#if defined( __PLAT_NGPS__ ) || defined( __PLAT_XBOX__ ) || defined( __PLAT_WN32__ )
 #define PLATFORM_SUPPORTS_VOLUME_PHASING			1
 #endif
 

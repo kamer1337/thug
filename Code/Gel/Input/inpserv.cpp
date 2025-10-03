@@ -45,6 +45,8 @@
 #include <libscedemo.h>					// Mick: needed for low level inactivity timeout on PS2 demo disk
 #elif defined( __PLAT_NGC__ )
 #include <gfx/ngc/p_memview.h>
+#elif defined( __PLAT_WN32__ )
+// PC platform - no special memview needed for input
 #endif
 
 #include <sys/config/config.h>

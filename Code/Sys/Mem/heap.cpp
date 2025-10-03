@@ -148,6 +148,10 @@ bool ScriptDumpHeaps( Script::CStruct *pParams, Script::CScript *pScript );
 #include <gfx/ngps/p_memview.h>
 #elif defined( __PLAT_NGC__ )
 #include <gfx/ngc/p_memview.h>
+#elif defined( __PLAT_XBOX__ )
+#include <gfx/xbox/p_memview.h>
+#elif defined( __PLAT_WN32__ )
+// PC platform - memview for heap debugging
 #endif
 
 

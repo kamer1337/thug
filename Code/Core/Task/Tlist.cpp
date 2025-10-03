@@ -222,6 +222,12 @@ void		List::Dump( void )
 				Dbg_Printf ("Task %p\n",task->GetCode() );
 //				MemView_GetFunctionName((int)task->GetCode(), &size));
 		}
+#elif defined( __PLAT_WN32__ )
+		if ( task->HaveAccess() )
+		{
+				// PC platform - simple task debugging
+				Dbg_Printf ("Task %p\n",task->GetCode() );
+		}
 #endif
 	}
 }

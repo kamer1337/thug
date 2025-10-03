@@ -45,12 +45,14 @@ namespace SIO
 		vMAX_PORT = 4,
 #		elif defined( __PLAT_NGC__ )
 		vMAX_PORT = 4,
+#		elif defined( __PLAT_WN32__ )
+		vMAX_PORT = 4,
 #		else
 		vMAX_PORT = 2,
 #		endif
 		vMAX_SLOT = 1,
 		vMAX_DEVICES = ( vMAX_PORT * vMAX_SLOT )
-	};   
+	};
 
 /*****************************************************************************
 **							Class Definitions								**

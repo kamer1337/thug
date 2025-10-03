@@ -57,6 +57,8 @@
 #elif defined( __PLAT_NGC__ )
 #include <gel/music/ngc/p_music.h>
 #include <gel/music/ngc/pcm/pcm.h>
+#elif defined( __PLAT_WN32__ )
+// PC platform - use generic music interface
 #endif
 #include <sys/config/config.h>
 #include <sys/replay/replay.h>

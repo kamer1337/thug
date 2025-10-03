@@ -1,0 +1,1 @@
+NxViewMan.h

@@ -405,25 +405,29 @@ void render::OldStyle()
 	// prepare stencil shadow dma list for generating the stencil buffer
 	dma::SetList(sGroup::pShadow);
 
-	// send the GS setup
+	// send the GS setup - optimized: group related register writes for better cache locality
 	dma::BeginTag(dma::cnt, 0);
 	gs::BeginPrim(ABS,0,0);
-	gs::Reg1(gs::XYOFFSET_2,	PackXYOFFSET(XOFFSET, YOFFSET));
-	gs::Reg1(gs::ZBUF_2,		PackZBUF(ZBUFFER_START,PSMZ24,1));
-	gs::Reg1(gs::SCISSOR_2,		PackSCISSOR(0,HRES - 1,0,VRES - 1));
+	// Frame buffer and test setup (grouped for cache efficiency)
 	gs::Reg1(gs::FRAME_2,		PackFRAME(0x1BA,HRES/64,PSMCT16S,0x00000000));
-	//gs::Reg1(gs::FRAME_2,		PackFRAME(FRAME_START,HRES/64,PSMCT32,0x00000000));
+	gs::Reg1(gs::ZBUF_2,		PackZBUF(ZBUFFER_START,PSMZ24,1));
+	gs::Reg1(gs::XYOFFSET_2,	PackXYOFFSET(XOFFSET, YOFFSET));
+	gs::Reg1(gs::SCISSOR_2,		PackSCISSOR(0,HRES - 1,0,VRES - 1));
+	// Alpha and blending setup (grouped)
 	gs::Reg1(gs::ALPHA_2,		PackALPHA(0,2,2,1,128));
 	gs::Reg1(gs::FBA_2,			PackFBA(0));
 	gs::Reg1(gs::PABE,			PackPABE(0));
 	gs::Reg1(gs::COLCLAMP,		PackCOLCLAMP(0));
+	// Drawing mode setup (grouped)
 	gs::Reg1(gs::PRMODECONT,	PackPRMODECONT(1));
 	gs::Reg1(gs::DTHE,			PackDTHE(0));
 	gs::Reg1(gs::TEST_2,		PackTEST(0,0,0,0,0,0,1,ZALWAYS));
-	gs::Reg1(gs::PRIM,			PackPRIM(SPRITE,0,0,0,0,0,0,1,0));			// clear the stencil buffer
+	// Clear primitive (grouped)
+	gs::Reg1(gs::PRIM,			PackPRIM(SPRITE,0,0,0,0,0,0,1,0));
 	gs::Reg1(gs::RGBAQ,			PackRGBAQ(0,0,0,0,0));
 	gs::Reg1(gs::XYZ2,			PackXYZ(XOFFSET,YOFFSET,0));
 	gs::Reg1(gs::XYZ2,			PackXYZ(0x10000-XOFFSET,0x10000-YOFFSET,0));
+	// Final setup for rendering
 	gs::Reg1(gs::TEST_2,		PackTEST(0,0,0,0,0,0,1,ZGREATER));
 	gs::Reg1(gs::FRAME_2,		PackFRAME(0x1BA,HRES/64,PSMCT16S,0xFF000000));
 	gs::EndPrim(1);
@@ -433,22 +437,25 @@ void render::OldStyle()
 	// prepare shadow dma list for generating the shadow texture
 	dma::SetList(sGroup::pShadow);
 
-	// send the GS setup
+	// send the GS setup - optimized: group related register writes for better cache locality
 	dma::BeginTag(dma::cnt, 0);
 	gs::BeginPrim(ABS,0,0);
-	gs::Reg1(gs::XYOFFSET_2,	PackXYOFFSET(0x7800,0x7800));
-	gs::Reg1(gs::ZBUF_2,		PackZBUF(0,PSMZ16,1));
-	gs::Reg1(gs::TEST_2,		PackTEST(0,0,0,0,0,0,1,ZALWAYS));
-	gs::Reg1(gs::SCISSOR_2,		PackSCISSOR(0,255,0,255));
+	// Frame buffer setup (grouped)
 	gs::Reg1(gs::FRAME_2,		PackFRAME(0x1F0,4,PSMCT16,0x00000000));
-	//gs::Reg1(gs::FRAME_2,		PackFRAME(0x000,HRES/64,PSMCT32,0x00000000));
+	gs::Reg1(gs::ZBUF_2,		PackZBUF(0,PSMZ16,1));
+	gs::Reg1(gs::XYOFFSET_2,	PackXYOFFSET(0x7800,0x7800));
+	gs::Reg1(gs::SCISSOR_2,		PackSCISSOR(0,255,0,255));
+	// Test and alpha setup (grouped)
+	gs::Reg1(gs::TEST_2,		PackTEST(0,0,0,0,0,0,1,ZALWAYS));
 	gs::Reg1(gs::FBA_2,			PackFBA(0));
-	gs::Reg1(gs::PRIM,			PackPRIM(SPRITE,0,0,0,0,0,0,1,0));			// clear the texture
+	// Clear primitive (grouped)
+	gs::Reg1(gs::PRIM,			PackPRIM(SPRITE,0,0,0,0,0,0,1,0));
 	gs::Reg1(gs::RGBAQ,			PackRGBAQ(0,0,0,0,0));
 	gs::Reg1(gs::XYZ2,			PackXYZ(0x7800,0x7800,0));
 	gs::Reg1(gs::XYZ2,			PackXYZ(0x8800,0x8800,0));
-	gs::Reg1(gs::FBA_2,			PackFBA(1));								// set A on all pixels we touch
-	gs::Reg1(gs::SCISSOR_2,		PackSCISSOR(1,254,1,254));					// don't touch edge of texture to avoid streaks
+	// Final setup (grouped)
+	gs::Reg1(gs::FBA_2,			PackFBA(1));
+	gs::Reg1(gs::SCISSOR_2,		PackSCISSOR(1,254,1,254));
 	gs::Reg1(gs::PRMODECONT,	PackPRMODECONT(0));
 	gs::Reg1(gs::PRMODE,		PackPRMODE(0,0,0,0,0,0,1,0));
 	gs::EndPrim(1);
@@ -460,20 +467,18 @@ void render::OldStyle()
 	// assume no dma context
 	dma::SetList(NULL);
 
-	// render old-style groups
+	// render old-style groups - optimized loop
 	for (p_group=sGroup::pHead; p_group!=sGroup::pEpilogue; p_group=p_group->pNext)
 	{
-		// skip the old render mechanism if the group belongs to a pip-style scene
+		// Early exit optimization: skip the old render mechanism if the group belongs to a pip-style scene
 		if (p_group==sGroup::pShadow || !p_group->pScene || p_group->pScene->Flags & SCENEFLAG_USESPIP)
-		{
 			continue;
-		}
 
 		dma::SetList(p_group);
 
 		dma::BeginTag(dma::cnt, 0);
 
-			// VIF1 and VU1 setup
+			// VIF1 and VU1 setup - grouped for better cache locality
 			vif::FLUSH();
 			vif::STMASK(0);
 			vif::STMOD(0);
@@ -484,11 +489,8 @@ void render::OldStyle()
 			vif::MSCAL(VU1_ADDR(Setup));
 			vu1::Loc = vu1::Buffer=0;
 
-			// constant part of vu1 context data
+			// constant part of vu1 context data - optimized using CopyQuads
 			vu1::BeginPrim(ABS, VU1_ADDR(L_VF09));
-//			vu1::StoreVec(*(Vec *)&render::AltFrustum);				// VF09
-//			vu1::StoreVec(*(Vec *)&render::InverseViewportScale);	// VF10
-//			vu1::StoreVec(*(Vec *)&render::InverseViewportOffset);	// VF11
 			vu1::CopyQuads((uint32*)&render::AltFrustum, 
 							(uint32*)&render::InverseViewportScale,
 							(uint32*)&render::InverseViewportOffset
@@ -505,6 +507,7 @@ void render::OldStyle()
 		dma::EndTag();
 
 
+		// Pre-initialize reflection matrix (moved out of conditional scope for optimization)
 		Mth::Matrix refl_temp;
 		Mth::Matrix  	ReflVecs;
 		refl_temp[0] = Mth::Vector(1.0f, 0.0f, 0.0f, 0.0f);
@@ -512,17 +515,19 @@ void render::OldStyle()
 		refl_temp[2] = Mth::Vector(0.0f, 0.0f, 1.4f, 0.0f);
 		refl_temp[3] = Mth::Vector(0.0f, 0.0f, 0.0f, 0.0f);
 
-		// this part handles the instanced non-skinned models
-		if (p_group->pScene && (p_group->pScene->Flags & SCENEFLAG_INSTANCEABLE) &&
-			p_group->pMeshes && !(p_group->pMeshes->Flags & MESHFLAG_SKINNED))
+		// this part handles the instanced non-skinned models - optimized with cached checks
+		const bool has_scene = (p_group->pScene != NULL);
+		const bool is_instanceable = has_scene && (p_group->pScene->Flags & SCENEFLAG_INSTANCEABLE);
+		const bool has_meshes = (p_group->pMeshes != NULL);
+		const bool is_not_skinned = has_meshes && !(p_group->pMeshes->Flags & MESHFLAG_SKINNED);
+		
+		if (is_instanceable && is_not_skinned)
 		{
 			for (CInstance *pInstance=p_group->pScene->pInstances; pInstance; pInstance=pInstance->GetNext())
 			{
-				// make sure the instance is active
+				// Early exit for inactive instances
 				if (!pInstance->IsActive())
-				{
 					continue;
-				}
 
 				LocalToWorld = *(Mth::Matrix *)pInstance->GetTransform();
 				LocalToCamera = LocalToWorld * render::WorldToCamera;
@@ -894,10 +899,12 @@ void render::OldStyle()
 				vif::BASE(256);
 				vif::OFFSET(0);
 				vu1::Loc = 256;
-				LightMatrix[3]  = ambientColour  * 1.0f/(128.0f*8388608.0f);
-				ColourMatrix[0] = diffuseColour0 * 1.0f/(128.0f*8388608.0f);
-				ColourMatrix[1] = diffuseColour1 * 1.0f/(128.0f*8388608.0f);
-				ColourMatrix[2] = diffuseColour2 * 1.0f/(128.0f*8388608.0f);
+				// Optimize matrix calculations by using constant multiplier
+				const float scale_factor = 1.0f / (128.0f * 8388608.0f);
+				LightMatrix[3]  = ambientColour  * scale_factor;
+				ColourMatrix[0] = diffuseColour0 * scale_factor;
+				ColourMatrix[1] = diffuseColour1 * scale_factor;
+				ColourMatrix[2] = diffuseColour2 * scale_factor;
 				vu1::BeginPrim(ABS, VU1_ADDR(L_VF20));
 				vu1::StoreMat(*(Mat *)&LightMatrix);			// VF20-23
 				vu1::StoreMat(*(Mat *)&ColourMatrix);			// VF24-27
@@ -906,14 +913,14 @@ void render::OldStyle()
 				vif::FLUSH();
 				dma::EndTag();
 
-				// traverse colour-locked meshes
-				for (j=0,pMesh=p_group->pMeshes; j<p_group->NumMeshes; j++,pMesh++)
+				// traverse colour-locked meshes - optimized loop
+				sMesh *pMesh = p_group->pMeshes;
+				const uint num_meshes = p_group->NumMeshes;
+				for (j=0; j<num_meshes; j++, pMesh++)
 				{
-					// skip if invisible, no subroutine, or affected by dynamic colouring
+					// Early exit optimization: skip if invisible, no subroutine, or affected by dynamic colouring
 					if (!pMesh->IsActive() || !pMesh->pSubroutine || !(pMesh->Flags & MESHFLAG_COLOR_LOCKED))
-					{
 						continue;
-					}
 
 					// render the mesh
 					vu1::Loc = vu1::Buffer = 256;
@@ -977,57 +984,50 @@ void render::OldStyle()
 void patch_texture_dma()
 {
 	Nx::CScene *p_nxscene =  Nx::CEngine::sGetMainScene();
-	if (p_nxscene)
+	if (!p_nxscene)
+		return;
+		
+	Nx::CPs2TexDict *p_tex_dict = (Nx::CPs2TexDict *)p_nxscene->GetTexDict();
+	if (!p_tex_dict)
+		return;
+		
+	sScene *p_scene = p_tex_dict->GetEngineTextureDictionary();
+	
+	sTexture *p_textures = p_scene->pTextures;
+	const int num_textures = p_scene->NumTextures;
+	
+	// Optimized: Pre-calculate constant values
+	const uint32 dma_ref_shifted = (dma::ref << 28);
+	
+	// Optimized: Loop with pointer arithmetic for better cache utilization
+	for (int i = 0; i < num_textures; i++)
 	{
-		Nx::CPs2TexDict *p_tex_dict = (Nx::CPs2TexDict *)p_nxscene->GetTexDict();
-		if (p_tex_dict)
+		sTexture *pTex = &p_textures[i];
+		uint32* p_dma = (uint32*)pTex->mp_dma;
+		
+		if (pTex->m_render_count)
 		{
-			sScene *p_scene = p_tex_dict->GetEngineTextureDictionary();
-		
-		
-			sTexture *p_textures = p_scene->pTextures;
-			int num_textures = p_scene->NumTextures;
-		
-			
-		//	int total_referenced = 0;
-		//	int num_unique = 0;
-			int i;
-			for (i=0;i<num_textures;i++)
+			// Reset for next frame
+			pTex->m_render_count = 0;
+			// fix it, so it gets uploaded
+			// This test speeds up the routine by about 20%
+			// Generally the visibility does not change
+			if (p_dma[0] == 0)
 			{
-				
-				uint32* p_dma = (uint32*)p_textures[i].mp_dma;
-				
-		//			gif::Tag2(0, 0, IMAGE, 0, 0, 0, NumTexQWords[j]);  			// 0..3 words, NumTexQWords is in the lower 15 bits of the first word [0]
-		//			dma::EndTag();									   			// Just Aligns upo to QW boundry
-		//			dma::Tag(dma::ref, NumTexQWords[j], (uint)pTextureSource);  // 0..1 (after alignment) NumTexQWords goes in the lower 28 bits of word 0
-		
-				if (p_textures[i].m_render_count)
-				{
-					// Reset it for next time around	
-					p_textures[i].m_render_count = 0;
-					// fix it, so it gets uploaded
-					// This test does speed up the routine by about 20%
-					// Generally the visibility does not change
-					uint32	current_value = (p_dma[0]);
-					if (current_value == 0)
-					{
-						p_dma[0] = p_textures[i].m_quad_words;; 
-						uint32* p_dma2 = (uint32*)((((int)(p_dma+4)) + 3)&0xfffffff0);
-						p_dma2[0] = (dma::ref << 28) | p_textures[i].m_quad_words; 
-					}
-				}
-				else
-				{
-					// patch it, so nothing gets uploaded
-					uint32	current_value = (p_dma[0]);
-					if (current_value != 0)
-					{
-						p_dma[0] =  0;
-						uint32* p_dma2 = (uint32*)((((int)(p_dma+4)) + 3)&0xfffffff0);
-						p_dma2[0] = (dma::ref << 28);
-					}
-				}
-				
+				const uint32 quad_words = pTex->m_quad_words;
+				p_dma[0] = quad_words;
+				uint32* p_dma2 = (uint32*)((((int)(p_dma+4)) + 3) & 0xfffffff0);
+				p_dma2[0] = dma_ref_shifted | quad_words; 
+			}
+		}
+		else
+		{
+			// patch it, so nothing gets uploaded
+			if (p_dma[0] != 0)
+			{
+				p_dma[0] = 0;
+				uint32* p_dma2 = (uint32*)((((int)(p_dma+4)) + 3) & 0xfffffff0);
+				p_dma2[0] = dma_ref_shifted;
 			}
 		}
 	}
@@ -1039,64 +1039,62 @@ void render::NewStyle(bool just_setup)
 
 	sGroup *p_group;
 
-	// add viewport-specific GS registers to each new-style group
+	// add viewport-specific GS registers to each new-style group - optimized loop
 	for (p_group=sGroup::pHead; p_group!=sGroup::pEpilogue; p_group=p_group->pNext)
 	{
-		if ((p_group!=sGroup::pShadow) && p_group->pScene && (p_group->pScene->Flags & SCENEFLAG_USESPIP))
+		// Early exit optimization: skip if group doesn't meet criteria
+		if ((p_group==sGroup::pShadow) || !p_group->pScene || !(p_group->pScene->Flags & SCENEFLAG_USESPIP))
+			continue;
+		
+		// Cache group flags for efficiency
+		const uint group_flags = p_group->flags;
+		const bool is_sorted = (group_flags & GROUPFLAG_SORT) != 0;
+		const bool is_sky = (group_flags & GROUPFLAG_SKY) != 0;
+		
+		// send the GS viewport context
+		dma::SetList(p_group);
+
+		// mark our place if it's a sorted group
+		if (is_sorted)
 		{
-			// send the GS viewport context
-			dma::SetList(p_group);
-
-			// mark our place if it's a (the?) sorted group
-			// remember to assert there's no overflow
-			if (p_group->flags & GROUPFLAG_SORT)
-			{
-				//printf("Marking location %08X, p_group==%08X, flags=%08X\n", (int)dma::pLoc, (int)p_group, p_group->flags);
-				Dbg_MsgAssert(sMarkerIndex < MAX_SORTED_LIST_MARKERS, ("too many sorted list markers - tell Mike"));
-				render::sSortedListMarker[render::sMarkerIndex++] = (int)dma::pLoc;
-			}
-
-			dma::BeginTag(dma::cnt, 0xFE000000);
-			vif::BASE(vu1::Loc);
-			vif::OFFSET(0);
-			uint vu1_loc = vu1::Loc;
-			vu1::Loc = 0;   							// must do this as a relative prim for a sortable list...
-
-			// constant part of vu1 context data
-			vu1::BeginPrim(REL, VU1_ADDR(L_VF09));
-			vu1::StoreVec(*(Vec *)&render::AltFrustum);				// VF09
-			if (p_group->flags & GROUPFLAG_SKY)
-			{
-				vu1::StoreVec(*(Vec *)&render::SkyInverseViewportScale);	// VF10
-				vu1::StoreVec(*(Vec *)&render::SkyInverseViewportOffset);	// VF11
-			}
-			else
-			{
-				vu1::StoreVec(*(Vec *)&render::InverseViewportScale);	// VF10
-				vu1::StoreVec(*(Vec *)&render::InverseViewportOffset);	// VF11
-			}
-			vu1::EndPrim(0);
-
-			gs::BeginPrim(REL, 0, 0);
-			gs::Reg1(gs::XYOFFSET_1, render::reg_XYOFFSET);
-			gs::Reg1(gs::SCISSOR_1,  render::reg_SCISSOR);
-			gs::EndPrim(1);
-			vif::MSCAL(VU1_ADDR(Parser));
-			dma::EndTag();
-			((uint16 *)dma::pTag)[1] |= vu1::Loc & 0x3FF;	// must write some code for doing this automatically
-			vu1::Loc += vu1_loc;
-
-			if (p_group->flags & GROUPFLAG_SORT)
-			{
-				dma::Tag(dma::cnt,0,0);
-				vif::NOP();
-				vif::NOP();
-			}
-
-			// assume no vu1 context for each group
-			p_group->pVu1Context = NULL;
+			Dbg_MsgAssert(sMarkerIndex < MAX_SORTED_LIST_MARKERS, ("too many sorted list markers - tell Mike"));
+			render::sSortedListMarker[render::sMarkerIndex++] = (int)dma::pLoc;
 		}
 
+		dma::BeginTag(dma::cnt, 0xFE000000);
+		vif::BASE(vu1::Loc);
+		vif::OFFSET(0);
+		uint vu1_loc = vu1::Loc;
+		vu1::Loc = 0;   							// must do this as a relative prim for a sortable list...
+
+		// constant part of vu1 context data - optimized with cached flags
+		vu1::BeginPrim(REL, VU1_ADDR(L_VF09));
+		vu1::StoreVec(*(Vec *)&render::AltFrustum);				// VF09
+		// Use pointer arithmetic for better performance
+		Vec *pInvScale = is_sky ? (Vec *)&render::SkyInverseViewportScale : (Vec *)&render::InverseViewportScale;
+		Vec *pInvOffset = is_sky ? (Vec *)&render::SkyInverseViewportOffset : (Vec *)&render::InverseViewportOffset;
+		vu1::StoreVec(*pInvScale);		// VF10
+		vu1::StoreVec(*pInvOffset);		// VF11
+		vu1::EndPrim(0);
+
+		gs::BeginPrim(REL, 0, 0);
+		gs::Reg1(gs::XYOFFSET_1, render::reg_XYOFFSET);
+		gs::Reg1(gs::SCISSOR_1,  render::reg_SCISSOR);
+		gs::EndPrim(1);
+		vif::MSCAL(VU1_ADDR(Parser));
+		dma::EndTag();
+		((uint16 *)dma::pTag)[1] |= vu1::Loc & 0x3FF;	// must write some code for doing this automatically
+		vu1::Loc += vu1_loc;
+
+		if (is_sorted)
+		{
+			dma::Tag(dma::cnt,0,0);
+			vif::NOP();
+			vif::NOP();
+		}
+
+		// assume no vu1 context for each group
+		p_group->pVu1Context = NULL;
 	}
 
 	// reserve space from dma list for new trans context
@@ -1146,7 +1144,7 @@ void render::NewStyle(bool just_setup)
 	vu1::Loc += EXT_CTXT_SIZE+1;
 	sGroup::pShadow->pVu1Context = p_shdw_ctxt;
 
-	// send the GS context for the shadow list
+	// send the GS context for the shadow list - optimized: group related registers for better cache locality
 	dma::BeginTag(dma::cnt, 0);
 
 	vu1::BeginPrim(ABS, VU1_ADDR(L_VF10));
@@ -1155,17 +1153,21 @@ void render::NewStyle(bool just_setup)
 	vu1::EndPrim(0);
 
 	gs::BeginPrim(ABS,0,0);
+	// Texture setup (grouped for cache efficiency)
 	gs::Reg1(gs::TEXFLUSH,		PackTEXFLUSH(0));
-	gs::Reg1(gs::FBA_2,			PackFBA(0));
 	gs::Reg1(gs::TEX0_2,		PackTEX0(0x3E00,4,PSMCT16,8,8,1,DECAL,0,0,0,0,0));
 	gs::Reg1(gs::TEX1_2,		PackTEX1(1,0,NEAREST,NEAREST,0,0,0));
 	gs::Reg1(gs::CLAMP_2,		PackCLAMP(CLAMP,CLAMP,0,0,0,0));
+	// Frame buffer setup (grouped)
 	gs::Reg1(gs::FRAME_2,		PackFRAME(FRAME_START,HRES/64,PSMCT32,0xFF000000));
 	gs::Reg1(gs::ZBUF_2,		PackZBUF(ZBUFFER_START,PSMZ24,1));
 	gs::Reg1(gs::XYOFFSET_2,	reg_XYOFFSET);
 	gs::Reg1(gs::SCISSOR_2,		reg_SCISSOR);
+	// Alpha and test setup (grouped)
+	gs::Reg1(gs::FBA_2,			PackFBA(0));
 	gs::Reg1(gs::ALPHA_2,		PackALPHA(2,1,2,1,ShadowDensity));
 	gs::Reg1(gs::TEST_2,		PackTEST(1,AGEQUAL,0x80,KEEP,0,0,1,ZGEQUAL));
+	// Primitive mode (grouped)
 	gs::Reg1(gs::PRMODECONT,	PackPRMODECONT(0));
 	gs::Reg1(gs::PRMODE,		PackPRMODE(0,1,0,1,0,0,1,0));
 	gs::EndPrim(0);

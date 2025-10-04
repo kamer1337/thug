@@ -33,6 +33,8 @@
 #include <gel/movies/xbox/p_movies.h>
 #elif defined( __PLAT_NGC__ )
 #include <gel/movies/ngc/p_movies.h>
+#elif defined( __PLAT_WN32__ )
+#include <gel/movies/win32/p_movies.h>
 #endif
 
 #include <sys/profiler.h>

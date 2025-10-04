@@ -192,7 +192,7 @@ typedef signed long long	sint128;
 
 #endif
 
-#if defined(__PLAT_NGPS__) || defined(__PLAT_XBOX__) || defined(__PLAT_NGC__)
+#if defined(__PLAT_NGPS__) || defined(__PLAT_XBOX__) || defined(__PLAT_NGC__) || defined(__PLAT_WN32__)
 
 class ostream
 {
@@ -206,7 +206,7 @@ public:
 	ostream& operator<< ( const void* p )	{ printf ( "%p", p ); return *this; }
 };
 
-#endif 
+#endif
 
 #define	vINT_BITS			32
 #define	vPTR_BITS			32
@@ -365,6 +365,8 @@ typedef	sint64				nID64;
 //#include "libsn.h"
 #elif defined( __PLAT_XBOX__ )
 #include <gfx/xbox/p_memview.h>
+#elif defined( __PLAT_WN32__ )
+#include <gfx/win32/p_memview.h>
 #endif
 
 

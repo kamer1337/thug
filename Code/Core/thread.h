@@ -16,8 +16,10 @@
 #endif
 	  
 #ifdef __PLAT_WN32__
+// PC threading support will be handled by Win32 API
 #else
 #	ifdef __PLAT_XBOX__
+// Xbox threading support will be handled by Xbox API
 #	else
 #		ifdef __PLAT_NGPS__
 #			include "thread/ngps/t_thread.h"

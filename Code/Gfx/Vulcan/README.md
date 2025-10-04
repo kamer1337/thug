@@ -51,16 +51,43 @@ The Vulcan renderer now has a working implementation with the following componen
 
 ## File Format Compatibility
 
-The Vulcan renderer maintains compatibility with existing THUG file formats:
+The Vulcan renderer maintains compatibility with existing THUG file formats across all platforms:
 
-### Texture Formats (.TEX)
-- `sTexture` structure matches NGC/NGPS texture format
+### Texture Formats (.TEX / .IMG)
+- `sTexture` structure supports both console and PC texture formats
 - Supports texture checksums for asset identification
 - Compatible with:
   - Base and actual dimensions
   - Mipmap levels
   - Texture flags (holes, alpha, channels)
   - Alpha data separation
+
+#### Console Formats (NGC/NGPS/Xbox)
+- RGBA32 - 32-bit uncompressed RGBA
+- RGB24 - 24-bit uncompressed RGB
+- PALETTE8 - 8-bit palettized
+- PALETTE4 - 4-bit palettized
+
+#### PC Formats (THUG PC Version - DirectX)
+- **DXT1** (BC1) - RGB with 1-bit alpha or no alpha, 4:1 compression ratio
+  - 4x4 pixel blocks, 8 bytes per block
+  - Vulkan format: `VK_FORMAT_BC1_RGB_UNORM_BLOCK` or `VK_FORMAT_BC1_RGBA_UNORM_BLOCK`
+- **DXT3** (BC2) - RGBA with explicit alpha, 4:1 compression ratio
+  - 4x4 pixel blocks, 16 bytes per block
+  - Vulkan format: `VK_FORMAT_BC2_UNORM_BLOCK`
+- **DXT5** (BC3) - RGBA with interpolated alpha, 4:1 compression ratio
+  - 4x4 pixel blocks, 16 bytes per block
+  - Vulkan format: `VK_FORMAT_BC3_UNORM_BLOCK`
+- **A8R8G8B8** - 32-bit uncompressed ARGB
+  - Vulkan format: `VK_FORMAT_B8G8R8A8_UNORM`
+- **R5G6B5** - 16-bit RGB
+  - Vulkan format: `VK_FORMAT_R5G6B5_UNORM_PACK16`
+- **A1R5G5B5** - 16-bit ARGB with 1-bit alpha
+  - Vulkan format: `VK_FORMAT_A1R5G5B5_UNORM_PACK16`
+- **A4R4G4B4** - 16-bit ARGB
+  - Vulkan format: `VK_FORMAT_A4R4G4B4_UNORM_PACK16`
+
+PC textures are typically stored in .IMG files with DirectX format headers.
 
 ### Model Formats
 - `CVulcanModel` class implements the platform-specific CModel interface
@@ -92,9 +119,18 @@ The Vulcan renderer maintains compatibility with existing THUG file formats:
 ### Data Structures
 All structures are designed to be binary-compatible with existing file formats:
 - Texture data stored as raw bytes with format identifiers
+- Support for both console formats (RGBA32, RGB24, PALETTE) and PC formats (DXT1/3/5, A8R8G8B8)
+- DXT compressed textures remain compressed in GPU memory
 - Mesh vertex data uses standard float arrays
 - Indices use 16-bit unsigned integers
 - Checksums use 32-bit CRC values
+
+### PC Format Detection
+The renderer automatically detects PC texture formats:
+- Files with .IMG extension are treated as PC format textures
+- PC textures use DirectX compressed formats (DXT1/DXT3/DXT5)
+- Compressed textures are uploaded directly to GPU without decompression
+- Format conversion handled by Vulkan BC (Block Compression) formats
 
 ### Memory Management
 - Hash tables for efficient texture and projection detail lookup

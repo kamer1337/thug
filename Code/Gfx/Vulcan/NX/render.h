@@ -38,6 +38,25 @@ namespace NxVulcan
 			TEXTURE_FLAG_CHANNEL_MASK			= ( TEXTURE_FLAG_CHANNEL_GREEN | TEXTURE_FLAG_CHANNEL_RED | TEXTURE_FLAG_CHANNEL_BLUE )
 		};
 
+		// PC texture format identifiers (DirectX formats)
+		enum ETextureFormat
+		{
+			// Console formats (NGC/NGPS/Xbox)
+			TEXTURE_FORMAT_RGBA32				= 0,
+			TEXTURE_FORMAT_RGB24				= 1,
+			TEXTURE_FORMAT_PALETTE8				= 2,
+			TEXTURE_FORMAT_PALETTE4				= 3,
+			
+			// PC formats (THUG PC version - DirectX)
+			TEXTURE_FORMAT_DXT1					= 10,	// BC1 - RGB with 1-bit alpha or no alpha
+			TEXTURE_FORMAT_DXT3					= 11,	// BC2 - RGBA with explicit alpha
+			TEXTURE_FORMAT_DXT5					= 12,	// BC3 - RGBA with interpolated alpha
+			TEXTURE_FORMAT_A8R8G8B8				= 13,	// 32-bit ARGB
+			TEXTURE_FORMAT_R5G6B5				= 14,	// 16-bit RGB
+			TEXTURE_FORMAT_A1R5G5B5				= 15,	// 16-bit ARGB with 1-bit alpha
+			TEXTURE_FORMAT_A4R4G4B4				= 16,	// 16-bit ARGB
+		};
+
 		uint32				Checksum;
 		uint16				BaseWidth, BaseHeight;
 		uint16				ActualWidth, ActualHeight;
@@ -172,9 +191,11 @@ namespace NxVulcan
 	
 	// Texture management
 	sTexture*	load_texture( const char *p_filename );
+	sTexture*	load_texture_pc_format( const char *p_filename );
 	sTexture*	create_texture( uint32 checksum, uint16 width, uint16 height, uint8 format, uint8* pData );
 	void		destroy_texture( sTexture *p_texture );
 	sTexture*	get_texture( uint32 checksum );
+	uint32		get_texture_size_for_format( uint16 width, uint16 height, uint8 format, uint8 mip_levels );
 	
 	// Mesh management
 	sMesh*		create_mesh( uint32 checksum );

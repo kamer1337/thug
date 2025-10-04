@@ -134,6 +134,15 @@ The original code is proprietary. This repository is for preservation and educat
 - Publisher: Activision
 - This is part of the Tony Hawk's game series
 
+## Documentation
+
+For more information about the project:
+
+- **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
+- **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
+- **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
+- **[RENDERING_OPTIMIZATIONS.md](RENDERING_OPTIMIZATIONS.md)** - PS2 rendering performance improvements
+
 ## Resources
 
 - [Tony Hawk's Underground on Wikipedia](https://en.wikipedia.org/wiki/Tony_Hawk%27s_Underground)

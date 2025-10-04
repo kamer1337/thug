@@ -194,8 +194,13 @@ namespace NxVulcan
 	sTexture*	load_texture_pc_format( const char *p_filename );
 	sTexture*	create_texture( uint32 checksum, uint16 width, uint16 height, uint8 format, uint8* pData );
 	void		destroy_texture( sTexture *p_texture );
-	sTexture*	get_texture( uint32 checksum );
 	uint32		get_texture_size_for_format( uint16 width, uint16 height, uint8 format, uint8 mip_levels );
+	
+	// Inline hot path functions for performance
+	inline sTexture* get_texture( uint32 checksum )
+	{
+		return pTextureTable ? pTextureTable->GetItem( checksum ) : NULL;
+	}
 	
 	// Mesh management
 	sMesh*		create_mesh( uint32 checksum );

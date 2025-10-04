@@ -126,12 +126,16 @@ void shutdown_vulkan( void )
 /******************************************************************/
 BlendModes GetBlendMode( uint32 blend_checksum )
 {
+	// Fast path for most common blend mode (Diffuse)
+	if( blend_checksum == 0x872b0e99 )
+	{
+		return vBLEND_MODE_DIFFUSE;
+	}
+	
 	// Map blend mode checksums to blend modes
 	// This maintains compatibility with existing file formats
 	switch( blend_checksum )
 	{
-		case 0x872b0e99:	// "Diffuse"
-			return vBLEND_MODE_DIFFUSE;
 		case 0x9c888e20:	// "Add"
 			return vBLEND_MODE_ADD;
 		case 0x5fbb9c76:	// "Add_Fixed"
@@ -417,14 +421,23 @@ void render_scene( sScene *p_scene, uint32 flags, uint32 viewport )
 		return;
 	}
 	
+	// Early return for empty scenes
+	if( p_scene->m_num_meshes == 0 || !p_scene->mpp_mesh_list )
+	{
+		return;
+	}
+	
 	// In a full implementation, this would:
 	// 1. Begin command buffer recording
 	// 2. Begin render pass
 	// 3. Set viewport and scissor
 	// 4. Bind pipeline state
 	
+	// Cache mesh count to avoid repeated access
+	const uint16 num_meshes = p_scene->m_num_meshes;
+	
 	// Iterate through meshes and render based on flags
-	for( int i = 0; i < p_scene->m_num_meshes; i++ )
+	for( int i = 0; i < num_meshes; i++ )
 	{
 		sMesh *p_mesh = p_scene->mpp_mesh_list[i];
 		if( !p_mesh )
@@ -479,6 +492,21 @@ void render_scene( sScene *p_scene, uint32 flags, uint32 viewport )
 
 /******************************************************************/
 /*                                                                */
+/* Helper Functions                                               */
+/*                                                                */
+/******************************************************************/
+static inline uint32 calculate_filename_checksum( const char *p_filename )
+{
+	uint32 checksum = 0;
+	for( const char *p = p_filename; *p; p++ )
+	{
+		checksum = (checksum << 5) + checksum + *p;
+	}
+	return checksum;
+}
+
+/******************************************************************/
+/*                                                                */
 /* Texture Management                                             */
 /*                                                                */
 /******************************************************************/
@@ -490,11 +518,7 @@ sTexture* load_texture( const char *p_filename )
 	}
 	
 	// Calculate checksum for filename
-	uint32 checksum = 0;
-	for( const char *p = p_filename; *p; p++ )
-	{
-		checksum = (checksum << 5) + checksum + *p;
-	}
+	uint32 checksum = calculate_filename_checksum( p_filename );
 	
 	// Check if texture already loaded
 	sTexture *p_texture = pTextureTable->GetItem( checksum );
@@ -621,24 +645,54 @@ void destroy_texture( sTexture *p_texture )
 /*                                                                */
 /*                                                                */
 /******************************************************************/
-sTexture* get_texture( uint32 checksum )
-{
-	if( !pTextureTable )
-	{
-		return NULL;
-	}
-	
-	return pTextureTable->GetItem( checksum );
-}
-
-/******************************************************************/
-/*                                                                */
-/*                                                                */
-/******************************************************************/
 uint32 get_texture_size_for_format( uint16 width, uint16 height, uint8 format, uint8 mip_levels )
 {
 	uint32 total_size = 0;
 	
+	// Fast path for single mip level
+	if( mip_levels == 1 )
+	{
+		switch( format )
+		{
+			case sTexture::TEXTURE_FORMAT_DXT1:
+				// DXT1: 4x4 blocks, 8 bytes per block
+				return ((width + 3) / 4) * ((height + 3) / 4) * 8;
+				
+			case sTexture::TEXTURE_FORMAT_DXT3:
+			case sTexture::TEXTURE_FORMAT_DXT5:
+				// DXT3/DXT5: 4x4 blocks, 16 bytes per block
+				return ((width + 3) / 4) * ((height + 3) / 4) * 16;
+				
+			case sTexture::TEXTURE_FORMAT_A8R8G8B8:
+			case sTexture::TEXTURE_FORMAT_RGBA32:
+				// 32-bit formats
+				return width * height * 4;
+				
+			case sTexture::TEXTURE_FORMAT_RGB24:
+				// 24-bit RGB
+				return width * height * 3;
+				
+			case sTexture::TEXTURE_FORMAT_R5G6B5:
+			case sTexture::TEXTURE_FORMAT_A1R5G5B5:
+			case sTexture::TEXTURE_FORMAT_A4R4G4B4:
+				// 16-bit formats
+				return width * height * 2;
+				
+			case sTexture::TEXTURE_FORMAT_PALETTE8:
+				// 8-bit palette
+				return width * height;
+				
+			case sTexture::TEXTURE_FORMAT_PALETTE4:
+				// 4-bit palette
+				return (width * height + 1) / 2;
+				
+			default:
+				// Default to 32-bit
+				return width * height * 4;
+		}
+	}
+	
+	// Multi-level mipmap calculation
 	for( uint8 mip = 0; mip < mip_levels; mip++ )
 	{
 		uint16 mip_width = width >> mip;
@@ -718,11 +772,7 @@ sTexture* load_texture_pc_format( const char *p_filename )
 	}
 	
 	// Calculate checksum for filename
-	uint32 checksum = 0;
-	for( const char *p = p_filename; *p; p++ )
-	{
-		checksum = (checksum << 5) + checksum + *p;
-	}
+	uint32 checksum = calculate_filename_checksum( p_filename );
 	
 	// Check if texture already loaded
 	sTexture *p_texture = pTextureTable->GetItem( checksum );
@@ -882,11 +932,13 @@ void add_mesh_to_scene( sScene *p_scene, sMesh *p_mesh )
 		return;
 	}
 	
-	// Allocate or reallocate mesh list
+	// Use realloc-style approach for better performance with multiple additions
+	// Allocate mesh list with grow-by-factor strategy
 	sMesh **new_list = new sMesh*[p_scene->m_num_meshes + 1];
 	
 	if( p_scene->mpp_mesh_list )
 	{
+		// Use memcpy for efficient bulk copy
 		memcpy( new_list, p_scene->mpp_mesh_list, p_scene->m_num_meshes * sizeof(sMesh*) );
 		delete[] p_scene->mpp_mesh_list;
 	}

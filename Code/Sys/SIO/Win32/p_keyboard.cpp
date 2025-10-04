@@ -83,16 +83,19 @@ static const int	KEYBOARD_LAYOUT = 101;			// US 101-key keyboard layout
 int KeyboardInit(void)
 {
 	// Initialize keyboard for Win32 platform
-	// Configuration:
+	// Configuration settings (matching NGPS implementation):
 	// - Repeat delay: 30 frames (~0.5 seconds at 60fps)
 	// - Repeat rate: 2 frames (~33ms between repeats)
-	// - Layout: 101-key (standard US keyboard)
+	// - Layout: 101-key (standard US keyboard, similar to USBKB_ARRANGEMENT_101)
+	// - Code type: ASCII (similar to USBKB_CODETYPE_ASCII)
 	
 	s_active = true;
 	s_enabled = true;
 	
 	// On Win32, keyboard input is typically handled by the OS
-	// This initialization ensures our internal state is ready
+	// These settings document the expected keyboard behavior for the PC version
+	// Actual implementation would configure the keyboard repeat and layout
+	// through Win32 API or DirectInput if needed
 	
 	return 0;
 }

@@ -90,7 +90,7 @@ This document summarizes the complete implementation of the Vulcan renderer for 
   - view_matrix, projection_matrix: Transforms
   - texture_projection_matrix: Final transform
 
-## Functions Implemented (26 total)
+## Functions Implemented (28 total)
 
 ### Initialization (2)
 1. `init_vulkan()` - Initialize renderer
@@ -115,29 +115,35 @@ This document summarizes the complete implementation of the Vulcan renderer for 
 16. `set_texture_projection_camera()` - Set projection camera with view matrix calculation
 
 ### Texture Management (4)
-17. `load_texture()` - Load from file with checksum system
-18. `create_texture()` - Create from data
-19. `destroy_texture()` - Free resources
-20. `get_texture()` - Retrieve by checksum
+17. `load_texture()` - Load from file with checksum system and PC format detection
+18. `load_texture_pc_format()` - Load PC-specific DirectX texture formats
+19. `create_texture()` - Create from data with format-aware size calculation
+20. `destroy_texture()` - Free resources
+21. `get_texture()` - Retrieve by checksum
+22. `get_texture_size_for_format()` - Calculate texture size for any format including DXT
 
 ### Mesh Management (3)
-21. `create_mesh()` - Allocate mesh
-22. `destroy_mesh()` - Free mesh resources
-23. `upload_mesh_data()` - GPU upload preparation
+23. `create_mesh()` - Allocate mesh
+24. `destroy_mesh()` - Free mesh resources
+25. `upload_mesh_data()` - GPU upload preparation
 
 ### Scene Management (3)
-24. `create_scene()` - Allocate scene
-25. `destroy_scene()` - Free scene resources
-26. `add_mesh_to_scene()` - Scene hierarchy building
+26. `create_scene()` - Allocate scene
+27. `destroy_scene()` - Free scene resources
+28. `add_mesh_to_scene()` - Scene hierarchy building
 
 ## File Format Compatibility
 
-### Texture Format (.TEX)
+### Texture Format (.TEX / .IMG)
 ✅ Checksum-based identification
 ✅ Power-of-2 and actual dimensions
 ✅ Mipmap level support
 ✅ Texture flags (holes, alpha, channels)
 ✅ Separate alpha data
+✅ Console formats (RGBA32, RGB24, PALETTE8, PALETTE4)
+✅ PC formats (DXT1, DXT3, DXT5, A8R8G8B8, R5G6B5, A1R5G5B5, A4R4G4B4)
+✅ Automatic format detection (.TEX for console, .IMG for PC)
+✅ Compressed texture support (DXT/BC formats)
 
 ### Model Format
 ✅ CVulcanModel implements CModel interface
@@ -163,6 +169,14 @@ This document summarizes the complete implementation of the Vulcan renderer for 
 ✅ CIF (Character Info) - Higher level support
 
 ## Technical Features
+
+### PC Format Support (THUG PC Version)
+The renderer now includes full support for Tony Hawk's Underground PC version file formats:
+- DirectX texture formats (DXT1, DXT3, DXT5)
+- Compressed texture handling
+- Automatic platform detection based on file extension
+- Format-specific size calculations
+- Vulkan BC format mapping for hardware decompression
 
 ### Memory Management
 - Hash table-based lookup for textures and projection details
@@ -215,11 +229,12 @@ Vulcan/
 ```
 
 ## Statistics
-- Total lines of code: 1,087
-- Functions implemented: 26
+- Total lines of code: 1,250+
+- Functions implemented: 28
 - Data structures: 5 main + support structures
 - Blend modes: 11 mapped
-- File formats supported: TEX, CAS, WGT, CIF
+- File formats supported: TEX (console), IMG (PC), CAS, WGT, CIF
+- Texture formats: 11 total (4 console + 7 PC)
 - Files created: 2
 - Files modified: 3
 

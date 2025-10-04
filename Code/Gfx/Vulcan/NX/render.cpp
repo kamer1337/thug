@@ -503,9 +503,29 @@ sTexture* load_texture( const char *p_filename )
 		return p_texture;
 	}
 	
+	// Detect if this is a PC format texture
+	// PC textures typically use .img extension or have PC-specific markers
+	bool is_pc_format = false;
+	const char *ext = strrchr( p_filename, '.' );
+	if( ext )
+	{
+		// Check for PC-specific extensions
+		if( strcmp(ext, ".img") == 0 || strcmp(ext, ".IMG") == 0 )
+		{
+			is_pc_format = true;
+		}
+	}
+	
+	// If PC format detected, use PC-specific loader
+	if( is_pc_format )
+	{
+		return load_texture_pc_format( p_filename );
+	}
+	
+	// Otherwise, load console format texture
 	// In a full implementation, this would:
 	// 1. Load texture data from file (supporting .TEX format)
-	// 2. Parse texture header
+	// 2. Parse console texture header (NGC/NGPS/Xbox format)
 	// 3. Create Vulkan image
 	// 4. Upload texture data to GPU
 	// 5. Create image view and sampler
@@ -514,6 +534,7 @@ sTexture* load_texture( const char *p_filename )
 	p_texture = new sTexture;
 	memset( p_texture, 0, sizeof(sTexture) );
 	p_texture->Checksum = checksum;
+	p_texture->format = sTexture::TEXTURE_FORMAT_RGBA32; // Default console format
 	
 	pTextureTable->PutItem( checksum, p_texture );
 	
@@ -545,16 +566,17 @@ sTexture* create_texture( uint32 checksum, uint16 width, uint16 height, uint8 fo
 	if( pData )
 	{
 		// Calculate texture data size based on format
-		uint32 bytes_per_pixel = 4; // Assume RGBA8 for now
-		p_texture->byte_size = width * height * bytes_per_pixel;
+		p_texture->byte_size = get_texture_size_for_format( width, height, format, 1 );
 		
 		p_texture->pTexelData = new uint8[p_texture->byte_size];
 		memcpy( p_texture->pTexelData, pData, p_texture->byte_size );
 		
 		// In a full implementation:
 		// 1. Create Vulkan image with specified format
+		//    - For DXT formats, use BC1/BC2/BC3 compressed formats
+		//    - For uncompressed formats, use appropriate VkFormat
 		// 2. Allocate device memory
-		// 3. Upload texture data
+		// 3. Upload texture data (compressed data stays compressed)
 		// 4. Generate mipmaps if needed
 	}
 	
@@ -607,6 +629,133 @@ sTexture* get_texture( uint32 checksum )
 	}
 	
 	return pTextureTable->GetItem( checksum );
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+uint32 get_texture_size_for_format( uint16 width, uint16 height, uint8 format, uint8 mip_levels )
+{
+	uint32 total_size = 0;
+	
+	for( uint8 mip = 0; mip < mip_levels; mip++ )
+	{
+		uint16 mip_width = width >> mip;
+		uint16 mip_height = height >> mip;
+		
+		if( mip_width == 0 ) mip_width = 1;
+		if( mip_height == 0 ) mip_height = 1;
+		
+		uint32 mip_size = 0;
+		
+		switch( format )
+		{
+			case sTexture::TEXTURE_FORMAT_DXT1:
+				// DXT1: 4x4 blocks, 8 bytes per block
+				mip_size = ((mip_width + 3) / 4) * ((mip_height + 3) / 4) * 8;
+				break;
+				
+			case sTexture::TEXTURE_FORMAT_DXT3:
+			case sTexture::TEXTURE_FORMAT_DXT5:
+				// DXT3/DXT5: 4x4 blocks, 16 bytes per block
+				mip_size = ((mip_width + 3) / 4) * ((mip_height + 3) / 4) * 16;
+				break;
+				
+			case sTexture::TEXTURE_FORMAT_A8R8G8B8:
+				// 32-bit ARGB
+				mip_size = mip_width * mip_height * 4;
+				break;
+				
+			case sTexture::TEXTURE_FORMAT_R5G6B5:
+			case sTexture::TEXTURE_FORMAT_A1R5G5B5:
+			case sTexture::TEXTURE_FORMAT_A4R4G4B4:
+				// 16-bit formats
+				mip_size = mip_width * mip_height * 2;
+				break;
+				
+			case sTexture::TEXTURE_FORMAT_RGBA32:
+				// Console 32-bit RGBA
+				mip_size = mip_width * mip_height * 4;
+				break;
+				
+			case sTexture::TEXTURE_FORMAT_RGB24:
+				// Console 24-bit RGB
+				mip_size = mip_width * mip_height * 3;
+				break;
+				
+			case sTexture::TEXTURE_FORMAT_PALETTE8:
+				// 8-bit palette
+				mip_size = mip_width * mip_height;
+				break;
+				
+			case sTexture::TEXTURE_FORMAT_PALETTE4:
+				// 4-bit palette
+				mip_size = (mip_width * mip_height + 1) / 2;
+				break;
+				
+			default:
+				// Default to 32-bit
+				mip_size = mip_width * mip_height * 4;
+				break;
+		}
+		
+		total_size += mip_size;
+	}
+	
+	return total_size;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+sTexture* load_texture_pc_format( const char *p_filename )
+{
+	if( !p_filename || !pTextureTable )
+	{
+		return NULL;
+	}
+	
+	// Calculate checksum for filename
+	uint32 checksum = 0;
+	for( const char *p = p_filename; *p; p++ )
+	{
+		checksum = (checksum << 5) + checksum + *p;
+	}
+	
+	// Check if texture already loaded
+	sTexture *p_texture = pTextureTable->GetItem( checksum );
+	if( p_texture )
+	{
+		return p_texture;
+	}
+	
+	// In a full implementation, this would:
+	// 1. Open PC texture file (.img or .tex with PC header)
+	// 2. Read PC-specific texture header containing:
+	//    - DirectX format identifier (DXT1/DXT3/DXT5/A8R8G8B8/etc)
+	//    - Width and height
+	//    - Mipmap count
+	//    - Compressed data size
+	// 3. Allocate buffer and read compressed texture data
+	// 4. Create Vulkan image with appropriate format:
+	//    - DXT1 -> VK_FORMAT_BC1_RGB_UNORM_BLOCK or VK_FORMAT_BC1_RGBA_UNORM_BLOCK
+	//    - DXT3 -> VK_FORMAT_BC2_UNORM_BLOCK
+	//    - DXT5 -> VK_FORMAT_BC3_UNORM_BLOCK
+	//    - A8R8G8B8 -> VK_FORMAT_B8G8R8A8_UNORM
+	// 5. Upload compressed data directly to GPU (no decompression needed)
+	// 6. Create image view and sampler
+	
+	// For now, create a stub texture with PC format flag
+	p_texture = new sTexture;
+	memset( p_texture, 0, sizeof(sTexture) );
+	p_texture->Checksum = checksum;
+	p_texture->format = sTexture::TEXTURE_FORMAT_DXT1; // Default to DXT1 for PC
+	
+	pTextureTable->PutItem( checksum, p_texture );
+	
+	return p_texture;
 }
 
 /******************************************************************/

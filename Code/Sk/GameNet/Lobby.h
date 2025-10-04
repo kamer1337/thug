@@ -148,10 +148,10 @@ private:
 
 	Tsk::Task< LobbyMan >*		m_lobby_logic_task;
 	Tsk::Task< LobbyMan >*		m_nat_negotiate_task;
-	Tsk::Task< LobbyMan >*		m_process_gamespy_queries_task;
+	Tsk::Task< LobbyMan >*		m_process_openspy_queries_task;
 	static	Tsk::Task< LobbyMan >::Code   	s_lobby_logic_code;
 	static	Tsk::Task< LobbyMan >::Code   	s_nat_negotiate_think_code;
-	static	Tsk::Task< LobbyMan >::Code		s_process_gamespy_queries_code;
+	static	Tsk::Task< LobbyMan >::Code		s_process_openspy_queries_code;
 
 	static	void	s_enum_players_callback( PEER peer, PEERBool success, RoomType roomType, int index, const char * nick,  // The nick of the player.
 												int flags, void * param );

@@ -723,7 +723,7 @@ BuddyMan::BuddyMan( void )
 	
 	Mem::Manager::sHandle().PushContext(Mem::Manager::sHandle().NetworkHeap());
 	
-	result = gpInitialize( &m_gp_conn, vGAMESPY_PRODUCT_ID );
+	result = gpInitialize( &m_gp_conn, vOPENSPY_PRODUCT_ID );
 	Dbg_Assert( result == GP_NO_ERROR );
 
 	result = gpSetCallback( &m_gp_conn, GP_ERROR, s_error_callback, this );

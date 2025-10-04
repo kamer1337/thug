@@ -131,8 +131,8 @@ enum
 	MSG_ID_JOIN_ACCEPTED,					//	= 121 : S->C You're in - completely
 	MSG_ID_KILL_TEAM_FLAGS,					//	= 122 : S->C Kill team flag (i.e. no more switching teams)
 	MSG_ID_WAIT_N_SECONDS,					//	= 123 : S->C Prepare for a period of N seconds of no communication
-	MSG_ID_CHALLENGE,						//	= 124 : S->C GameSpy Stats Challenge
-	MSG_ID_CHALLENGE_RESPONSE,				//	= 125 : C->S GameSpy Stats Challenge Response
+	MSG_ID_CHALLENGE,						//	= 124 : S->C OpenSpy Stats Challenge
+	MSG_ID_CHALLENGE_RESPONSE,				//	= 125 : C->S OpenSpy Stats Challenge Response
 	MSG_ID_FACE_DATA,						//	= 126 : C->C Custom face data
 	MSG_ID_TOGGLE_CHEAT,					//	= 127 : S->C Toggle a cheat on or off
 	MSG_ID_CHEAT_CHECKSUM_REQUEST,			//	= 128 : S->C Server requesting client's cheat checksum

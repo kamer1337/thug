@@ -14,7 +14,7 @@
 **																			**
 **	Created by:		04/4/02	-	spg											**
 **																			**
-**	Description:	Gamespy peer lobby implementation						**
+**	Description:	OpenSpy peer lobby implementation						**
 **																			**
 *****************************************************************************/
 
@@ -71,9 +71,9 @@ namespace GameNet
 
 enum
 {
-	vGAMESPY_NO_DATA,
-	vGAMESPY_QUERY_DATA,
-	vGAMESPY_NAT_DATA,
+	vOPENSPY_NO_DATA,
+	vOPENSPY_QUERY_DATA,
+	vOPENSPY_NAT_DATA,
 };
 
 /*****************************************************************************
@@ -82,11 +82,11 @@ enum
 
 static Tmr::Time	s_last_refresh_time = 0;
 static Tmr::Time	s_time_of_connection = 0;
-static	int		s_gamespy_data_type = vGAMESPY_NO_DATA;
-static	char	s_gamespy_parse_data[2048];
-static	int		s_gamespy_parse_data_len = 0;
-static	struct sockaddr s_gamespy_sender;
-static	bool	s_got_gamespy_callback;
+static	int		s_openspy_data_type = vOPENSPY_NO_DATA;
+static	char	s_openspy_parse_data[2048];
+static	int		s_openspy_parse_data_len = 0;
+static	struct sockaddr s_openspy_sender;
+static	bool	s_got_openspy_callback;
 static	Tmr::Time	s_game_start_time;
 static	Tmr::Time	s_last_post_time;
 static	bool		s_notified_user_not_connected;
@@ -439,13 +439,13 @@ void LobbyMan::s_disconnected_callback( PEER peer, const char * reason, void * p
 	if( man->m_connection_in_progress )
 	{
 		printf( "******* Connect Callback FAILED!\n" );
-		Script::RunScript( "create_gamespy_connection_failure_dialog" );
+		Script::RunScript( "create_openspy_connection_failure_dialog" );
 		man->m_connection_in_progress = false;
 	}
 	else if( man->m_expecting_disconnect == false )
 	{
 		printf( "Wasn't expecting discon.  Attempting to stop hosting game\n" );
-		Script::RunScript( "lost_connection_to_gamespy" );
+		Script::RunScript( "lost_connection_to_openspy" );
 	}
 	else
 	{
@@ -924,12 +924,12 @@ void LobbyMan::s_server_key_callback( PEER peer, int key, qr2_buffer_t buffer, v
 			break;
 	}
 
-	s_got_gamespy_callback = true;
+	s_got_openspy_callback = true;
 }
 
 void LobbyMan::s_player_key_callback( PEER peer, int key, int index, qr2_buffer_t buffer, void * param )
 {
-	s_got_gamespy_callback = true;
+	s_got_openspy_callback = true;
 
 	//Dbg_Printf( "***** PLAYER KEY %d CALLBACK : for player %d\n", key, index );
 	switch(key)
@@ -1202,7 +1202,7 @@ void	LobbyMan::s_connect_callback( PEER peer, PEERBool success, void* param )
 	else
 	{
 		printf( "******* Connect Callback FAILED!\n" );
-		Script::RunScript( "create_gamespy_connection_failure_dialog" );
+		Script::RunScript( "create_openspy_connection_failure_dialog" );
 	}
 	
 }
@@ -1389,24 +1389,24 @@ void	LobbyMan::s_nat_negotiate_think_code( const Tsk::Task< LobbyMan >& task )
 /*                                                                */
 /******************************************************************/
 
-void gamespy_data_handler( char* packet_data, int len, struct sockaddr* sender )
+void openspy_data_handler( char* packet_data, int len, struct sockaddr* sender )
 {
 	
 
-	//Dbg_Printf( "Got gamepsy data of length %d\n", len );
+	//Dbg_Printf( "Got openspy data of length %d\n", len );
 	//Dbg_Printf( "Data[0] = %c\n", packet_data[0] );
 	//Dbg_Printf( "Data[1] = %c\n", packet_data[1] );
 
 	Dbg_Assert( len < 2047 );
-	// backslash as the first character signifies a gamespy packet
+	// backslash as the first character signifies an openspy packet
 	if( ( (unsigned char) packet_data[0] == QR_MAGIC_1 ) &&
 		( (unsigned char) packet_data[1] == QR_MAGIC_2 ))
 	{
-		//Dbg_Printf( "************ GOT GAMESPY QUERY CALL!!!!!!!!\n" );
-		memcpy( s_gamespy_parse_data, packet_data, len );
-		s_gamespy_sender = *sender;
-		s_gamespy_parse_data_len = len;
-		s_gamespy_data_type = vGAMESPY_QUERY_DATA;
+		//Dbg_Printf( "************ GOT OPENSPY QUERY CALL!!!!!!!!\n" );
+		memcpy( s_openspy_parse_data, packet_data, len );
+		s_openspy_sender = *sender;
+		s_openspy_parse_data_len = len;
+		s_openspy_data_type = vOPENSPY_QUERY_DATA;
 	}
 	else
 	{
@@ -1421,10 +1421,10 @@ void gamespy_data_handler( char* packet_data, int len, struct sockaddr* sender )
 				( (unsigned char) packet_data[5] == NN_MAGIC_5 ))
 			{
 				//Dbg_Printf( "Magic number matches\n" );
-                memcpy( s_gamespy_parse_data, packet_data, len );
-				s_gamespy_sender = *sender;
-				s_gamespy_parse_data_len = len;
-				s_gamespy_data_type = vGAMESPY_NAT_DATA;
+                memcpy( s_openspy_parse_data, packet_data, len );
+				s_openspy_sender = *sender;
+				s_openspy_parse_data_len = len;
+				s_openspy_data_type = vOPENSPY_NAT_DATA;
 			}
 		}
 
@@ -1436,7 +1436,7 @@ void gamespy_data_handler( char* packet_data, int len, struct sockaddr* sender )
 /*                                                                */
 /******************************************************************/
 
-void	LobbyMan::s_process_gamespy_queries_code( const Tsk::Task< LobbyMan >& task )
+void	LobbyMan::s_process_openspy_queries_code( const Tsk::Task< LobbyMan >& task )
 {
 	LobbyMan& man = task.GetData();
 	Tmr::Time current_time;
@@ -1445,32 +1445,32 @@ void	LobbyMan::s_process_gamespy_queries_code( const Tsk::Task< LobbyMan >& task
 	
 	Mem::Manager::sHandle().PushContext(Mem::Manager::sHandle().InternetTopDownHeap());
 
-	//if( s_gamespy_parse_data[0] != '\0' )
-	if( s_gamespy_data_type == vGAMESPY_QUERY_DATA )
+	//if( s_openspy_parse_data[0] != '\0' )
+	if( s_openspy_data_type == vOPENSPY_QUERY_DATA )
 	{
-		//Dbg_Printf( "***** Parsing Gamespy Packet Data...\n" ); 
-		//qr_parse_query( NULL, s_gamespy_parse_data, &s_gamespy_sender );
-		peerParseQuery( man.GetPeer(), s_gamespy_parse_data, s_gamespy_parse_data_len, &s_gamespy_sender );
-		s_gamespy_parse_data[0] = '\0';
-		s_gamespy_parse_data_len = 0;
-		s_gamespy_data_type = vGAMESPY_NO_DATA;
+		//Dbg_Printf( "***** Parsing OpenSpy Packet Data...\n" ); 
+		//qr_parse_query( NULL, s_openspy_parse_data, &s_openspy_sender );
+		peerParseQuery( man.GetPeer(), s_openspy_parse_data, s_openspy_parse_data_len, &s_openspy_sender );
+		s_openspy_parse_data[0] = '\0';
+		s_openspy_parse_data_len = 0;
+		s_openspy_data_type = vOPENSPY_NO_DATA;
 	}
-	else if( s_gamespy_data_type == vGAMESPY_NAT_DATA )
+	else if( s_openspy_data_type == vOPENSPY_NAT_DATA )
 	{
 		//Dbg_Printf( "Processing Nat Neg data\n" );
-        NNProcessData( s_gamespy_parse_data, s_gamespy_parse_data_len, (sockaddr_in*) &s_gamespy_sender );
-		s_gamespy_parse_data[0] = '\0';
-		s_gamespy_parse_data_len = 0;
-		s_gamespy_data_type = vGAMESPY_NO_DATA;
+        NNProcessData( s_openspy_parse_data, s_openspy_parse_data_len, (sockaddr_in*) &s_openspy_sender );
+		s_openspy_parse_data[0] = '\0';
+		s_openspy_parse_data_len = 0;
+		s_openspy_data_type = vOPENSPY_NO_DATA;
 	}
-	else if( s_got_gamespy_callback == false )
+	else if( s_got_openspy_callback == false )
 	{
 		Manager * gamenet_man = Manager::Instance();
 
 		if( gamenet_man->InNetGame() && gamenet_man->OnServer())
 		{
-			// After N seconds, if we have yet to be contacted by GameSpy, notify the user that his server
-			// was not properly posted to GameSpy
+			// After N seconds, if we have yet to be contacted by OpenSpy, notify the user that his server
+			// was not properly posted to OpenSpy
 			if( ( current_time - s_game_start_time ) > vPOST_SERVER_TIMEOUT )
 			{
 				
@@ -1482,7 +1482,7 @@ void	LobbyMan::s_process_gamespy_queries_code( const Tsk::Task< LobbyMan >& task
 			}
 			else if(( current_time - s_last_post_time ) > vPOST_SERVER_RETRY_TIME )
 			{
-				// Gamespy still hasn't queried us for our options. Let's tell them again
+				// OpenSpy still hasn't queried us for our options. Let's tell them again
 				// that our server is up
 				peerStateChanged( man.GetPeer());
 				s_last_post_time = current_time;
@@ -1511,7 +1511,7 @@ LobbyMan::LobbyMan( void )
 
 	m_lobby_logic_task = new Tsk::Task< LobbyMan > ( s_lobby_logic_code, *this );
 	m_nat_negotiate_task = new Tsk::Task< LobbyMan > ( s_nat_negotiate_think_code, *this );
-	m_process_gamespy_queries_task = new Tsk::Task< LobbyMan > ( s_process_gamespy_queries_code, *this );
+	m_process_openspy_queries_task = new Tsk::Task< LobbyMan > ( s_process_openspy_queries_code, *this );
 	qr2_register_key( NUMOBSERVERS_KEY, "numobservers" );
 	qr2_register_key( MAXOBSERVERS_KEY, "maxobservers" );
 	qr2_register_key( SKILLLEVEL_KEY, "skilllevel" );
@@ -1530,7 +1530,7 @@ LobbyMan::~LobbyMan( void )
 {
 	delete m_lobby_logic_task;
 	delete m_nat_negotiate_task;
-	delete m_process_gamespy_queries_task;
+	delete m_process_openspy_queries_task;
 }
 
 /******************************************************************/
@@ -1548,9 +1548,9 @@ void		LobbyMan::StartReportingGame( void )
 	server = gamenet_man->GetServer();
 	Dbg_Assert( server );
 	
-	server->SetForeignPacketHandler( gamespy_data_handler );
-	s_gamespy_parse_data[0] = '\0';
-	s_gamespy_data_type = vGAMESPY_NO_DATA;
+	server->SetForeignPacketHandler( openspy_data_handler );
+	s_openspy_parse_data[0] = '\0';
+	s_openspy_data_type = vOPENSPY_NO_DATA;
     
 	result = peerStartReportingWithSocket( m_peer, server->GetSocket(), vHOST_PORT );
 	if( result == true )
@@ -1561,8 +1561,8 @@ void		LobbyMan::StartReportingGame( void )
 	s_game_start_time = Tmr::GetTime();
 	s_last_post_time = s_game_start_time;
 	s_notified_user_not_connected = false;
-	s_got_gamespy_callback = false;
-	mlp_manager->AddLogicTask( *m_process_gamespy_queries_task );
+	s_got_openspy_callback = false;
+	mlp_manager->AddLogicTask( *m_process_openspy_queries_task );
 	m_reported_game = true;
 }
 
@@ -1576,7 +1576,7 @@ void		LobbyMan::StopReportingGame( void )
 	if( m_peer )
 	{
         peerStopGame( m_peer );
-		m_process_gamespy_queries_task->Remove();
+		m_process_openspy_queries_task->Remove();
 	}
 
 	m_reported_game = false;
@@ -1867,7 +1867,7 @@ void 	LobbyMan::s_nat_negotiate_complete( NegotiateResult result, SOCKET gamesoc
 		client = gamenet_man->GetClient( 0 );
 		client->SetForeignPacketHandler( NULL );
 		gamenet_man->mpLobbyMan->m_nat_negotiate_task->Remove();
-		gamenet_man->mpLobbyMan->m_process_gamespy_queries_task->Remove();
+		gamenet_man->mpLobbyMan->m_process_openspy_queries_task->Remove();
 
 		if( result != nr_success )
 		{
@@ -1913,7 +1913,7 @@ bool	LobbyMan::ScriptCancelNatNegotiation(Script::CScriptStructure *pParams, Scr
 	NNFreeNegotiateList();
 	
 	gamenet_man->mpLobbyMan->m_nat_negotiate_task->Remove();
-	gamenet_man->mpLobbyMan->m_process_gamespy_queries_task->Remove();
+	gamenet_man->mpLobbyMan->m_process_openspy_queries_task->Remove();
 	return true;
 }
 
@@ -1958,9 +1958,9 @@ bool	LobbyMan::ScriptStartNatNegotiation(Script::CScriptStructure *pParams, Scri
 
 	Dbg_Printf( "*** Added NAT Task\n" );
 	mlp_manager->AddLogicTask( *lobby_man->m_nat_negotiate_task );
-	client->SetForeignPacketHandler( gamespy_data_handler );
-	mlp_manager->AddLogicTask( *lobby_man->m_process_gamespy_queries_task );
-	s_gamespy_parse_data[0] = '\0';
+	client->SetForeignPacketHandler( openspy_data_handler );
+	mlp_manager->AddLogicTask( *lobby_man->m_process_openspy_queries_task );
+	s_openspy_parse_data[0] = '\0';
 
 	Mem::Manager::sHandle().PopContext();
 
@@ -2336,7 +2336,7 @@ void	LobbyMan::Shutdown( void )
 
 	m_lobby_logic_task->Remove();
 	m_nat_negotiate_task->Remove();
-	m_process_gamespy_queries_task->Remove();
+	m_process_openspy_queries_task->Remove();
 
 	if( m_peer )
 	{

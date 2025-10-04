@@ -3385,7 +3385,7 @@ int	Manager::s_handle_cheat_checksum_request( Net::MsgHandlerContext* context )
 }
 
 /******************************************************************/
-/* Server has sent a GameSpy stats challenge					  */
+/* Server has sent an OpenSpy stats challenge					  */
 /*                                                  			  */
 /******************************************************************/
 
@@ -3418,7 +3418,7 @@ int	Manager::s_handle_challenge( Net::MsgHandlerContext* context )
 }
 
 /******************************************************************/
-/* Client has answered the GameSpy stats challenge				  */
+/* Client has answered the OpenSpy stats challenge				  */
 /*                                                  			  */
 /******************************************************************/
 

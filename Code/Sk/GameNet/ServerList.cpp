@@ -62,7 +62,7 @@
 //extern "C" 
 //{
 //////////////////////////////////
-// Global IP addresses for gamespy
+// Global IP addresses for openspy
 //extern char	qr_hostname[64];
 //extern char ServerListHostname[64];
 
@@ -351,7 +351,7 @@ void	Manager::s_server_list_state_code( const Tsk::Task< Manager >& task )
 			man.mpLobbyMan->StopLobbyList();
 		
 			pStructure = new Script::CScriptStructure;
-			pStructure->AddComponent( Script::GenerateCRC( "message" ), ESYMBOLTYPE_STRING, Script::GetLocalString( "net_status_gamespy_no_connect" ));
+			pStructure->AddComponent( Script::GenerateCRC( "message" ), ESYMBOLTYPE_STRING, Script::GetLocalString( "net_status_openspy_no_connect" ));
 
 			Script::RunScript( "CreateFailedLobbyListDialog", pStructure );
 
@@ -368,7 +368,7 @@ void	Manager::s_server_list_state_code( const Tsk::Task< Manager >& task )
 			{
 				Script::CScriptStructure* pStructure = new Script::CScriptStructure;
 				
-				pStructure->AddComponent( Script::GenerateCRC( "message" ), ESYMBOLTYPE_STRING, Script::GetLocalString( "net_status_gamespy_no_connect" ));
+				pStructure->AddComponent( Script::GenerateCRC( "message" ), ESYMBOLTYPE_STRING, Script::GetLocalString( "net_status_openspy_no_connect" ));
 
 				Script::RunScript( "CreateFailedLobbyListDialog", pStructure );
 
@@ -616,8 +616,8 @@ void	Manager::PostGame( void )
 #ifdef __PLAT_NGPS__
 	int result;
 
-	m_server->SetForeignPacketHandler( gamespy_data_handler );
-	s_gamespy_parse_data[0] = '\0';
+	m_server->SetForeignPacketHandler( openspy_data_handler );
+	s_openspy_parse_data[0] = '\0';
 
 	// Hardcode the IP of the master server until we get the message of the day squared away
 	result = qr_init_socket( NULL, m_server->GetSocket(), "thps4ps2", "H2r8W1", basic_callback,
@@ -632,16 +632,16 @@ void	Manager::PostGame( void )
 			// success:
 			break;
 		case E_GOA_WSOCKERROR:
-			Dbg_MsgAssert( 0, ( "Failed to initialize GameSpy query report toolkit due to Socket Error\n" ));
+			Dbg_MsgAssert( 0, ( "Failed to initialize OpenSpy query report toolkit due to Socket Error\n" ));
 			break;
 		case E_GOA_BINDERROR:
-			Dbg_MsgAssert( 0, ( "Failed to initialize GameSpy query report toolkit due to Bind Error\n" ));
+			Dbg_MsgAssert( 0, ( "Failed to initialize OpenSpy query report toolkit due to Bind Error\n" ));
 			break;
 		case E_GOA_CONNERROR:
-			Dbg_MsgAssert( 0, ( "Failed to initialize GameSpy query report toolkit due to Connection Error\n" ));
+			Dbg_MsgAssert( 0, ( "Failed to initialize OpenSpy query report toolkit due to Connection Error\n" ));
 			break;
 		default:
-			Dbg_MsgAssert( 0, ( "Failed to initialize Gamespy query report toolkit\n" ));
+			Dbg_MsgAssert( 0, ( "Failed to initialize OpenSpy query report toolkit\n" ));
 			break;
 	}
 
@@ -653,7 +653,7 @@ void	Manager::PostGame( void )
 	s_retried_game_post = false;
 	gGotGamespyCallback = false;
 #endif		// __PLAT_NGC__
-	mlp_manager->AddLogicTask( *m_process_gamespy_queries_task );
+	mlp_manager->AddLogicTask( *m_process_openspy_queries_task );
 }
 
 /******************************************************************/
@@ -821,7 +821,7 @@ GHTTPBool	Manager::MotdComplete( GHTTPRequest request, GHTTPResult result, char*
 			if( checksum == Script::GenerateCRC( ip_ptr ))
 			{
 				//Dbg_Printf( "Matched!\n" );
-				// Next token is the IP address for the gamespy servers
+				// Next token is the IP address for the openspy servers
 				ip_ptr = strtok( NULL, " " );
 				if( ip_ptr )
 				{
@@ -838,7 +838,7 @@ GHTTPBool	Manager::MotdComplete( GHTTPRequest request, GHTTPResult result, char*
                         //sprintf( ServerListHostname, "%s", inet_ntoa(*(struct in_addr*) &server_ip ));
 						//sprintf( qr_hostname, "%s", inet_ntoa(*(struct in_addr*) &server_ip ));
 
-						//Dbg_Printf( "GameSpy Server is %s\n", ServerListHostname );
+						//Dbg_Printf( "OpenSpy Server is %s\n", ServerListHostname );
 						succeeded = true;
 					}
 				}
@@ -987,7 +987,7 @@ void		Manager::s_threaded_track_usage( Manager* gamenet_man )
 
 	gamenet_man->m_ghttp_start_time = Tmr::GetTime();
 	gamenet_man->m_ghttp_request = ptTrackUsage( 	0,	// int userID ( if not using Presence & Messaging, send zero )
-													vGAMESPY_PRODUCT_ID,	// int productID,
+													vOPENSPY_PRODUCT_ID,	// int productID,
 													"1.0",	//const char * versionUniqueID,
 													0,	//int distributionID,
 													GHTTPFalse,
@@ -2027,7 +2027,7 @@ bool		Manager::ScriptChooseServer(Script::CScriptStructure *pParams, Script::CSc
 		}
 		
 		gamenet_man->m_XboxKeyRegistered = true;
-		// Translate the host’s XNADDR to an IN_ADDR.			
+		// Translate the hostï¿½s XNADDR to an IN_ADDR.			
 		if( XNetXnAddrToInAddr( &p_server->m_XboxAddr, &p_server->m_XboxKeyId,
 				&host_addr ) != NO_ERROR )
 		{

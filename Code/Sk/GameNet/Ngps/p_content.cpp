@@ -14,7 +14,7 @@
 **																			**
 **	Created by:		04/4/02	-	spg											**
 **																			**
-**	Description:	Gamespy peer lobby implementation						**
+**	Description:	OpenSpy peer lobby implementation						**
 **																			**
 *****************************************************************************/
 
@@ -1008,7 +1008,7 @@ bool	ContentMan::ScriptDownloadDirectoryList(Script::CScriptStructure *p_item_pa
 			
 	}
 
-	if( buddy_man->GetProfile() == 18549782 )	// Gamespy profile of our level-verifying account
+	if( buddy_man->GetProfile() == 18549782 )	// OpenSpy profile of our level-verifying account
 	{
 		Directory* dir;
 		char path[128];

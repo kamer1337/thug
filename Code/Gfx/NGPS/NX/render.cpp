@@ -984,57 +984,50 @@ void render::OldStyle()
 void patch_texture_dma()
 {
 	Nx::CScene *p_nxscene =  Nx::CEngine::sGetMainScene();
-	if (p_nxscene)
+	if (!p_nxscene)
+		return;
+		
+	Nx::CPs2TexDict *p_tex_dict = (Nx::CPs2TexDict *)p_nxscene->GetTexDict();
+	if (!p_tex_dict)
+		return;
+		
+	sScene *p_scene = p_tex_dict->GetEngineTextureDictionary();
+	
+	sTexture *p_textures = p_scene->pTextures;
+	const int num_textures = p_scene->NumTextures;
+	
+	// Optimized: Pre-calculate constant values
+	const uint32 dma_ref_shifted = (dma::ref << 28);
+	
+	// Optimized: Loop with pointer arithmetic for better cache utilization
+	for (int i = 0; i < num_textures; i++)
 	{
-		Nx::CPs2TexDict *p_tex_dict = (Nx::CPs2TexDict *)p_nxscene->GetTexDict();
-		if (p_tex_dict)
+		sTexture *pTex = &p_textures[i];
+		uint32* p_dma = (uint32*)pTex->mp_dma;
+		
+		if (pTex->m_render_count)
 		{
-			sScene *p_scene = p_tex_dict->GetEngineTextureDictionary();
-		
-		
-			sTexture *p_textures = p_scene->pTextures;
-			int num_textures = p_scene->NumTextures;
-		
-			
-		//	int total_referenced = 0;
-		//	int num_unique = 0;
-			int i;
-			for (i=0;i<num_textures;i++)
+			// Reset for next frame
+			pTex->m_render_count = 0;
+			// fix it, so it gets uploaded
+			// This test speeds up the routine by about 20%
+			// Generally the visibility does not change
+			if (p_dma[0] == 0)
 			{
-				
-				uint32* p_dma = (uint32*)p_textures[i].mp_dma;
-				
-		//			gif::Tag2(0, 0, IMAGE, 0, 0, 0, NumTexQWords[j]);  			// 0..3 words, NumTexQWords is in the lower 15 bits of the first word [0]
-		//			dma::EndTag();									   			// Just Aligns upo to QW boundry
-		//			dma::Tag(dma::ref, NumTexQWords[j], (uint)pTextureSource);  // 0..1 (after alignment) NumTexQWords goes in the lower 28 bits of word 0
-		
-				if (p_textures[i].m_render_count)
-				{
-					// Reset it for next time around	
-					p_textures[i].m_render_count = 0;
-					// fix it, so it gets uploaded
-					// This test does speed up the routine by about 20%
-					// Generally the visibility does not change
-					uint32	current_value = (p_dma[0]);
-					if (current_value == 0)
-					{
-						p_dma[0] = p_textures[i].m_quad_words;; 
-						uint32* p_dma2 = (uint32*)((((int)(p_dma+4)) + 3)&0xfffffff0);
-						p_dma2[0] = (dma::ref << 28) | p_textures[i].m_quad_words; 
-					}
-				}
-				else
-				{
-					// patch it, so nothing gets uploaded
-					uint32	current_value = (p_dma[0]);
-					if (current_value != 0)
-					{
-						p_dma[0] =  0;
-						uint32* p_dma2 = (uint32*)((((int)(p_dma+4)) + 3)&0xfffffff0);
-						p_dma2[0] = (dma::ref << 28);
-					}
-				}
-				
+				const uint32 quad_words = pTex->m_quad_words;
+				p_dma[0] = quad_words;
+				uint32* p_dma2 = (uint32*)((((int)(p_dma+4)) + 3) & 0xfffffff0);
+				p_dma2[0] = dma_ref_shifted | quad_words; 
+			}
+		}
+		else
+		{
+			// patch it, so nothing gets uploaded
+			if (p_dma[0] != 0)
+			{
+				p_dma[0] = 0;
+				uint32* p_dma2 = (uint32*)((((int)(p_dma+4)) + 3) & 0xfffffff0);
+				p_dma2[0] = dma_ref_shifted;
 			}
 		}
 	}

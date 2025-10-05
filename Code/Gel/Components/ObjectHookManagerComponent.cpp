@@ -104,6 +104,7 @@ void CObjectHookManagerComponent::InitFromStructure( Script::CStruct* pParams )
 	// Create a CObjectHookManager, and parse the node array for the hooks.
 	mp_object_hook_manager = new Obj::CObjectHookManager();
 	mp_object_hook_manager->AddObjectHooksFromNodeArray( p_nodearray_component->GetNodeArray());
+	mp_object_hook_manager->AddedAll();
 }
 
 

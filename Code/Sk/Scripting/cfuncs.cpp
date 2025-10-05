@@ -618,7 +618,7 @@ bool SetActiveCamera(uint32 id, int viewport, bool move_to_current)
 // Wait 60 gameframes       This will wait for exactly 60 logic calls, 
 // so the actual time it takes will depend on the current framerate. <nl>
 // In all the above, the units do not have to be plural, so one could type 
-// ‘Wait 1 second’ instead of ‘Wait 1 seconds’
+// ï¿½Wait 1 secondï¿½ instead of ï¿½Wait 1 secondsï¿½
 // @parm float |  | number of units to wait
 // @flag seconds | measure time in seconds
 // @flag frames | measure time in frames
@@ -6403,6 +6403,7 @@ bool ScriptParseNodeArray( Script::CStruct *pParams, Script::CScript *pScript )
 	Dbg_MsgAssert(!fail, ("ParseNodeArray FAILED, see above for reasons labled FAILED BECAUSE \n"));
 	
 	Obj::Proxim_AddedAll();
+	Obj::CEmitterManager::sAddedAll();
 	p_rail_man->AddedAll();
 	Mdl::Skate::Instance()->GetGapChecklist()->FindGaps();
 
@@ -6719,7 +6720,7 @@ bool ScriptSetDynamicLightModulationFactor( Script::CStruct* pParams, Script::CS
 /******************************************************************/
 
 // @script | SetClippingDistances | Sets the clipping distances in inches. 
-// “Near” should generally be left at 12, “Far” should be whatever is 
+// ï¿½Nearï¿½ should generally be left at 12, ï¿½Farï¿½ should be whatever is 
 // appropriate for your level. Example: 
 // SetClippingDistances Near=12 Far=8000  
 // @parm float | Near |
@@ -7639,7 +7640,7 @@ bool ScriptSetViewMode(Script::CStruct *pParams, Script::CScript *pScript)
 
 // @script | ToggleMetricItem | ToggleMetricItem will turn on or off 
 // individual items in the metric display.
-// The “item” parameter is one of: <nl>
+// The ï¿½itemï¿½ parameter is one of: <nl>
 // METRIC_TIME <nl>
 // METRIC_ARENAUSAGE <nl>            
 // METRIC_TOTALPOLYS <nl>
@@ -9636,7 +9637,7 @@ bool ScriptDoFlash( Script::CStruct *pParams, Script::CScript *pScript )
 // @script | StartServer | Starts a server using the IP stored in
 // the script variable LocalIP, which you also have to define. You
 // can also define a script variable called ServerName to name your
-// server (i.e. ServerName = “MyServer” with a max of 15 characters
+// server (i.e. ServerName = ï¿½MyServerï¿½ with a max of 15 characters
 bool ScriptStartServer(Script::CStruct *pParams, Script::CScript *pScript )
 {
 	

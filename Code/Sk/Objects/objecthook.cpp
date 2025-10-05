@@ -179,6 +179,21 @@ void	CObjectHookManager::AddObjectHooksFromNodeArray(Script::CArray * p_nodearra
 }
 
 
+void CObjectHookManager::AddedAll()
+{
+	
+//	printf("Added all ObjectHooks\n");		 
+		 
+	CObjectHookNode *pObjectHookNode = mp_first_node;
+	while (pObjectHookNode)
+	{
+		// do any final per-node processing here
+		pObjectHookNode = pObjectHookNode->m_pNext;
+	}				 
+				 	
+}			   
+
+
 const Mth::Vector&	CObjectHookNode::GetPos() const
 {
 	return m_pos;

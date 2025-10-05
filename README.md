@@ -1,13 +1,10 @@
-# Tony Hawk's Underground - Source Code
+# Tony Hawk's Underground - Source Code (PC Port)
 
-This repository contains the source code for Tony Hawk's Underground (THUG), originally developed for PlayStation 2, GameCube, and Xbox platforms.
+This repository contains the source code for Tony Hawk's Underground (THUG), ported to PC only.
 
 ## Overview
 
-This is a reverse-engineered/leaked source code of Tony Hawk's Underground. The code is structured for multiple platforms including:
-- PlayStation 2 (NGPS - Next Generation PlayStation)
-- GameCube (NGC)
-- Xbox
+This is a reverse-engineered/leaked source code of Tony Hawk's Underground that has been adapted for PC-only development. The original game was developed for PlayStation 2, GameCube, and Xbox, but all console-specific code has been removed from this repository to focus on PC development.
 
 ## Project Structure
 
@@ -26,19 +23,18 @@ This repository includes a CMake build system infrastructure. However, **the cod
 
 ### Why It Can't Be Built Directly
 
-1. **Platform-Specific Dependencies**: The code was written for PlayStation 2, GameCube, and Xbox using their proprietary SDKs and hardware-specific features
-2. **Console-Specific Code**: Extensive use of platform-specific libraries (VU1 code, GS registers, etc.)
-3. **Missing Assets**: Game assets (models, textures, sounds, scripts) are not included
-4. **Compiler Extensions**: Uses MSVC/CodeWarrior specific extensions and syntax
-5. **Binary Dependencies**: Requires proprietary middleware and libraries
+1. **Missing Assets**: Game assets (models, textures, sounds, scripts) are not included
+2. **Compiler Extensions**: Uses MSVC/CodeWarrior specific extensions and syntax
+3. **Binary Dependencies**: Requires proprietary middleware and libraries
+4. **Incomplete Windows Port**: The original Win32 port was incomplete with many stub functions
 
 ### Prerequisites (If You Had Everything)
 
-- Original platform SDKs (PS2, GameCube, or Xbox)
 - CMake 3.10 or higher
-- Platform-specific compilers
+- Modern C++ compiler (MSVC, GCC, or Clang)
 - Game assets and data files
 - Proprietary middleware licenses
+- Complete Windows/PC implementations for stub functions
 
 ### Build System
 
@@ -73,29 +69,23 @@ This repository has been enhanced with:
 
 ## Important Notes
 
-### Platform-Specific Code
+### PC-Only Port
 
-The original source code contains extensive platform-specific implementations for PS2, GameCube, and Xbox. The CMake build system currently excludes these platform-specific directories as they require the original development kits and libraries.
-
-Platform-specific code is located in:
-- `*/ngps/` or `*/NGPS/` - PlayStation 2
-- `*/ngc/` or `*/NGC/` - GameCube  
-- `*/xbox/` or `*/XBox/` - Xbox
-- `*/Win32/` - Windows (original PC port)
+This repository has been cleaned to focus on PC development only. All console-specific code (PS2, GameCube, Xbox) has been removed. The codebase now contains:
+- `*/Win32/` or `*/Wn32/` - Windows PC implementations
 
 ### Missing Dependencies
 
-The original code relies on proprietary platform SDKs and libraries that are not included:
-- PlayStation 2 SDK (libsn, libgraph, libdma, etc.)
-- GameCube/Wii SDK
-- Xbox SDK
+The code still requires several components not included in this repository:
+- Game assets (models, textures, sounds, scripts)
 - Various middleware (sound, video, etc.)
+- Complete implementations of Win32 stub functions
 
 To fully compile and run this code, you would need:
-1. Original platform development kits
-2. Game assets (models, textures, scripts)
-3. Audio libraries
-4. Video codec libraries
+1. Game assets (models, textures, scripts)
+2. Audio libraries
+3. Video codec libraries
+4. Complete Win32 platform layer implementations
 
 ### Legal Disclaimer
 
@@ -141,7 +131,6 @@ For more information about the project:
 - **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
-- **[RENDERING_OPTIMIZATIONS.md](RENDERING_OPTIMIZATIONS.md)** - PS2 rendering performance improvements
 
 ## Resources
 

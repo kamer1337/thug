@@ -1,19 +1,18 @@
-# Building THUG - Technical Details
+# Building THUG - Technical Details (PC Port)
 
-This document provides technical details about building Tony Hawk's Underground source code.
+This document provides technical details about building Tony Hawk's Underground source code for PC.
 
 ## Current Status
 
-The repository has been prepared with a modern build system, but **the code cannot be compiled as-is** on modern systems. This document explains why and what would be needed.
+This repository has been cleaned to focus on PC-only development. All console-specific code (PlayStation 2, GameCube, Xbox) has been removed. The code still **cannot be compiled as-is** on modern systems. This document explains why and what would be needed.
 
 ## Build Infrastructure Added
 
 ### 1. CMake Build System
 
 A `CMakeLists.txt` has been created that:
-- Configures for multiple platforms (Linux, macOS, Windows)
-- Collects source files automatically
-- Excludes platform-specific console code
+- Configures for PC platforms (Linux, macOS, Windows)
+- Collects source files automatically from Win32/Wn32 directories
 - Sets up include directories
 - Provides debug/release build configurations
 
@@ -54,29 +53,27 @@ sint32, sint64, uint32, uint64  // Platform-specific integer types
 
 **Fix Required**: Define these types or use standard `<cstdint>` types.
 
-### 3. Platform-Specific Code
+### 3. Incomplete Win32 Implementation
 
-#### PlayStation 2 Specific:
-- VU1 microcode (Vector Units)
-- GS (Graphics Synthesizer) registers
-- DMA controller code
-- EE (Emotion Engine) specific features
+The Win32/Wn32 directories contain many stub functions that were never fully implemented:
+- Graphics rendering functions (return NULL or empty implementations)
+- Sound system functions (stub implementations)
+- Movie playback (inline stubs that do nothing)
+- Memory management (basic implementations)
 
-#### GameCube Specific:
-- Gekko CPU features
-- DSP audio code
-- GX graphics library calls
-
-#### Xbox Specific:
-- NV2A GPU code
-- Xbox SDK calls
+Many critical functions exist but don't do anything:
+```cpp
+inline bool PlayMovie( const char* pMovieName ) { return false; }
+inline bool IsPlayingMovie( void ) { return false; }
+inline void StopMovie( void ) {}
+```
 
 ### 4. Missing Dependencies
 
 #### Required Libraries (Not Included):
-- **Sound**: `libsn.a`, background music system
-- **Graphics**: `libgraph.a`, `libdma.a`, `libvu0.a`
-- **Platform**: `libdev.a`, `libpad.a`, `libpkt.a`
+- **Sound**: Background music system, audio middleware
+- **Graphics**: Modern rendering backend (OpenGL/DirectX/Vulkan)
+- **Platform**: Input handling, file I/O
 - **Middleware**: Video codecs, audio systems
 - **Game Engine**: Asset loading, script execution
 
@@ -90,24 +87,24 @@ sint32, sint64, uint32, uint64  // Platform-specific integer types
 
 ## What Would Be Needed for a Full Build
 
-### Approach 1: Original Platform Build
+### Approach 1: Complete Win32 Implementation
 
 Requirements:
-1. **PlayStation 2 SDK** (SN Systems ProDG or Official Sony SDK)
-2. **ee-gcc** toolchain
-3. **dvpasm** (VU assembler)
-4. PS2 libraries (libsn, libgraph, libdma, etc.)
-5. Game assets
-6. Link file (`app.cmd`)
+1. **Complete Win32 stub functions** - Implement all the empty/stub functions in Win32 directories
+2. **Modern rendering backend** - Port graphics to OpenGL/DirectX/Vulkan
+3. **Audio system** - Implement complete audio/music system (OpenAL, FMOD, etc.)
+4. **Input handling** - Complete controller and keyboard input
+5. **Game assets** - Convert console assets to PC formats
+6. **Fix compiler issues** - Convert to ISO C++
 
-### Approach 2: Modern PC Port
+### Approach 2: Modern PC Port with Modern Libraries
 
 This would require:
 1. **Abstract Platform Layer**: Create a HAL (Hardware Abstraction Layer)
-2. **Replace Console APIs**: 
-   - Graphics: Port to OpenGL/DirectX/Vulkan
-   - Audio: Port to OpenAL/FMOD
-   - Input: Port to SDL2
+2. **Replace Win32 Stubs**: 
+   - Graphics: Implement with OpenGL/DirectX/Vulkan
+   - Audio: Implement with OpenAL/FMOD/SDL_mixer
+   - Input: Implement with SDL2 or DirectInput
 3. **Fix Compiler Issues**: Convert to ISO C++
 4. **Type Definitions**: Create platform-independent types
 5. **Asset Pipeline**: Convert console assets to PC formats

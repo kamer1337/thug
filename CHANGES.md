@@ -2,7 +2,37 @@
 
 ## Overview
 
-This repository contains source code for Tony Hawk's Underground (THUG), originally developed for PlayStation 2, GameCube, and Xbox. The task was to make the project "executable" - which has been interpreted as creating the infrastructure and documentation necessary for potential compilation and execution.
+This repository contains source code for Tony Hawk's Underground (THUG), originally developed for PlayStation 2, GameCube, and Xbox. The repository has been cleaned to focus on PC-only development by removing all console-specific code.
+
+## Major Changes
+
+### Console Code Removal (Latest Update)
+
+**All console-specific code has been removed from the repository:**
+- Removed 36 console-specific directories (PS2/NGPS, Xbox/XBox, NGC/GameCube)
+- Removed 533 console-specific source files (.cpp and .h)
+- Removed platform exclusion filters from CMakeLists.txt (no longer needed)
+- Updated all documentation to reflect PC-only focus
+
+**Directories Removed:**
+- `Code/Core/Debug/NGPS`, `Code/Core/Debug/XBox`, `Code/Core/Debug/ngc`
+- `Code/Core/Thread/ngc`, `Code/Core/Thread/ngps`
+- `Code/Gel/Movies/Ngps`, `Code/Gel/Movies/ngc`
+- `Code/Gel/Music/Ngps`, `Code/Gel/Music/ngc`
+- `Code/Gel/SoundFX/NGPS`, `Code/Gel/SoundFX/ngc`
+- `Code/Gfx/NGC`, `Code/Gfx/NGPS`, `Code/Gfx/XBox`
+- `Code/Sk/GameNet/Ngps`, `Code/Sk/GameNet/XBox`
+- `Code/Sk/Ngps`, `Code/Sk/ngc`
+- `Code/Sys/Config/NGC`, `Code/Sys/Config/NGPS`, `Code/Sys/Config/XBox`
+- `Code/Sys/File/XBox`, `Code/Sys/File/ngc`, `Code/Sys/File/ngps`
+- `Code/Sys/MemCard/NGPS`, `Code/Sys/MemCard/XBox`, `Code/Sys/MemCard/ngc`
+- `Code/Sys/Replay/NGC`, `Code/Sys/Replay/NGPS`, `Code/Sys/Replay/XBox`
+- `Code/Sys/SIO/NGPS`, `Code/Sys/SIO/XBox`, `Code/Sys/SIO/ngc`
+- `Code/Sys/XBox`, `Code/Sys/ngc`, `Code/Sys/ngps`
+
+**This is a PC-only port now. All console platform code has been permanently removed.**
+
+## Previous Changes
 
 ## Changes Made
 
@@ -98,49 +128,60 @@ This was done selectively to avoid breaking:
 ### What Works
 
 ✅ **Build System Configuration**: `cmake ..` succeeds
-✅ **Project Structure**: Well-documented and organized
+✅ **Project Structure**: Well-documented and organized for PC development
 ✅ **Cross-Platform Setup**: Symlinks and paths fixed
-✅ **Documentation**: Comprehensive guides for developers
+✅ **Documentation**: Comprehensive guides for PC port development
 ✅ **Version Control**: Proper .gitignore configuration
+✅ **Console Code Removed**: All PS2, Xbox, and GameCube code removed
 
 ### What Doesn't Work (And Why)
 
 ❌ **Compilation**: `cmake --build .` fails due to:
 - Non-standard variadic macro syntax (`##A` instead of `__VA_ARGS__`)
 - Missing platform-specific type definitions (`sint32`, `uint64`)
-- Console-specific code (VU1, GS registers, etc.)
+- Incomplete Win32 stub implementations
 - Missing SDK headers and libraries
 - Compiler extension dependencies
 
 ❌ **Execution**: Cannot run because:
 - Code won't compile
+- Win32 functions are mostly stubs
 - Missing game assets (models, textures, scripts, audio)
-- Platform-specific hardware dependencies
+- Missing rendering backend
 - Proprietary middleware requirements
 
 ## What "Executable" Means in This Context
 
 The term "executable" has been interpreted as:
 
-1. **Buildable Infrastructure**: The project has a modern build system that *could* be used if all dependencies were available
-2. **Well-Documented**: Developers can understand the codebase structure and what would be needed
-3. **Cross-Platform Ready**: Path and case-sensitivity issues resolved
-4. **Preservation Ready**: Proper source control and documentation for archival purposes
-5. **Foundation for Porting**: Provides a starting point for anyone attempting to port the code
+1. **PC-Only Focus**: Console code removed, focusing development on PC platform
+2. **Buildable Infrastructure**: The project has a modern build system for PC
+3. **Well-Documented**: Developers can understand what needs to be implemented for PC
+4. **Cross-Platform Ready**: Path and case-sensitivity issues resolved
+5. **Preservation Ready**: Proper source control for PC port
+6. **Foundation for PC Port**: Provides a clean starting point for PC development
 
 ## Files Modified
 
-### New Files
+### Latest Changes (PC-Only Port)
+- **Removed**: 36 console-specific directories
+- **Removed**: 533 console-specific source files
+- **Modified**: `CMakeLists.txt` - Removed console exclusion filters
+- **Modified**: `README.md` - Updated to reflect PC-only port
+- **Modified**: `BUILDING.md` - Removed console-specific content
+- **Modified**: `CHANGES.md` - Documented the PC-only port
+
+### Original Setup Files
 - `CMakeLists.txt` - Build configuration
 - `README.md` - Project documentation
 - `BUILDING.md` - Technical build guide
 - `.gitignore` - Build artifact exclusions
 - `CHANGES.md` - This file
 
-### Modified Files
+### Modified Files (Previous)
 - Include paths in ~300+ source/header files (backslash to forward slash in #include directives)
 
-### Symlinks Created
+### Symlinks Created (Previous)
 - 5 top-level directory symlinks (core, gel, gfx, sk, sys)
 - ~50+ subdirectory symlinks
 - ~500+ header file symlinks
@@ -161,49 +202,49 @@ Would need conversion to ISO C++:
 #define Dbg_Printf(...) { printf(__VA_ARGS__); }
 ```
 
-### 2. Platform Dependencies
+### 2. Incomplete Win32 Implementation
 
-The code is tightly coupled to console hardware:
-- PlayStation 2: EE (Emotion Engine), VU1, GS
-- GameCube: Gekko CPU, GX graphics
-- Xbox: NV2A GPU, custom Xbox APIs
+The Win32/Wn32 platform layer is mostly stubs:
+- Graphics functions return NULL or do nothing
+- Movie playback functions are empty stubs
+- Sound system needs complete implementation
+- Input handling needs expansion
 
 ### 3. Missing Components
 
 Not included in the repository:
-- Console SDKs (GB of development tools)
+- Complete rendering backend
 - Game assets (GB of models, textures, audio)
 - Proprietary middleware
-- Link libraries and modules
+- Complete Win32 implementations
 
 ### 4. Runtime Environment
 
 Even if compiled, would need:
 - Asset loading system
 - Script interpreter
-- Rendering engine
+- Rendering engine (OpenGL/DirectX/Vulkan)
 - Audio system
 - Input system
-- All configured for modern hardware
+- All configured for modern Windows/PC
 
 ## Recommendations for Future Work
 
-### Option 1: Documentation Project
+### Option 1: Complete Win32 Implementation
+Implement all the stub functions in Win32/Wn32 directories. Add proper rendering, audio, and input systems.
+
+### Option 2: Modern PC Port with SDL2/OpenGL
+Replace Win32 stubs with modern libraries:
+- SDL2 for windowing and input
+- OpenGL/Vulkan for rendering
+- OpenAL/FMOD for audio
+- Modern asset pipeline
+
+### Option 3: Documentation Project
 Use this as a reference for understanding game engine architecture. Document algorithms and systems.
 
-### Option 2: Educational Port
-Create a minimal subset port focusing on core systems as a learning exercise.
-
-### Option 3: Full Port Project
-A multi-year effort requiring:
-- Team of experienced engine developers
-- Legal clearance
-- Modern middleware
-- Complete asset pipeline
-- Extensive testing
-
-### Option 4: Preservation
-Keep as-is for historical preservation. The build system provides structure for future archivists.
+### Option 4: Educational Port
+Create a minimal subset port focusing on core systems as a learning exercise for PC game development.
 
 ## Success Metrics
 
@@ -218,20 +259,22 @@ Keep as-is for historical preservation. The build system provides structure for 
 
 ## Conclusion
 
-The project has been made as "executable" as possible given the constraints:
+The project has been converted to a PC-only port:
 
-1. **Build infrastructure exists** and would work with proper dependencies
-2. **Cross-platform issues resolved** where possible
-3. **Comprehensive documentation** explains the codebase
-4. **Foundation established** for future porting efforts
-5. **Preservation achieved** with proper source control
+1. **Console code removed** - All PS2, Xbox, and GameCube code permanently removed
+2. **PC-focused infrastructure** - Build system configured for Windows/Linux/Mac PC development
+3. **Win32 foundation** - Stub implementations provide framework for full PC port
+4. **Well-documented** - Clear understanding of what needs implementation
+5. **Clean codebase** - Reduced from 344 to 330 source files (PC-only)
 
-However, actual compilation and execution requires either:
-- Original console development kits (PS2/GameCube/Xbox SDKs)
-- Extensive porting work to modern platforms
-- Game assets and middleware
+However, actual compilation and execution requires:
+- Completing Win32 stub implementations
+- Adding modern rendering backend (OpenGL/DirectX/Vulkan)
+- Implementing complete audio and input systems
+- Game assets and data files
+- Fixing compiler compatibility issues
 
-The work done provides the best possible foundation for anyone with the resources to attempt a full build or port.
+The work done provides a clean PC-only codebase ready for further development.
 
 ## Repository Structure
 

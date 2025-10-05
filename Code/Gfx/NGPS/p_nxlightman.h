@@ -1,1 +1,0 @@
-p_NxLightMan.h

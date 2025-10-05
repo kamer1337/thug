@@ -1,5 +1,7 @@
 # THUG Source Code - Development Roadmap
 
+**Note**: This repository has been converted to a PC-only port. All console-specific code (PS2, GameCube, Xbox) has been removed. Some sections of this roadmap may reference console platforms for historical context, but current development focuses exclusively on PC.
+
 This document outlines potential improvements, enhancements, and future directions for the Tony Hawk's Underground source code repository.
 
 ## Overview
@@ -27,20 +29,17 @@ This roadmap is organized into short-term, medium-term, and long-term goals. Eac
 - `docs/SCRIPTING.md` - Script system documentation
 - `docs/RENDERING.md` - Graphics pipeline details
 
-#### 1.2 Platform-Specific Documentation
+#### 1.2 Win32 Implementation Documentation
 **Priority**: High | **Complexity**: Low | **Impact**: Medium
 
-- [ ] Document PS2-specific code and hardware features
-- [ ] Document GameCube-specific implementations
-- [ ] Document Xbox-specific implementations
-- [ ] Create platform comparison matrix
-- [ ] Document VU1 microcode and graphics pipeline
+- [ ] Document Win32 stub functions and what needs implementation
+- [ ] Document PC-specific requirements
+- [ ] Create roadmap for completing Win32 implementations
+- [ ] Document differences from console versions
 
 **Files to create**:
-- `docs/platforms/PS2.md`
-- `docs/platforms/GAMECUBE.md`
-- `docs/platforms/XBOX.md`
-- `docs/platforms/COMPARISON.md`
+- `docs/platforms/WIN32.md`
+- `docs/platforms/STUB_FUNCTIONS.md`
 
 #### 1.3 Subsystem Documentation
 **Priority**: Medium | **Complexity**: Medium | **Impact**: Medium
@@ -135,9 +134,8 @@ docs/
 ├── CODE_STYLE.md
 ├── CONTRIBUTING.md
 ├── platforms/
-│   ├── PS2.md
-│   ├── GAMECUBE.md
-│   └── XBOX.md
+│   ├── WIN32.md
+│   └── STUB_FUNCTIONS.md
 ├── subsystems/
 │   ├── PHYSICS.md
 │   ├── ANIMATION.md
@@ -316,19 +314,20 @@ docs/
 5. File system integration
 
 #### 9.2 Modern Graphics API Support
-**Priority**: Low | **Complexity**: Very High | **Impact**: Very High
+**Priority**: High | **Complexity**: Very High | **Impact**: Very High
 
-- [ ] Design graphics abstraction layer
+- [ ] Design graphics abstraction layer for PC
 - [ ] Implement OpenGL 3.3+ backend
 - [ ] Implement Vulkan backend
 - [ ] Implement DirectX 11/12 backend
-- [ ] Port shader system
+- [ ] Create shader system for modern graphics
 - [ ] Implement modern rendering techniques
 
 **Challenges**:
-- PS2 VU1 microcode needs complete rewrite
-- Different rendering paradigms (immediate mode → modern)
-- Shader translation from VU1 assembly
+- Win32 stub functions need complete implementation
+- Need modern rendering pipeline design
+- Shader system development
+- Asset format conversion for PC
 
 #### 9.3 Physics Engine Modernization
 **Priority**: Low | **Complexity**: High | **Impact**: Medium
@@ -455,29 +454,27 @@ docs/
 
 ## Specialized Projects
 
-### 13. Platform-Specific Initiatives
+### 13. PC Port Development
 
-#### 13.1 Original Platform Preservation
-**Priority**: Medium | **Complexity**: High | **Impact**: Medium
+#### 13.1 Win32 Implementation Completion
+**Priority**: High | **Complexity**: High | **Impact**: High
 
-- [ ] Document original build process completely
-- [ ] Preserve compiler versions and tools
-- [ ] Create virtual machine configurations
-- [ ] Document SDK setup procedures
-- [ ] Archive all build artifacts
+- [ ] Complete Win32 graphics stub implementations
+- [ ] Complete Win32 audio stub implementations
+- [ ] Complete Win32 input handling
+- [ ] Document all stub function requirements
+- [ ] Create implementation roadmap
 
-**Goal**: Enable future historians to build original binaries
+**Goal**: Make the Win32 port fully functional
 
-#### 13.2 Emulator Development Support
-**Priority**: Low | **Complexity**: Very High | **Impact**: High
+#### 13.2 Modern PC Port Development
+**Priority**: Medium | **Complexity**: Very High | **Impact**: High
 
-- [ ] Document PS2 hardware usage patterns
-- [ ] Create test cases for emulators
-- [ ] Document graphics synthesizer usage
-- [ ] Provide reference implementations
-- [ ] Collaborate with emulator projects
-
-**Benefits**: Improve accuracy of PS2 emulators
+- [ ] Create modern rendering backend (OpenGL/DirectX/Vulkan)
+- [ ] Implement complete audio system
+- [ ] Create asset conversion pipeline
+- [ ] Port all game systems to PC
+- [ ] Enable full gameplay on PC
 
 ### 14. Advanced Analysis Projects
 

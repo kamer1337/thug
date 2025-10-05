@@ -131,7 +131,6 @@ For more information about the project:
 - **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
-- **[RENDERING_OPTIMIZATIONS.md](RENDERING_OPTIMIZATIONS.md)** - PS2 rendering performance improvements
 
 ## Resources
 

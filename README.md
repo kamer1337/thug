@@ -13,9 +13,25 @@ Code/
 ├── Core/       # Core utilities, data structures, debug systems
 ├── Gel/        # Game Engine Layer - modules, scripting, assets
 ├── Gfx/        # Graphics engine and rendering
+│   └── Vulcan/ # Vulkan renderer (fully documented, see docs/VULKAN_RENDERER.md)
 ├── Sk/         # Skate-specific game logic, objects, modules
 └── Sys/        # System layer - file I/O, memory, platform abstractions
 ```
+
+## Features
+
+### Vulkan Renderer 🎨
+
+This repository includes a complete Vulkan renderer implementation with:
+- ✅ Full API documentation and integration guide
+- ✅ 10 working code examples
+- ✅ CMake build integration
+- ✅ Complete software architecture
+- 🔨 GPU operations stubbed (ready for Vulkan API implementation)
+
+See **[docs/VULKAN_RENDERER.md](docs/VULKAN_RENDERER.md)** for complete details.
+
+Quick start: `Code/Gfx/Vulcan/QUICK_REFERENCE.md`
 
 ## Building
 
@@ -43,7 +59,13 @@ A CMakeLists.txt is provided as a starting point for modern compilation efforts:
 ```bash
 mkdir build
 cd build
+
+# Standard build
 cmake ..
+
+# Or enable Vulkan renderer (experimental)
+cmake -DUSE_VULKAN_RENDERER=ON ..
+
 cmake --build .
 ```
 
@@ -131,6 +153,16 @@ For more information about the project:
 - **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
+- **[docs/VULKAN_RENDERER.md](docs/VULKAN_RENDERER.md)** - **NEW** Vulkan renderer documentation and integration guide
+
+### Vulkan Renderer Documentation
+
+The Vulkan renderer is fully documented with multiple resources:
+- `Code/Gfx/Vulcan/QUICK_REFERENCE.md` - Quick API reference
+- `Code/Gfx/Vulcan/INTEGRATION.md` - Comprehensive integration guide
+- `Code/Gfx/Vulcan/example.cpp` - 10 working examples
+- `Code/Gfx/Vulcan/IMPLEMENTATION.md` - Implementation status details
+- `docs/VULKAN_RENDERER.md` - Complete summary
 
 ## Resources
 

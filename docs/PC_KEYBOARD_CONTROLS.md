@@ -128,7 +128,8 @@ Potential improvements for the keyboard control system:
 
 1. Ensure the game window has focus
 2. Check that the keyboard is enabled (not disabled by frontend)
-3. Verify the build includes Win32 platform code
+3. Verify the build includes Win32 platform code (`__PLAT_WN32__` defined)
+4. Ensure Windows.h is available (Win32 API)
 
 ### Multiple Keys Not Working
 
@@ -137,6 +138,22 @@ Some keyboards have limitations on simultaneous key presses (ghosting). Try diff
 ### Analog Stick Issues
 
 The keyboard simulates digital input on analog sticks. For precise analog control, a gamepad is recommended.
+
+### Testing the Implementation
+
+Since the game cannot be fully built without assets and complete implementations, the keyboard code has been designed to:
+
+1. Compile on Win32 platforms with `__PLAT_WN32__` defined
+2. Integrate seamlessly with the existing input system
+3. Map to the same controller data format used by the PS2 version
+4. Maintain compatibility with existing gamepad code paths
+
+When testing becomes possible (with complete build and assets), verify:
+- All key mappings respond correctly
+- Multiple simultaneous key presses work (combo tricks)
+- Camera controls respond to I/J/K/L keys
+- Menu navigation works with Enter/Tab
+- Keyboard and gamepad can coexist (if gamepad support is added)
 
 ## Credits
 

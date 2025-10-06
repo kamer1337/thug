@@ -141,12 +141,27 @@ The original code is proprietary. This repository is for preservation and educat
 
 For more information about the project:
 
+### Main Documentation
 - **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
-- **[docs/THUG2_QUICK_REFERENCE.md](docs/THUG2_QUICK_REFERENCE.md)** - ⭐ Quick THUG vs THUG2 comparison guide
+- **[docs/README.md](docs/README.md)** - Complete documentation index
+
+### Getting Started
+- **[docs/tutorials/GETTING_STARTED.md](docs/tutorials/GETTING_STARTED.md)** - ⭐ New contributors start here!
+- **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** - Contribution guidelines
+- **[docs/CODE_STYLE.md](docs/CODE_STYLE.md)** - Coding standards
+
+### Platform & Implementation
+- **[docs/platforms/WIN32.md](docs/platforms/WIN32.md)** - Windows platform documentation
+- **[docs/platforms/STUB_FUNCTIONS.md](docs/platforms/STUB_FUNCTIONS.md)** - Stub functions catalog
+
+### Research & Analysis
+- **[docs/THUG2_QUICK_REFERENCE.md](docs/THUG2_QUICK_REFERENCE.md)** - Quick THUG vs THUG2 comparison guide
 - **[docs/THUG2_RESEARCH.md](docs/THUG2_RESEARCH.md)** - THUG2 game similarities and comparison analysis
 - **[docs/THUG2_IMPLEMENTATION.md](docs/THUG2_IMPLEMENTATION.md)** - Technical guide for implementing THUG2 features
+
+### Subsystems
 - **[docs/subsystems/RECORDS.md](docs/subsystems/RECORDS.md)** - Records system documentation
 
 ## Resources

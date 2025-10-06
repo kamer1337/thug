@@ -10,6 +10,10 @@ This directory contains comprehensive documentation for the Tony Hawk's Undergro
 - **[../CHANGES.md](../CHANGES.md)** - History of modifications and PC port conversion
 - **[../ROADMAP.md](../ROADMAP.md)** - Development roadmap and future plans
 
+### Development Guidelines
+- **[CODE_STYLE.md](CODE_STYLE.md)** - Coding standards and style guide
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute to the project
+
 ## Research and Analysis
 
 ### THUG2 Research
@@ -37,6 +41,25 @@ This directory contains comprehensive documentation for the Tony Hawk's Undergro
   - Network protocol changes
   - Performance optimization strategies
 
+## Platform Documentation
+
+### [platforms/](platforms/)
+Platform-specific implementation details:
+
+- **[WIN32.md](platforms/WIN32.md)** - Windows platform documentation
+  - Platform overview and requirements
+  - Win32 API usage
+  - Graphics implementation (DirectX 8)
+  - Audio system (DirectSound)
+  - Current implementation status
+  - Development guidelines
+
+- **[STUB_FUNCTIONS.md](platforms/STUB_FUNCTIONS.md)** - Stub functions catalog
+  - Complete list of unimplemented functions
+  - Implementation priorities
+  - Testing strategies
+  - Resources for implementation
+
 ## Subsystem Documentation
 
 ### [subsystems/](subsystems/)
@@ -48,13 +71,26 @@ Detailed documentation for specific game subsystems:
   - Usage examples
   - Integration with game systems
 
+## Tutorials and Guides
+
+### [tutorials/](tutorials/)
+Step-by-step guides for getting started and learning the codebase:
+
+- **[GETTING_STARTED.md](tutorials/GETTING_STARTED.md)** - ⭐ **New contributors start here!**
+  - Setting up development environment
+  - Understanding the codebase
+  - Building the project
+  - Making your first contribution
+  - Exploring the code structure
+
 ## Quick Reference
 
 ### For New Contributors
-1. Start with [../README.md](../README.md) to understand the project
-2. Read [../BUILDING.md](../BUILDING.md) for technical setup
-3. Check [../CHANGES.md](../CHANGES.md) to understand what's been modified
-4. Review [../ROADMAP.md](../ROADMAP.md) for development priorities
+1. **Start here**: [tutorials/GETTING_STARTED.md](tutorials/GETTING_STARTED.md) - Complete beginner's guide
+2. Read [../README.md](../README.md) to understand the project
+3. Review [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
+4. Check [CODE_STYLE.md](CODE_STYLE.md) for coding standards
+5. See [../ROADMAP.md](../ROADMAP.md) for development priorities
 
 ### For Researchers
 1. **THUG2 Quick Start**: Begin with [THUG2_QUICK_REFERENCE.md](THUG2_QUICK_REFERENCE.md)
@@ -63,21 +99,32 @@ Detailed documentation for specific game subsystems:
 4. **Specific Systems**: Browse [subsystems/](subsystems/) directory
 
 ### For Developers
-1. **Architecture**: Review source code structure in [../README.md](../README.md)
-2. **Build System**: Follow [../BUILDING.md](../BUILDING.md)
-3. **Subsystems**: Study [subsystems/](subsystems/) documentation
-4. **Extensions**: Use [THUG2_IMPLEMENTATION.md](THUG2_IMPLEMENTATION.md) as a guide
+1. **Getting Started**: Begin with [tutorials/GETTING_STARTED.md](tutorials/GETTING_STARTED.md)
+2. **Architecture**: Review source code structure in [../README.md](../README.md)
+3. **Build System**: Follow [../BUILDING.md](../BUILDING.md)
+4. **Platform Code**: See [platforms/WIN32.md](platforms/WIN32.md) for Win32 implementation
+5. **Stub Functions**: Check [platforms/STUB_FUNCTIONS.md](platforms/STUB_FUNCTIONS.md) for implementation tasks
+6. **Code Style**: Follow [CODE_STYLE.md](CODE_STYLE.md) standards
+7. **Subsystems**: Study [subsystems/](subsystems/) documentation
+8. **Extensions**: Use [THUG2_IMPLEMENTATION.md](THUG2_IMPLEMENTATION.md) as a guide
 
 ## Documentation Structure
 
 ```
 docs/
 ├── README.md                       # This file
+├── CODE_STYLE.md                  # Coding standards and style guide
+├── CONTRIBUTING.md                # Contribution guidelines
 ├── THUG2_QUICK_REFERENCE.md       # Quick comparison guide ⭐ Start here!
 ├── THUG2_RESEARCH.md              # Comprehensive THUG vs THUG2 analysis
 ├── THUG2_IMPLEMENTATION.md        # Technical implementation guide
-└── subsystems/
-    └── RECORDS.md                 # Records system documentation
+├── platforms/                      # Platform-specific documentation
+│   ├── WIN32.md                   # Windows platform documentation
+│   └── STUB_FUNCTIONS.md          # Stub functions catalog
+├── subsystems/                     # Subsystem documentation
+│   └── RECORDS.md                 # Records system documentation
+└── tutorials/                      # Tutorials and guides
+    └── GETTING_STARTED.md         # Getting started guide
 ```
 
 ## Key Findings from THUG2 Research

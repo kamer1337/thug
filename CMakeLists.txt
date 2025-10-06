@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 99)
 
+# Renderer options
+option(USE_VULKAN_RENDERER "Use Vulkan renderer backend (experimental)" OFF)
+
 # Compiler options
 if(MSVC)
     add_compile_options(/W3)
@@ -45,6 +48,21 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated -Wno-write-strings")
 include_directories(
     ${CMAKE_SOURCE_DIR}/Code
 )
+
+# Vulkan renderer configuration
+if(USE_VULKAN_RENDERER)
+    message(STATUS "Vulkan renderer enabled (experimental)")
+    add_definitions(-DUSE_VULKAN_RENDERER)
+    
+    # Try to find Vulkan SDK (optional, for future full implementation)
+    find_package(Vulkan QUIET)
+    if(Vulkan_FOUND)
+        message(STATUS "Vulkan SDK found: ${Vulkan_LIBRARY}")
+        include_directories(${Vulkan_INCLUDE_DIRS})
+    else()
+        message(STATUS "Vulkan SDK not found (optional for current implementation)")
+    endif()
+endif()
 
 # Collect source files
 # We don't follow symlinks to avoid duplicates from case-insensitive symlinks
@@ -95,6 +113,12 @@ if(UNIX AND NOT APPLE)
     target_link_libraries(thug pthread dl m)
 elseif(APPLE)
     target_link_libraries(thug pthread dl m)
+endif()
+
+# Link Vulkan if available and enabled
+if(USE_VULKAN_RENDERER AND Vulkan_FOUND)
+    target_link_libraries(thug ${Vulkan_LIBRARIES})
+    message(STATUS "Vulkan library linked: ${Vulkan_LIBRARIES}")
 endif()
 
 # Installation

@@ -250,6 +250,7 @@ static int s_get_platforms_block_size();
 static int s_round_up_to_platforms_block_size(int fileSize);
 static int s_get_version_number(uint32 fileType);
 static const char *s_generate_xbox_directory_name(uint32 fileType, const char *p_name);
+static const char *s_generate_win32_file_path(uint32 fileType, const char *p_name);
 static void s_generate_card_directory_name(uint32 fileType, const char *p_name, char *p_card_directory_name);
 static bool s_make_xbox_dir_and_icons(	Mc::Card *p_card,
 										uint32 fileType, const char *p_name, 
@@ -410,28 +411,28 @@ static unsigned short s_ascii_to_sjis(unsigned char ascii_code)
 
 	switch ((char)ascii_code)
 	{
-		case 'ß': ascii_code='B'; break;
-		case 'Ä': ascii_code='A'; break;
-		case 'Ü': ascii_code='U'; break;
-		case 'Ö': ascii_code='O'; break;
-		case 'à': ascii_code='a'; break;
-		case 'â': ascii_code='a'; break;
-		case 'ä': ascii_code='a'; break;
-		case 'ê': ascii_code='e'; break;
-		case 'è': ascii_code='e'; break;
-		case 'é': ascii_code='e'; break;
-		case 'ë': ascii_code='e'; break;
-		case 'ì': ascii_code='i'; break;
-		case 'î': ascii_code='i'; break;
-		case 'ï': ascii_code='i'; break;
-		case 'ô': ascii_code='o'; break;
-		case 'ò': ascii_code='o'; break;
-		case 'ö': ascii_code='o'; break;
-		case 'ù': ascii_code='u'; break;
-		case 'û': ascii_code='u'; break;
-		case 'ü': ascii_code='u'; break;
-		case 'ç': ascii_code='c'; break;
-		case 'œ': ascii_code='o'; break;
+		case 'ï¿½': ascii_code='B'; break;
+		case 'ï¿½': ascii_code='A'; break;
+		case 'ï¿½': ascii_code='U'; break;
+		case 'ï¿½': ascii_code='O'; break;
+		case 'ï¿½': ascii_code='a'; break;
+		case 'ï¿½': ascii_code='a'; break;
+		case 'ï¿½': ascii_code='a'; break;
+		case 'ï¿½': ascii_code='e'; break;
+		case 'ï¿½': ascii_code='e'; break;
+		case 'ï¿½': ascii_code='e'; break;
+		case 'ï¿½': ascii_code='e'; break;
+		case 'ï¿½': ascii_code='i'; break;
+		case 'ï¿½': ascii_code='i'; break;
+		case 'ï¿½': ascii_code='i'; break;
+		case 'ï¿½': ascii_code='o'; break;
+		case 'ï¿½': ascii_code='o'; break;
+		case 'ï¿½': ascii_code='o'; break;
+		case 'ï¿½': ascii_code='u'; break;
+		case 'ï¿½': ascii_code='u'; break;
+		case 'ï¿½': ascii_code='u'; break;
+		case 'ï¿½': ascii_code='c'; break;
+		case 'ï¿½': ascii_code='o'; break;
 		default: break;
 	}
 	
@@ -1595,6 +1596,51 @@ static const char *s_generate_xbox_directory_name(uint32 fileType, const char *p
 	Dbg_MsgAssert( strlen( p_directory_name ) < 100, ( "Oops" ));
 	
 	return p_directory_name;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+// Generate Win32 file path for save games
+static const char *s_generate_win32_file_path(uint32 fileType, const char *p_name)
+{
+	static char p_file_path[256];
+	const char *p_type_suffix = "";
+	
+	switch( fileType )
+	{
+		case 0xca41692d: // NetworkSettings
+			p_type_suffix = "NetworkSettings";
+			break;
+		case 0xb010f357: // OptionsAndPros
+			p_type_suffix = "Story";
+			break;
+		case 0xffc529f4: // Cas
+			Dbg_MsgAssert(0,("CAS mem card files are no longer supported! Use OptionsAndPros file type instead"));
+			break;
+        case 0x61a1bc57: // Cat
+			p_type_suffix = "Trick";
+			break;
+		case 0x3bf882cc: // Park
+			p_type_suffix = "Park";
+			break;
+		case 0x26c80b0d: // Replay
+			p_type_suffix = "Replay";
+			break;
+		case 0x62896edf: // CreatedGoals
+			p_type_suffix = "Goals";
+			break;
+		default:
+			Dbg_MsgAssert( 0, ( "Bad file type of '%s' for file '%s' sent to s_generate_win32_file_path", FindChecksumName(fileType),p_name));
+			break;
+	}
+	
+	// Create a savegame path like: SaveGames/Story_MySkater.sav
+	sprintf( p_file_path, "SaveGames/%s_%s.sav", p_type_suffix, p_name );
+	Dbg_MsgAssert( strlen( p_file_path ) < 256, ( "File path too long" ));
+	
+	return p_file_path;
 }
 
 /******************************************************************/
@@ -3243,14 +3289,19 @@ bool ScriptSaveToMemoryCard(Script::CStruct *pParams, Script::CScript *pScript)
 	
 	mc_man = Mc::Manager::Instance();
 	p_card=mc_man->GetCard(0,0);
-	if (!p_card)
+	
+	// For Win32/PC, we don't use memory cards, so skip card validation
+	if (Config::GetHardware() != Config::HARDWARE_WIN32)
 	{
-		goto ERROR;
-	}
-	// GameCube often crashes if try to do card operations on a bad card, so do this check first.
-	if (!p_card->IsFormatted())
-	{
-		goto ERROR;
+		if (!p_card)
+		{
+			goto ERROR;
+		}
+		// GameCube often crashes if try to do card operations on a bad card, so do this check first.
+		if (!p_card->IsFormatted())
+		{
+			goto ERROR;
+		}
 	}
 	
 	char p_card_file_name[MAX_CARD_FILE_NAME_CHARS+1];
@@ -3291,6 +3342,16 @@ bool ScriptSaveToMemoryCard(Script::CStruct *pParams, Script::CScript *pScript)
 				goto ERROR;
 			}
 			break;
+		
+		case Config::HARDWARE_WIN32:
+		{
+			// For Win32/PC, use regular file system instead of memory card
+			const char *p_file_path = s_generate_win32_file_path(file_type, p_name);
+			strcpy(p_card_file_name, p_file_path);
+			Dbg_MsgAssert(strlen(p_card_file_name)<MAX_CARD_FILE_NAME_CHARS+1,("File path too long"));
+			break;
+		}
+		
 		default:
 			{
 				goto ERROR;
@@ -3301,6 +3362,156 @@ bool ScriptSaveToMemoryCard(Script::CStruct *pParams, Script::CScript *pScript)
 
 	// Open a file big enough to hold all the data.
 	//printf("Opening file %s of size %d for writing\n",p_card_file_name,fixed_size);
+	
+	// For Win32/PC, use direct file I/O instead of memory card abstraction
+	if (Config::GetHardware() == Config::HARDWARE_WIN32)
+	{
+		// Create the SaveGames directory if it doesn't exist
+		// (This is a stub - a real implementation would need to create the directory)
+		
+		// Open the file for writing using the File namespace
+		void* p_win32_file = File::Open(p_card_file_name, "wb");
+		if (!p_win32_file)
+		{
+			goto ERROR;
+		}
+		
+		// Write the data
+		pTemp=(uint8*)Mem::Malloc(header_and_structures_size);
+		
+		p_file_header=(SMcFileHeader*)pTemp;
+		// Zero the whole structure
+		p_dest=(uint8*)p_file_header;
+		for (uint32 i=0; i<sizeof(SMcFileHeader); ++i)
+		{
+			*p_dest++=0;
+		}
+		
+		p_file_header->mVersion=s_get_version_number(file_type);
+		p_file_header->mSummaryInfoSize=summary_info_size;
+		p_file_header->mDataSize=header_and_structures_size;
+
+		p_dest=(uint8*)(p_file_header+1);
+
+		// Write in the summary info and calculate its checksum.
+		BytesWritten=WriteToBuffer(pSummaryInfo, p_dest, summary_info_size, Script::NO_ASSERT);
+		if (BytesWritten!=summary_info_size)
+		{
+			Dbg_MsgAssert(0,("BytesWritten does not equal summary_info_size ?"));
+		}	
+		p_file_header->mSummaryInfoChecksum=Crc::GenerateCRCCaseSensitive((const char *)p_dest,summary_info_size);
+		p_dest+=summary_info_size;
+
+		// Write in the game save info
+		BytesWritten=WriteToBuffer(pMemCardStuff, p_dest, structure_size, Script::NO_ASSERT);
+		
+		// Encrypt network settings if needed
+		if (file_type==0xca41692d) // NetworkSettings
+		{
+			for (uint32 e=0; e<structure_size; ++e)
+			{
+				p_dest[e]+=0x69;
+			}
+		}
+		
+		if (BytesWritten!=structure_size)
+		{
+			Dbg_MsgAssert(0,("BytesWritten does not equal structure_size ?"));
+		}	
+		p_dest+=structure_size;
+
+		Dbg_MsgAssert(p_dest==pTemp+header_and_structures_size,("What ?"));
+		
+		// Calculate checksum
+		p_file_header->mChecksum=Crc::GenerateCRCCaseSensitive((const char*)pTemp,header_and_structures_size);
+		
+		// Write to file
+		size_t written = File::Write(pTemp, 1, header_and_structures_size, p_win32_file);
+		if (written != header_and_structures_size)
+		{
+			File::Close(p_win32_file);
+			goto ERROR;
+		}
+
+#if __USE_REPLAYS__
+		// Write out the replay data for Win32 (simplified version)
+		if (file_type==0x26c80b0d/* Replay */)
+		{
+			// Write replay data header
+			written = File::Write((uint8*)&replay_data_header, 1, sizeof(Replay::SReplayDataHeader), p_win32_file);
+			if (written != sizeof(Replay::SReplayDataHeader))
+			{
+				File::Close(p_win32_file);
+				goto ERROR;
+			}
+			
+			// Write replay buffer in chunks
+			uint32 replay_data_checksum=0xffffffff;
+			replay_data_checksum=Crc::UpdateCRC((const char *)&replay_data_header,sizeof(Replay::SReplayDataHeader),replay_data_checksum);
+			
+			Replay::SSavedDummy saved_dummy;
+			Replay::CDummy *p_dummy=Replay::GetFirstStartStateDummy();
+			int count=0;
+			while (p_dummy)
+			{
+				p_dummy->Save(&saved_dummy);
+				written = File::Write((uint8*)&saved_dummy, 1, sizeof(Replay::SSavedDummy), p_win32_file);
+				if (written != sizeof(Replay::SSavedDummy))
+				{
+					File::Close(p_win32_file);
+					goto ERROR;
+				}
+				replay_data_checksum=Crc::UpdateCRC((const char *)&saved_dummy,sizeof(Replay::SSavedDummy),replay_data_checksum);
+				p_dummy=p_dummy->mpNext;
+				++count;
+			}
+			
+			int buf_size=Replay::GetBufferSize();
+			uint8 *p_chunk=Replay::GetTempBuffer();
+			int num_chunks=buf_size/REPLAY_BUFFER_CHUNK_SIZE;
+			uint32 offset=0;
+			
+			for (int i=0; i<num_chunks; ++i)
+			{
+				Replay::ReadFromBuffer(p_chunk,offset,REPLAY_BUFFER_CHUNK_SIZE);
+				replay_data_checksum=Crc::UpdateCRC((const char *)p_chunk,REPLAY_BUFFER_CHUNK_SIZE,replay_data_checksum);
+				offset+=REPLAY_BUFFER_CHUNK_SIZE;
+				
+				written = File::Write(p_chunk, 1, REPLAY_BUFFER_CHUNK_SIZE, p_win32_file);
+				if (written != REPLAY_BUFFER_CHUNK_SIZE)
+				{
+					File::Close(p_win32_file);
+					goto ERROR;
+				}
+			}
+			
+			// Write checksum
+			written = File::Write((uint8*)&replay_data_checksum, 1, 4, p_win32_file);
+			if (written != 4)
+			{
+				File::Close(p_win32_file);
+				goto ERROR;
+			}
+		}
+#endif
+		
+		// Write padding
+		if (pad_size && p_pad)
+		{
+			written = File::Write(p_pad, 1, pad_size, p_win32_file);
+			if (written != pad_size)
+			{
+				File::Close(p_win32_file);
+				goto ERROR;
+			}
+		}
+		
+		File::Close(p_win32_file);
+		SavedOK=true;
+		goto CLEANUP;
+	}
+	
+	// Original memory card code for other platforms
 	pFile=p_card->Open( p_card_file_name, Mc::File::mMODE_WRITE | Mc::File::mMODE_CREATE, fixed_size );
 	s_insufficient_space=p_card->GetLastError()==Mc::Card::vINSUFFICIENT_SPACE;
 
@@ -3515,6 +3726,7 @@ bool ScriptSaveToMemoryCard(Script::CStruct *pParams, Script::CScript *pScript)
 	
 	SavedOK=true;
 	
+CLEANUP:
 ERROR:	
 	if (p_pad)
 	{
@@ -3535,7 +3747,7 @@ ERROR:
 			SavedOK=false;
 		}	
 		delete pFile;
-	}	
+	}
 	
 	delete pSummaryInfo;
 	delete pMemCardStuff;
@@ -3658,14 +3870,19 @@ bool ScriptLoadFromMemoryCard(Script::CStruct *pParams, Script::CScript *pScript
 	// Get the card.
 	Mc::Manager * mc_man = Mc::Manager::Instance();
 	Mc::Card* p_card=mc_man->GetCard(0,0);
-	if (!p_card)
+	
+	// For Win32/PC, we don't use memory cards, so skip card validation
+	if (Config::GetHardware() != Config::HARDWARE_WIN32)
 	{
-		goto ERROR;
-	}
-	// GameCube often crashes if try to do card operations on a bad card, so do this check first.
-	if (!p_card->IsFormatted())
-	{
-		goto ERROR;
+		if (!p_card)
+		{
+			goto ERROR;
+		}
+		// GameCube often crashes if try to do card operations on a bad card, so do this check first.
+		if (!p_card->IsFormatted())
+		{
+			goto ERROR;
+		}
 	}
 		
 		
@@ -3713,6 +3930,14 @@ bool ScriptLoadFromMemoryCard(Script::CStruct *pParams, Script::CScript *pScript
 			sprintf( p_card_file_name, "/%s/%s", p_low_level_directory_name, p_low_level_directory_name );
 			break;
 		}	
+		case Config::HARDWARE_WIN32:
+		{
+			// For Win32/PC, use regular file system instead of memory card
+			const char *p_file_path = s_generate_win32_file_path(file_type, p_name);
+			strcpy(p_card_file_name, p_file_path);
+			Dbg_MsgAssert(strlen(p_card_file_name)<MAX_CARD_FILE_NAME_CHARS+1,("File path too long"));
+			break;
+		}
 		default:
 		{
 			goto ERROR;
@@ -3729,7 +3954,79 @@ bool ScriptLoadFromMemoryCard(Script::CStruct *pParams, Script::CScript *pScript
 		sNeedToLoadReplayBuffer=true;
 	}
 #endif
+	
+	// For Win32/PC, use direct file I/O instead of memory card abstraction
+	if (Config::GetHardware() == Config::HARDWARE_WIN32)
+	{
+		// Open the file for reading using the File namespace
+		void* p_win32_file = File::Open(p_card_file_name, "rb");
+		if (!p_win32_file)
+		{
+			// File could not be opened
+			goto ERROR;
+		}
 		
+		// Get file size
+		File::Seek(p_win32_file, 0, SEEK_END);
+		file_size = File::Tell(p_win32_file);
+		File::Seek(p_win32_file, 0, SEEK_SET);
+		
+		// Allocate buffer
+		p_temp=(uint8*)Mem::Malloc(file_size);
+		Dbg_MsgAssert(p_temp,("Could not allocate %d bytes for file buffer for file %s",file_size,p_card_file_name));
+		
+		// Read the file
+		size_t bytes_read = File::Read(p_temp, 1, file_size, p_win32_file);
+		File::Close(p_win32_file);
+		
+		if (bytes_read != (size_t)file_size)
+		{
+			// Some sort of read error.
+			goto ERROR;
+		}
+		
+		// Process the loaded data
+		p_file_header=(SMcFileHeader*)p_temp;
+		p_stuff=p_temp+sizeof(SMcFileHeader);
+		
+		// Verify checksum
+		stored_checksum=p_file_header->mChecksum;
+		p_file_header->mChecksum=0;
+		calculated_checksum=Crc::GenerateCRCCaseSensitive((const char*)p_temp,p_file_header->mDataSize);
+		checksum_matches=(calculated_checksum==stored_checksum);
+		
+		if (!checksum_matches)
+		{
+			pScript->GetParams()->AddChecksum(NONAME,GenerateCRC("CorruptedData"));
+			goto ERROR;
+		}
+		
+		// Extract summary info
+		CStruct *p_summary=new CStruct;
+		ReadFromBuffer(p_summary, p_stuff, p_file_header->mSummaryInfoSize, Script::NO_ASSERT);
+		pSummaryInfo->AppendStructure(p_summary);
+		delete p_summary;
+		p_stuff+=p_file_header->mSummaryInfoSize;
+		
+		// Extract game save data
+		uint32 data_size=p_file_header->mDataSize-sizeof(SMcFileHeader)-p_file_header->mSummaryInfoSize;
+		
+		// Decrypt network settings if needed
+		if (file_type==0xca41692d) // NetworkSettings
+		{
+			for (uint32 e=0; e<data_size; ++e)
+			{
+				p_stuff[e]-=0x69;
+			}
+		}
+		
+		ReadFromBuffer(pMemCardStuff, p_stuff, data_size, Script::NO_ASSERT);
+		
+		loaded_ok=true;
+		goto WIN32_LOAD_SUCCESS;
+	}
+		
+	// Original memory card code for other platforms
 	// Open the file.
 	p_file=p_card->Open( p_card_file_name, Mc::File::mMODE_READ );
 	if (!p_file)
@@ -3906,6 +4203,7 @@ bool ScriptLoadFromMemoryCard(Script::CStruct *pParams, Script::CScript *pScript
 		}	
 	}
 
+WIN32_LOAD_SUCCESS:
 ERROR:	
 	// Cleanup and unpause the music.
 	if (p_file)
@@ -4723,6 +5021,7 @@ bool SaveDataFile(const char *p_name, uint8 *p_data, uint32 size)
 		case Config::HARDWARE_PS2:
 		case Config::HARDWARE_PS2_PROVIEW:
 		case Config::HARDWARE_PS2_DEVSYSTEM:
+		case Config::HARDWARE_WIN32:
 			break;
 		default:
 			return false;
@@ -4843,6 +5142,7 @@ bool LoadDataFile(const char *p_name, uint8 *p_data, uint32 size)
 		case Config::HARDWARE_PS2:
 		case Config::HARDWARE_PS2_PROVIEW:
 		case Config::HARDWARE_PS2_DEVSYSTEM:
+		case Config::HARDWARE_WIN32:
 			break;
 		default:
 			return false;

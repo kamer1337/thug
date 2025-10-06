@@ -140,7 +140,10 @@ void Device::wait( void )
 void Device::read_data ( void )
 {
     
-
+#ifdef __PLAT_WN32__
+	// On Win32, use keyboard input instead of gamepad
+	read_data_keyboard();
+#else
     int state;
 
     state = scePadGetState( m_data.m_port, m_data.m_slot );
@@ -167,7 +170,8 @@ void Device::read_data ( void )
         Unacquire();
         Acquire();
         break;
-    }                  
+    }
+#endif
 }
 
 /******************************************************************/

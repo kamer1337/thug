@@ -33,6 +33,19 @@ See **[docs/VULKAN_RENDERER.md](docs/VULKAN_RENDERER.md)** for complete details.
 
 Quick start: `Code/Gfx/Vulcan/QUICK_REFERENCE.md`
 
+### PC Controls ⌨️
+
+This PC port now includes keyboard controls! See [PC Keyboard Controls Documentation](docs/PC_KEYBOARD_CONTROLS.md) for the complete control scheme.
+
+**Quick Reference:**
+- Movement: WASD or Arrow Keys
+- Jump: Space
+- Grind/Grab: Shift
+- Flip Tricks: Ctrl
+- Special: Alt
+- Camera: I/J/K/L
+- Pause: Enter
+
 ## Building
 
 This repository includes a CMake build system infrastructure. However, **the code cannot be built as-is** on modern systems due to several factors:
@@ -153,7 +166,11 @@ For more information about the project:
 - **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
-- **[docs/VULKAN_RENDERER.md](docs/VULKAN_RENDERER.md)** - **NEW** Vulkan renderer documentation and integration guide
+- **[docs/VULKAN_RENDERER.md](docs/VULKAN_RENDERER.md)** - Vulkan renderer documentation and integration guide
+- **[docs/THUG2_QUICK_REFERENCE.md](docs/THUG2_QUICK_REFERENCE.md)** - ⭐ Quick THUG vs THUG2 comparison guide
+- **[docs/THUG2_RESEARCH.md](docs/THUG2_RESEARCH.md)** - THUG2 game similarities and comparison analysis
+- **[docs/THUG2_IMPLEMENTATION.md](docs/THUG2_IMPLEMENTATION.md)** - Technical guide for implementing THUG2 features
+- **[docs/subsystems/RECORDS.md](docs/subsystems/RECORDS.md)** - Records system documentation
 
 ### Vulkan Renderer Documentation
 

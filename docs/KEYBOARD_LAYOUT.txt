@@ -1,0 +1,111 @@
+# PC Keyboard Layout for THUG
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                   KEYBOARD CONTROL LAYOUT                           │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───────┐
+│Esc│ 1 │ 2 │ 3 │ 4 │ 5 │ 6 │ 7 │ 8 │ 9 │ 0 │ - │ = │ Bksp  │
+├───┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─────┤
+│ Tab │ Q │ W │ E │ R │ T │ Y │ U │ I │ O │ P │ [ │ ] │  \  │
+│Select│L1│UP│R1│   │   │   │   │C↑│   │   │   │   │     │
+├─────┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴─────┤
+│ Caps │ A │ S │ D │ F │ G │ H │ J │ K │ L │ ; │ ' │ Enter  │
+│      │LFT│DN│RGT│   │   │   │C←│C↓│C→│   │   │  Start │
+├──────┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴────────┤
+│ Shift  │ Z │ X │ C │ V │ B │ N │ M │ , │ . │ / │  Shift   │
+│ Square │L2 │   │R2 │   │   │   │   │   │   │   │  Square  │
+├────┬───┴┬──┴─┬─┴───┴───┴───┴───┴───┴──┬┴───┼───┴┬────┬────┤
+│Ctrl│    │ Alt│                        │Alt │    │    │Ctrl│
+│Circ│    │ Tri│       SPACE (Jump)     │ Tri│    │    │Circ│
+└────┴────┴────┴────────────────────────┴────┴────┴────┴────┘
+
+              ┌───┬───┬───┐
+              │   │ ↑ │   │
+              │   │UP │   │
+              ├───┼───┼───┤
+              │ ← │ ↓ │ → │
+              │LFT│DN │RGT│
+              └───┴───┴───┘
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                       CONTROL MAPPING                               │
+└─────────────────────────────────────────────────────────────────────┘
+
+MOVEMENT & DIRECTION:
+┌──────────────────────┬────────────────────────────────────────┐
+│  W or Arrow Up       │  Move Forward / D-Pad Up               │
+│  S or Arrow Down     │  Move Backward / D-Pad Down            │
+│  A or Arrow Left     │  Move Left / D-Pad Left                │
+│  D or Arrow Right    │  Move Right / D-Pad Right              │
+└──────────────────────┴────────────────────────────────────────┘
+
+TRICK BUTTONS:
+┌──────────────────────┬────────────────────────────────────────┐
+│  Space               │  Jump/Ollie (X Button)                 │
+│  Shift               │  Grind/Grab Tricks (Square Button)     │
+│  Ctrl                │  Flip Tricks (Circle Button)           │
+│  Alt                 │  Special/Nollie (Triangle Button)      │
+└──────────────────────┴────────────────────────────────────────┘
+
+SPIN & MODIFIERS:
+┌──────────────────────┬────────────────────────────────────────┐
+│  Q                   │  Spin Left (L1 Button)                 │
+│  E                   │  Spin Right (R1 Button)                │
+│  Z                   │  Modifier (L2 Button)                  │
+│  C                   │  Modifier (R2 Button)                  │
+└──────────────────────┴────────────────────────────────────────┘
+
+CAMERA CONTROL (Right Analog Stick):
+┌──────────────────────┬────────────────────────────────────────┐
+│  I                   │  Camera Up                             │
+│  K                   │  Camera Down                           │
+│  J                   │  Camera Left                           │
+│  L                   │  Camera Right                          │
+└──────────────────────┴────────────────────────────────────────┘
+
+MENU CONTROLS:
+┌──────────────────────┬────────────────────────────────────────┐
+│  Enter               │  Pause/Start Menu (Start Button)       │
+│  Tab                 │  View/Select Menu (Select Button)      │
+└──────────────────────┴────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                      BUTTON COMBINATIONS                            │
+└─────────────────────────────────────────────────────────────────────┘
+
+Common Trick Combinations:
+- Space             = Jump/Ollie
+- Space + Shift     = Jump + Grab Trick
+- Space + Ctrl      = Jump + Flip Trick
+- Space + Alt       = Jump + Special Trick
+- Q or E + Shift    = Spin + Grab
+- Q or E + Ctrl     = Spin + Flip
+- Space + Q/E       = Ollie + Spin
+
+Ground Tricks:
+- Shift             = Grind (when near rail/edge)
+- Ctrl              = Manual
+- Alt               = Revert
+
+Note: Multiple keys can be pressed simultaneously for complex trick combinations.
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                         LEGEND                                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+UP/DN/LFT/RGT = Movement directions
+C↑/C↓/C←/C→   = Camera control (I/J/K/L keys)
+L1/L2/R1/R2   = PlayStation controller shoulder buttons
+Square/Circle/Triangle = PlayStation face buttons
+X Button      = Jump/Ollie (Space key)
+
+Controller Button Names:
+- Square   = Grind/Grab button
+- Circle   = Flip trick button  
+- Triangle = Special/Nollie button
+- X (Cross)= Jump/Ollie button

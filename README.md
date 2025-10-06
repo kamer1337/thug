@@ -131,6 +131,7 @@ For more information about the project:
 - **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
+- **[docs/THUG2_QUICK_REFERENCE.md](docs/THUG2_QUICK_REFERENCE.md)** - ⭐ Quick THUG vs THUG2 comparison guide
 - **[docs/THUG2_RESEARCH.md](docs/THUG2_RESEARCH.md)** - THUG2 game similarities and comparison analysis
 - **[docs/THUG2_IMPLEMENTATION.md](docs/THUG2_IMPLEMENTATION.md)** - Technical guide for implementing THUG2 features
 - **[docs/subsystems/RECORDS.md](docs/subsystems/RECORDS.md)** - Records system documentation

@@ -13,6 +13,13 @@ This directory contains comprehensive documentation for the Tony Hawk's Undergro
 ## Research and Analysis
 
 ### THUG2 Research
+- **[THUG2_QUICK_REFERENCE.md](THUG2_QUICK_REFERENCE.md)** - ⭐ **Start here!** Quick comparison and reference guide
+  - At-a-glance comparison tables
+  - Feature lists and differences
+  - Implementation priorities
+  - Developer quick start guide
+  - Testing checklist
+
 - **[THUG2_RESEARCH.md](THUG2_RESEARCH.md)** - Comprehensive comparison between THUG and THUG2
   - Engine architecture similarities (70-80% code reuse)
   - Feature comparison matrix
@@ -50,9 +57,10 @@ Detailed documentation for specific game subsystems:
 4. Review [../ROADMAP.md](../ROADMAP.md) for development priorities
 
 ### For Researchers
-1. **THUG2 Comparison**: Start with [THUG2_RESEARCH.md](THUG2_RESEARCH.md)
-2. **Implementation Details**: See [THUG2_IMPLEMENTATION.md](THUG2_IMPLEMENTATION.md)
-3. **Specific Systems**: Browse [subsystems/](subsystems/) directory
+1. **THUG2 Quick Start**: Begin with [THUG2_QUICK_REFERENCE.md](THUG2_QUICK_REFERENCE.md)
+2. **THUG2 Full Comparison**: See [THUG2_RESEARCH.md](THUG2_RESEARCH.md)
+3. **Implementation Details**: Review [THUG2_IMPLEMENTATION.md](THUG2_IMPLEMENTATION.md)
+4. **Specific Systems**: Browse [subsystems/](subsystems/) directory
 
 ### For Developers
 1. **Architecture**: Review source code structure in [../README.md](../README.md)
@@ -64,11 +72,12 @@ Detailed documentation for specific game subsystems:
 
 ```
 docs/
-├── README.md                    # This file
-├── THUG2_RESEARCH.md           # THUG vs THUG2 comparison
-├── THUG2_IMPLEMENTATION.md     # Technical implementation guide
+├── README.md                       # This file
+├── THUG2_QUICK_REFERENCE.md       # Quick comparison guide ⭐ Start here!
+├── THUG2_RESEARCH.md              # Comprehensive THUG vs THUG2 analysis
+├── THUG2_IMPLEMENTATION.md        # Technical implementation guide
 └── subsystems/
-    └── RECORDS.md              # Records system documentation
+    └── RECORDS.md                 # Records system documentation
 ```
 
 ## Key Findings from THUG2 Research

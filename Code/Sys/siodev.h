@@ -190,7 +190,10 @@ private :
 #	endif // __PLAT_XBOX__
 
     void                    process( void );
-    void			        read_data ( void );         
+    void			        read_data ( void );
+#ifdef __PLAT_WN32__
+    void                    read_data_keyboard( void );  // Win32 keyboard input reading
+#endif
     void                    wait( void );
     void                    acquisition_pending( void );
     void                    query_capabilities( void );

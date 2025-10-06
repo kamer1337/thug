@@ -4,6 +4,8 @@ This directory contains the Vulcan renderer implementation for THUG.
 
 ## Quick Start
 
+For a quick API reference, see [QUICK_REFERENCE.md](QUICK_REFERENCE.md).
+
 For a comprehensive integration guide, see [INTEGRATION.md](INTEGRATION.md).
 
 For example usage code, see [example.cpp](example.cpp).
@@ -14,8 +16,9 @@ For example usage code, see [example.cpp](example.cpp).
 - `NX/render.cpp` - Implementation file with Vulkan rendering functions
 - `p_nxmodel.h` - Platform-specific model class header
 - `p_nxmodel.cpp` - Platform-specific model class implementation
-- `INTEGRATION.md` - **NEW** Comprehensive integration guide for using the renderer
-- `example.cpp` - **NEW** Example code demonstrating renderer usage
+- **`QUICK_REFERENCE.md`** - **NEW** Quick API reference for common operations
+- **`INTEGRATION.md`** - **NEW** Comprehensive integration guide for using the renderer
+- **`example.cpp`** - **NEW** Example code demonstrating renderer usage
 - `IMPLEMENTATION.md` - Detailed implementation status and function documentation
 - `README.md` - This file, providing an overview of the renderer
 

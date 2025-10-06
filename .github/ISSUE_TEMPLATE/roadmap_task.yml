@@ -1,0 +1,148 @@
+name: Roadmap Task
+description: Create an issue to work on a task from TASKS.md
+title: "[TASK-XXX-NNN] Task Title"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Working on a Roadmap Task
+        
+        Use this template to claim a task from [TASKS.md](https://github.com/kamer1337/thug/blob/main/TASKS.md).
+        
+        Before creating this issue:
+        1. Check if someone is already working on this task
+        2. Make sure you understand the requirements
+        3. Review [CREATING_PRS_FROM_ROADMAP.md](https://github.com/kamer1337/thug/blob/main/docs/CREATING_PRS_FROM_ROADMAP.md)
+        
+  - type: input
+    id: task-id
+    attributes:
+      label: Task ID
+      description: The task ID from TASKS.md (e.g., TASK-DOC-001)
+      placeholder: TASK-DOC-001
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: category
+    attributes:
+      label: Task Category
+      description: What category does this task belong to?
+      options:
+        - Documentation
+        - Build System
+        - Code Quality
+        - Testing
+        - Code Modernization
+        - Tooling
+        - Platform Support
+        - Advanced Features
+        - Community
+        - Reference Implementation
+        - Educational Content
+        - Algorithm Studies
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: Task priority from TASKS.md
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Complexity
+      description: Task complexity from TASKS.md
+      options:
+        - Low
+        - Medium
+        - High
+        - Very High
+    validations:
+      required: true
+      
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: Copy the description and requirements from TASKS.md
+      placeholder: |
+        Description from TASKS.md:
+        
+        Requirements:
+        - Requirement 1
+        - Requirement 2
+        
+        Files to create/modify:
+        - path/to/file.md
+    validations:
+      required: true
+      
+  - type: textarea
+    id: approach
+    attributes:
+      label: Your Approach
+      description: Outline how you plan to complete this task
+      placeholder: |
+        1. Study existing code/documentation
+        2. Create necessary files
+        3. Implement requirements
+        4. Test changes
+        5. Submit PR
+    validations:
+      required: false
+      
+  - type: textarea
+    id: questions
+    attributes:
+      label: Questions or Clarifications
+      description: Any questions about the task requirements?
+      placeholder: Questions about implementation details, preferred approach, etc.
+    validations:
+      required: false
+      
+  - type: input
+    id: timeline
+    attributes:
+      label: Estimated Timeline
+      description: When do you plan to complete this?
+      placeholder: "1 week"
+    validations:
+      required: false
+      
+  - type: textarea
+    id: related
+    attributes:
+      label: Related Issues/PRs
+      description: Link any related issues or PRs
+      placeholder: |
+        - Related to #123
+        - Depends on #456
+    validations:
+      required: false
+      
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have read TASKS.md and understand the requirements
+          required: true
+        - label: I have read CREATING_PRS_FROM_ROADMAP.md
+          required: true
+        - label: I have checked for duplicate issues
+          required: true
+        - label: I have reviewed CONTRIBUTING.md
+          required: true
+        - label: I have the necessary skills to complete this task
+          required: false

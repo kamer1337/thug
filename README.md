@@ -143,6 +143,7 @@ For more information about the project:
 
 ### Main Documentation
 - **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
+- **[TASKS.md](TASKS.md)** - ⭐ Discrete tasks ready for pull requests!
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
 - **[docs/README.md](docs/README.md)** - Complete documentation index
@@ -150,6 +151,7 @@ For more information about the project:
 ### Getting Started
 - **[docs/tutorials/GETTING_STARTED.md](docs/tutorials/GETTING_STARTED.md)** - ⭐ New contributors start here!
 - **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** - Contribution guidelines
+- **[docs/CREATING_PRS_FROM_ROADMAP.md](docs/CREATING_PRS_FROM_ROADMAP.md)** - How to create PRs from roadmap items
 - **[docs/CODE_STYLE.md](docs/CODE_STYLE.md)** - Coding standards
 
 ### Platform & Implementation

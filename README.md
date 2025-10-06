@@ -17,6 +17,19 @@ Code/
 └── Sys/        # System layer - file I/O, memory, platform abstractions
 ```
 
+## PC Controls
+
+This PC port now includes keyboard controls! See [PC Keyboard Controls Documentation](docs/PC_KEYBOARD_CONTROLS.md) for the complete control scheme.
+
+**Quick Reference:**
+- Movement: WASD or Arrow Keys
+- Jump: Space
+- Grind/Grab: Shift
+- Flip Tricks: Ctrl
+- Special: Alt
+- Camera: I/J/K/L
+- Pause: Enter
+
 ## Building
 
 This repository includes a CMake build system infrastructure. However, **the code cannot be built as-is** on modern systems due to several factors:

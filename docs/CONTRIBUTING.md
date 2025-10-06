@@ -4,6 +4,12 @@
 
 Thank you for your interest in contributing to the Tony Hawk's Underground source code repository! This document provides guidelines for contributing to the project.
 
+**Quick Links:**
+- **[TASKS.md](../TASKS.md)** - Browse ready-to-implement tasks
+- **[CREATING_PRS_FROM_ROADMAP.md](CREATING_PRS_FROM_ROADMAP.md)** - Learn how to create PRs from roadmap items
+- **[ROADMAP.md](../ROADMAP.md)** - View the project roadmap
+- **[tutorials/GETTING_STARTED.md](tutorials/GETTING_STARTED.md)** - Getting started guide
+
 ## Table of Contents
 
 - [Code of Conduct](#code-of-conduct)

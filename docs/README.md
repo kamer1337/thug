@@ -9,10 +9,12 @@ This directory contains comprehensive documentation for the Tony Hawk's Undergro
 - **[../BUILDING.md](../BUILDING.md)** - Build instructions and technical details
 - **[../CHANGES.md](../CHANGES.md)** - History of modifications and PC port conversion
 - **[../ROADMAP.md](../ROADMAP.md)** - Development roadmap and future plans
+- **[../TASKS.md](../TASKS.md)** - ⭐ Discrete tasks ready for pull requests!
 
 ### Development Guidelines
 - **[CODE_STYLE.md](CODE_STYLE.md)** - Coding standards and style guide
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute to the project
+- **[CREATING_PRS_FROM_ROADMAP.md](CREATING_PRS_FROM_ROADMAP.md)** - How to create PRs from roadmap items
 
 ## Research and Analysis
 
@@ -87,10 +89,12 @@ Step-by-step guides for getting started and learning the codebase:
 
 ### For New Contributors
 1. **Start here**: [tutorials/GETTING_STARTED.md](tutorials/GETTING_STARTED.md) - Complete beginner's guide
-2. Read [../README.md](../README.md) to understand the project
-3. Review [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
-4. Check [CODE_STYLE.md](CODE_STYLE.md) for coding standards
-5. See [../ROADMAP.md](../ROADMAP.md) for development priorities
+2. **Pick a task**: [../TASKS.md](../TASKS.md) - Ready-to-implement tasks
+3. **Learn the workflow**: [CREATING_PRS_FROM_ROADMAP.md](CREATING_PRS_FROM_ROADMAP.md) - How to create PRs
+4. Read [../README.md](../README.md) to understand the project
+5. Review [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
+6. Check [CODE_STYLE.md](CODE_STYLE.md) for coding standards
+7. See [../ROADMAP.md](../ROADMAP.md) for development priorities
 
 ### For Researchers
 1. **THUG2 Quick Start**: Begin with [THUG2_QUICK_REFERENCE.md](THUG2_QUICK_REFERENCE.md)
@@ -100,13 +104,15 @@ Step-by-step guides for getting started and learning the codebase:
 
 ### For Developers
 1. **Getting Started**: Begin with [tutorials/GETTING_STARTED.md](tutorials/GETTING_STARTED.md)
-2. **Architecture**: Review source code structure in [../README.md](../README.md)
-3. **Build System**: Follow [../BUILDING.md](../BUILDING.md)
-4. **Platform Code**: See [platforms/WIN32.md](platforms/WIN32.md) for Win32 implementation
-5. **Stub Functions**: Check [platforms/STUB_FUNCTIONS.md](platforms/STUB_FUNCTIONS.md) for implementation tasks
-6. **Code Style**: Follow [CODE_STYLE.md](CODE_STYLE.md) standards
-7. **Subsystems**: Study [subsystems/](subsystems/) documentation
-8. **Extensions**: Use [THUG2_IMPLEMENTATION.md](THUG2_IMPLEMENTATION.md) as a guide
+2. **Pick a Task**: Choose from [../TASKS.md](../TASKS.md)
+3. **Create a PR**: Follow [CREATING_PRS_FROM_ROADMAP.md](CREATING_PRS_FROM_ROADMAP.md)
+4. **Architecture**: Review source code structure in [../README.md](../README.md)
+5. **Build System**: Follow [../BUILDING.md](../BUILDING.md)
+6. **Platform Code**: See [platforms/WIN32.md](platforms/WIN32.md) for Win32 implementation
+7. **Stub Functions**: Check [platforms/STUB_FUNCTIONS.md](platforms/STUB_FUNCTIONS.md) for implementation tasks
+8. **Code Style**: Follow [CODE_STYLE.md](CODE_STYLE.md) standards
+9. **Subsystems**: Study [subsystems/](subsystems/) documentation
+10. **Extensions**: Use [THUG2_IMPLEMENTATION.md](THUG2_IMPLEMENTATION.md) as a guide
 
 ## Documentation Structure
 
@@ -115,6 +121,7 @@ docs/
 ├── README.md                       # This file
 ├── CODE_STYLE.md                  # Coding standards and style guide
 ├── CONTRIBUTING.md                # Contribution guidelines
+├── CREATING_PRS_FROM_ROADMAP.md   # How to create PRs from roadmap
 ├── THUG2_QUICK_REFERENCE.md       # Quick comparison guide ⭐ Start here!
 ├── THUG2_RESEARCH.md              # Comprehensive THUG vs THUG2 analysis
 ├── THUG2_IMPLEMENTATION.md        # Technical implementation guide

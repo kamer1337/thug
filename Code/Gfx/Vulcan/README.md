@@ -2,12 +2,70 @@
 
 This directory contains the Vulcan renderer implementation for THUG.
 
+## Quick Start
+
+For a quick API reference, see [QUICK_REFERENCE.md](QUICK_REFERENCE.md).
+
+For a comprehensive integration guide, see [INTEGRATION.md](INTEGRATION.md).
+
+For example usage code, see [example.cpp](example.cpp).
+
 ## Structure
 
 - `NX/render.h` - Header file defining the Vulcan rendering interface
 - `NX/render.cpp` - Implementation file with Vulkan rendering functions
 - `p_nxmodel.h` - Platform-specific model class header
 - `p_nxmodel.cpp` - Platform-specific model class implementation
+- **`QUICK_REFERENCE.md`** - **NEW** Quick API reference for common operations
+- **`INTEGRATION.md`** - **NEW** Comprehensive integration guide for using the renderer
+- **`example.cpp`** - **NEW** Example code demonstrating renderer usage
+- `IMPLEMENTATION.md` - Detailed implementation status and function documentation
+- `README.md` - This file, providing an overview of the renderer
+
+## Getting Started
+
+### 1. Read the Integration Guide
+
+Start with [INTEGRATION.md](INTEGRATION.md) for a comprehensive guide on:
+- How to initialize and use the renderer
+- API reference and examples
+- Scene and mesh management
+- Texture handling
+- Camera setup
+- Rendering pipeline
+- Best practices
+
+### 2. Study the Examples
+
+Review [example.cpp](example.cpp) which contains 10 complete examples showing:
+- Basic initialization and cleanup
+- Scene and mesh creation
+- Texture management
+- Camera configuration
+- Render states and blend modes
+- Complete rendering pipeline
+- Frustum culling
+- Using CVulcanModel
+
+### 3. Build with Vulkan Support
+
+To enable the Vulkan renderer in your build:
+
+```bash
+mkdir build && cd build
+cmake -DUSE_VULKAN_RENDERER=ON ..
+cmake --build .
+```
+
+**Note**: The current implementation won't compile due to base code compatibility issues. See BUILDING.md in the repository root for details.
+
+### 4. Explore the Implementation
+
+Review the source files:
+- `NX/render.h` - Complete API definitions
+- `NX/render.cpp` - Implementation with stubs for GPU operations
+- `p_nxmodel.h/cpp` - Platform-specific model class
+- `IMPLEMENTATION.md` - Detailed implementation documentation
 
 ## Implementation Status
 

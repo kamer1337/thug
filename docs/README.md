@@ -73,28 +73,13 @@ Detailed documentation for specific game subsystems:
   - Usage examples
   - Integration with game systems
 
-## Tutorials and Guides
-
-### [tutorials/](tutorials/)
-Step-by-step guides for getting started and learning the codebase:
-
-- **[GETTING_STARTED.md](tutorials/GETTING_STARTED.md)** - ⭐ **New contributors start here!**
-  - Setting up development environment
-  - Understanding the codebase
-  - Building the project
-  - Making your first contribution
-  - Exploring the code structure
-
 ## Quick Reference
 
 ### For New Contributors
-1. **Start here**: [tutorials/GETTING_STARTED.md](tutorials/GETTING_STARTED.md) - Complete beginner's guide
-2. **Pick a task**: [../TASKS.md](../TASKS.md) - Ready-to-implement tasks
-3. **Learn the workflow**: [CREATING_PRS_FROM_ROADMAP.md](CREATING_PRS_FROM_ROADMAP.md) - How to create PRs
-4. Read [../README.md](../README.md) to understand the project
-5. Review [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
-6. Check [CODE_STYLE.md](CODE_STYLE.md) for coding standards
-7. See [../ROADMAP.md](../ROADMAP.md) for development priorities
+1. Start with [../README.md](../README.md) to understand the project
+2. Read [../BUILDING.md](../BUILDING.md) for technical setup
+3. Check [../CHANGES.md](../CHANGES.md) to understand what's been modified
+4. Review [../ROADMAP.md](../ROADMAP.md) for development priorities
 
 ### For Researchers
 1. **THUG2 Quick Start**: Begin with [THUG2_QUICK_REFERENCE.md](THUG2_QUICK_REFERENCE.md)
@@ -103,16 +88,10 @@ Step-by-step guides for getting started and learning the codebase:
 4. **Specific Systems**: Browse [subsystems/](subsystems/) directory
 
 ### For Developers
-1. **Getting Started**: Begin with [tutorials/GETTING_STARTED.md](tutorials/GETTING_STARTED.md)
-2. **Pick a Task**: Choose from [../TASKS.md](../TASKS.md)
-3. **Create a PR**: Follow [CREATING_PRS_FROM_ROADMAP.md](CREATING_PRS_FROM_ROADMAP.md)
-4. **Architecture**: Review source code structure in [../README.md](../README.md)
-5. **Build System**: Follow [../BUILDING.md](../BUILDING.md)
-6. **Platform Code**: See [platforms/WIN32.md](platforms/WIN32.md) for Win32 implementation
-7. **Stub Functions**: Check [platforms/STUB_FUNCTIONS.md](platforms/STUB_FUNCTIONS.md) for implementation tasks
-8. **Code Style**: Follow [CODE_STYLE.md](CODE_STYLE.md) standards
-9. **Subsystems**: Study [subsystems/](subsystems/) documentation
-10. **Extensions**: Use [THUG2_IMPLEMENTATION.md](THUG2_IMPLEMENTATION.md) as a guide
+1. **Architecture**: Review source code structure in [../README.md](../README.md)
+2. **Build System**: Follow [../BUILDING.md](../BUILDING.md)
+3. **Subsystems**: Study [subsystems/](subsystems/) documentation
+4. **Extensions**: Use [THUG2_IMPLEMENTATION.md](THUG2_IMPLEMENTATION.md) as a guide
 
 ## Documentation Structure
 

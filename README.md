@@ -13,11 +13,27 @@ Code/
 ├── Core/       # Core utilities, data structures, debug systems
 ├── Gel/        # Game Engine Layer - modules, scripting, assets
 ├── Gfx/        # Graphics engine and rendering
+│   └── Vulcan/ # Vulkan renderer (fully documented, see docs/VULKAN_RENDERER.md)
 ├── Sk/         # Skate-specific game logic, objects, modules
 └── Sys/        # System layer - file I/O, memory, platform abstractions
 ```
 
-## PC Controls
+## Features
+
+### Vulkan Renderer 🎨
+
+This repository includes a complete Vulkan renderer implementation with:
+- ✅ Full API documentation and integration guide
+- ✅ 10 working code examples
+- ✅ CMake build integration
+- ✅ Complete software architecture
+- 🔨 GPU operations stubbed (ready for Vulkan API implementation)
+
+See **[docs/VULKAN_RENDERER.md](docs/VULKAN_RENDERER.md)** for complete details.
+
+Quick start: `Code/Gfx/Vulcan/QUICK_REFERENCE.md`
+
+### PC Controls ⌨️
 
 This PC port now includes keyboard controls! See [PC Keyboard Controls Documentation](docs/PC_KEYBOARD_CONTROLS.md) for the complete control scheme.
 
@@ -56,7 +72,13 @@ A CMakeLists.txt is provided as a starting point for modern compilation efforts:
 ```bash
 mkdir build
 cd build
+
+# Standard build
 cmake ..
+
+# Or enable Vulkan renderer (experimental)
+cmake -DUSE_VULKAN_RENDERER=ON ..
+
 cmake --build .
 ```
 
@@ -146,25 +168,20 @@ For more information about the project:
 - **[TASKS.md](TASKS.md)** - ⭐ Discrete tasks ready for pull requests!
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
-- **[docs/README.md](docs/README.md)** - Complete documentation index
-
-### Getting Started
-- **[docs/tutorials/GETTING_STARTED.md](docs/tutorials/GETTING_STARTED.md)** - ⭐ New contributors start here!
-- **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** - Contribution guidelines
-- **[docs/CREATING_PRS_FROM_ROADMAP.md](docs/CREATING_PRS_FROM_ROADMAP.md)** - How to create PRs from roadmap items
-- **[docs/CODE_STYLE.md](docs/CODE_STYLE.md)** - Coding standards
-
-### Platform & Implementation
-- **[docs/platforms/WIN32.md](docs/platforms/WIN32.md)** - Windows platform documentation
-- **[docs/platforms/STUB_FUNCTIONS.md](docs/platforms/STUB_FUNCTIONS.md)** - Stub functions catalog
-
-### Research & Analysis
-- **[docs/THUG2_QUICK_REFERENCE.md](docs/THUG2_QUICK_REFERENCE.md)** - Quick THUG vs THUG2 comparison guide
+- **[docs/VULKAN_RENDERER.md](docs/VULKAN_RENDERER.md)** - Vulkan renderer documentation and integration guide
+- **[docs/THUG2_QUICK_REFERENCE.md](docs/THUG2_QUICK_REFERENCE.md)** - ⭐ Quick THUG vs THUG2 comparison guide
 - **[docs/THUG2_RESEARCH.md](docs/THUG2_RESEARCH.md)** - THUG2 game similarities and comparison analysis
 - **[docs/THUG2_IMPLEMENTATION.md](docs/THUG2_IMPLEMENTATION.md)** - Technical guide for implementing THUG2 features
-
-### Subsystems
 - **[docs/subsystems/RECORDS.md](docs/subsystems/RECORDS.md)** - Records system documentation
+
+### Vulkan Renderer Documentation
+
+The Vulkan renderer is fully documented with multiple resources:
+- `Code/Gfx/Vulcan/QUICK_REFERENCE.md` - Quick API reference
+- `Code/Gfx/Vulcan/INTEGRATION.md` - Comprehensive integration guide
+- `Code/Gfx/Vulcan/example.cpp` - 10 working examples
+- `Code/Gfx/Vulcan/IMPLEMENTATION.md` - Implementation status details
+- `docs/VULKAN_RENDERER.md` - Complete summary
 
 ## Resources
 

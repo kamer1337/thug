@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/kamer1337/thug/blob/main/README.md
+    about: Check the documentation for guides and information
+  - name: Contributing Guidelines
+    url: https://github.com/kamer1337/thug/blob/main/docs/CONTRIBUTING.md
+    about: Learn how to contribute to the project
+  - name: Roadmap
+    url: https://github.com/kamer1337/thug/blob/main/ROADMAP.md
+    about: View the project roadmap and future plans
+  - name: Task List
+    url: https://github.com/kamer1337/thug/blob/main/TASKS.md
+    about: Browse discrete tasks ready for implementation

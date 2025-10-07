@@ -9,6 +9,12 @@ This directory contains comprehensive documentation for the Tony Hawk's Undergro
 - **[../BUILDING.md](../BUILDING.md)** - Build instructions and technical details
 - **[../CHANGES.md](../CHANGES.md)** - History of modifications and PC port conversion
 - **[../ROADMAP.md](../ROADMAP.md)** - Development roadmap and future plans
+- **[../TASKS.md](../TASKS.md)** - ⭐ Discrete tasks ready for pull requests!
+
+### Development Guidelines
+- **[CODE_STYLE.md](CODE_STYLE.md)** - Coding standards and style guide
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute to the project
+- **[CREATING_PRS_FROM_ROADMAP.md](CREATING_PRS_FROM_ROADMAP.md)** - How to create PRs from roadmap items
 
 ## Research and Analysis
 
@@ -36,6 +42,25 @@ This directory contains comprehensive documentation for the Tony Hawk's Undergro
   - Script extensions and QB commands
   - Network protocol changes
   - Performance optimization strategies
+
+## Platform Documentation
+
+### [platforms/](platforms/)
+Platform-specific implementation details:
+
+- **[WIN32.md](platforms/WIN32.md)** - Windows platform documentation
+  - Platform overview and requirements
+  - Win32 API usage
+  - Graphics implementation (DirectX 8)
+  - Audio system (DirectSound)
+  - Current implementation status
+  - Development guidelines
+
+- **[STUB_FUNCTIONS.md](platforms/STUB_FUNCTIONS.md)** - Stub functions catalog
+  - Complete list of unimplemented functions
+  - Implementation priorities
+  - Testing strategies
+  - Resources for implementation
 
 ## Subsystem Documentation
 
@@ -73,11 +98,19 @@ Detailed documentation for specific game subsystems:
 ```
 docs/
 ├── README.md                       # This file
+├── CODE_STYLE.md                  # Coding standards and style guide
+├── CONTRIBUTING.md                # Contribution guidelines
+├── CREATING_PRS_FROM_ROADMAP.md   # How to create PRs from roadmap
 ├── THUG2_QUICK_REFERENCE.md       # Quick comparison guide ⭐ Start here!
 ├── THUG2_RESEARCH.md              # Comprehensive THUG vs THUG2 analysis
 ├── THUG2_IMPLEMENTATION.md        # Technical implementation guide
-└── subsystems/
-    └── RECORDS.md                 # Records system documentation
+├── platforms/                      # Platform-specific documentation
+│   ├── WIN32.md                   # Windows platform documentation
+│   └── STUB_FUNCTIONS.md          # Stub functions catalog
+├── subsystems/                     # Subsystem documentation
+│   └── RECORDS.md                 # Records system documentation
+└── tutorials/                      # Tutorials and guides
+    └── GETTING_STARTED.md         # Getting started guide
 ```
 
 ## Key Findings from THUG2 Research

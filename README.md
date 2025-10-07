@@ -163,7 +163,9 @@ The original code is proprietary. This repository is for preservation and educat
 
 For more information about the project:
 
+### Main Documentation
 - **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
+- **[TASKS.md](TASKS.md)** - ⭐ Discrete tasks ready for pull requests!
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
 - **[docs/VULKAN_RENDERER.md](docs/VULKAN_RENDERER.md)** - Vulkan renderer documentation and integration guide

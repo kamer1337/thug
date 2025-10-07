@@ -1,0 +1,116 @@
+name: Feature Request
+description: Suggest a new feature or improvement (not in roadmap)
+title: "[FEATURE] Brief description"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Feature Request
+        
+        Before creating a feature request:
+        - Check [TASKS.md](https://github.com/kamer1337/thug/blob/main/TASKS.md) to see if this is already planned
+        - Check [ROADMAP.md](https://github.com/kamer1337/thug/blob/main/ROADMAP.md) for future plans
+        - If it's already planned, use the "Roadmap Task" template instead
+        
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Need
+      description: What problem does this feature solve? Why is it needed?
+      placeholder: Describe the problem or need this feature addresses
+    validations:
+      required: true
+      
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your proposed solution
+      placeholder: How would this feature work?
+    validations:
+      required: true
+      
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions?
+      placeholder: Other approaches you've thought about
+    validations:
+      required: false
+      
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What category does this feature belong to?
+      options:
+        - Documentation
+        - Build System
+        - Code Quality/Tooling
+        - Testing
+        - Platform Support
+        - Graphics/Rendering
+        - Audio
+        - Physics
+        - Scripting
+        - Networking
+        - Community/Process
+        - Other
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Suggested Priority
+      description: How important is this feature?
+      options:
+        - Critical (blocking work)
+        - High (important improvement)
+        - Medium (nice to have)
+        - Low (minor enhancement)
+    validations:
+      required: true
+      
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefits
+      description: What are the benefits of implementing this feature?
+      placeholder: |
+        - Benefit 1
+        - Benefit 2
+    validations:
+      required: true
+      
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Details
+      description: Do you have ideas about how to implement this?
+      placeholder: Technical details, files to modify, etc.
+    validations:
+      required: false
+      
+  - type: textarea
+    id: effort
+    attributes:
+      label: Estimated Effort
+      description: How much work do you think this would take?
+      placeholder: e.g., "A few hours", "Several days", "Unknown"
+    validations:
+      required: false
+      
+  - type: checkboxes
+    id: volunteer
+    attributes:
+      label: Contribution
+      options:
+        - label: I would be willing to implement this feature myself
+          required: false
+        - label: I can help test this feature
+          required: false
+        - label: I can help review this feature
+          required: false

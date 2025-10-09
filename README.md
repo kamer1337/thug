@@ -168,6 +168,9 @@ For more information about the project:
 - **[TASKS.md](TASKS.md)** - ⭐ Discrete tasks ready for pull requests!
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
+- **[LEGAL.md](LEGAL.md)** - Legal information, disclaimers, and copyright notices
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - ⭐ System architecture and design overview
+- **[docs/GAME_LOOP.md](docs/GAME_LOOP.md)** - Frame processing and update cycle details
 - **[docs/VULKAN_RENDERER.md](docs/VULKAN_RENDERER.md)** - Vulkan renderer documentation and integration guide
 - **[docs/THUG2_QUICK_REFERENCE.md](docs/THUG2_QUICK_REFERENCE.md)** - ⭐ Quick THUG vs THUG2 comparison guide
 - **[docs/THUG2_RESEARCH.md](docs/THUG2_RESEARCH.md)** - THUG2 game similarities and comparison analysis

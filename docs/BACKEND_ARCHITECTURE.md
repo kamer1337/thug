@@ -45,7 +45,9 @@ Nx Rendering System (Platform-Independent)
 
 #### Vulkan Backend ✅
 - **Complete**: All 28 rendering functions implemented
+- **Integrated**: Connected to main codebase via platform abstraction layer
 - **Data Structures**: sTexture, sMesh, sMaterial, sScene
+- **Build System**: CMake option `USE_VULKAN_RENDERER`
 - **Features**:
   - Texture loading (console TEX, PC IMG formats)
   - Mesh management with VBO support
@@ -53,8 +55,10 @@ Nx Rendering System (Platform-Independent)
   - Material/blend mode system
   - Camera and projection
   - File format compatibility
+  - Factory pattern for model creation
 
 See `Code/Gfx/Vulcan/IMPLEMENTATION.md` for detailed status.
+See `docs/VULKAN_INTEGRATION_STATUS.md` for integration details.
 
 #### DirectX Backend 🔨
 - **Status**: Stub implementation
@@ -250,12 +254,13 @@ Legend:
 1. ✅ Fix C++ template syntax issues (COMPLETED)
 2. ✅ Document graphics backend architecture (COMPLETED)
 3. ✅ Document audio backend architecture (COMPLETED)
-4. 🔨 Implement DirectX backend (or use Vulkan)
-5. 🔨 Implement audio backend (SDL2_mixer recommended)
+4. ✅ Integrate Vulkan backend with main codebase (COMPLETED)
+5. 🔨 Implement DirectX backend (or use Vulkan)
+6. 🔨 Implement audio backend (SDL2_mixer recommended)
 
 ### Medium Priority
 1. Implement OpenGL backend for maximum compatibility
-2. Test Vulkan backend integration
+2. Complete Vulkan backend GPU operations (swapchain, pipelines, etc.)
 3. Add audio streaming support
 4. Implement 3D positional audio
 

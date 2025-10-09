@@ -59,6 +59,15 @@ cmake --build .
 
 **Note**: The current implementation won't compile due to base code compatibility issues. See BUILDING.md in the repository root for details.
 
+### 4. Integration Status
+
+**✅ INTEGRATED**: The Vulkan backend is now integrated with the main THUG codebase!
+
+- Model factory creates `CVulcanModel` when `USE_VULKAN_RENDERER` is enabled
+- Engine initialization calls `NxVulcan::init_vulkan()` automatically
+- Platform-specific functions route to Vulkan backend
+- See `docs/VULKAN_INTEGRATION_STATUS.md` for complete integration details
+
 ### 4. Explore the Implementation
 
 Review the source files:

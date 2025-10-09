@@ -9,6 +9,10 @@ set(CMAKE_C_STANDARD 99)
 # Renderer options
 option(USE_VULKAN_RENDERER "Use Vulkan renderer backend (experimental)" OFF)
 
+# Audio options
+option(USE_OPENAL "Use OpenAL audio backend" ON)
+option(USE_SDL_MIXER "Use SDL2_mixer audio backend" OFF)
+
 # Compiler options
 if(MSVC)
     add_compile_options(/W3)
@@ -61,6 +65,34 @@ if(USE_VULKAN_RENDERER)
         include_directories(${Vulkan_INCLUDE_DIRS})
     else()
         message(STATUS "Vulkan SDK not found (optional for current implementation)")
+    endif()
+endif()
+
+# Audio backend configuration
+if(USE_OPENAL)
+    message(STATUS "OpenAL audio backend enabled")
+    add_definitions(-DUSE_OPENAL)
+    
+    # Try to find OpenAL
+    find_package(OpenAL QUIET)
+    if(OpenAL_FOUND)
+        message(STATUS "OpenAL found: ${OPENAL_LIBRARY}")
+        include_directories(${OPENAL_INCLUDE_DIR})
+    else()
+        message(WARNING "OpenAL not found - audio will be disabled")
+    endif()
+endif()
+
+if(USE_SDL_MIXER)
+    message(STATUS "SDL2_mixer audio backend enabled")
+    add_definitions(-DUSE_SDL_MIXER)
+    
+    # Try to find SDL2_mixer
+    find_package(SDL2_mixer QUIET)
+    if(SDL2_mixer_FOUND)
+        message(STATUS "SDL2_mixer found")
+    else()
+        message(WARNING "SDL2_mixer not found - audio will be disabled")
     endif()
 endif()
 
@@ -119,6 +151,18 @@ endif()
 if(USE_VULKAN_RENDERER AND Vulkan_FOUND)
     target_link_libraries(thug ${Vulkan_LIBRARIES})
     message(STATUS "Vulkan library linked: ${Vulkan_LIBRARIES}")
+endif()
+
+# Link OpenAL if available and enabled
+if(USE_OPENAL AND OpenAL_FOUND)
+    target_link_libraries(thug ${OPENAL_LIBRARY})
+    message(STATUS "OpenAL library linked: ${OPENAL_LIBRARY}")
+endif()
+
+# Link SDL2_mixer if available and enabled
+if(USE_SDL_MIXER AND SDL2_mixer_FOUND)
+    target_link_libraries(thug ${SDL2_MIXER_LIBRARIES})
+    message(STATUS "SDL2_mixer library linked")
 endif()
 
 # Installation

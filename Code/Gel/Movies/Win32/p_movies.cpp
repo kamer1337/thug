@@ -8,53 +8,66 @@
 **																			**
 **	Project:		GEL (Game Engine Library)								**
 **																			**
-**	Module:			Music (Pcm)												**
+**	Module:			Movies													**
 **																			**
-**	File name:		p_music.h												**
+**	File name:		p_movies.cpp											**
 **																			**
 **	Created by:		PC Port													**
 **																			**
-**	Description:	PC platform music stub									**
+**	Description:	PC platform movies stub implementations					**
 **																			**
 *****************************************************************************/
-
-#ifndef __GEL_MUSIC_P_MUSIC_H
-#define __GEL_MUSIC_P_MUSIC_H
 
 /*****************************************************************************
 **							  	  Includes									**
 *****************************************************************************/
 
-#ifndef __CORE_DEFINES_H
+#include <gel/movies/Win32/p_movies.h>
 #include <core/defines.h>
-#endif
 
 /*****************************************************************************
 **								   Defines									**
 *****************************************************************************/
 
-namespace Pcm
+namespace Flx
 {
 
 /*****************************************************************************
-**							   Public Prototypes							**
+**							   Private Data									**
 *****************************************************************************/
 
-// PC platform music functions
-void	PCMAudio_Init( void );
-void	PCMAudio_Deinit( void );
-void	PCMAudio_Update( void );
-bool	PCMAudio_TrackExists( const char* nameOfFile, int trackNumber = 0 );
-bool	PCMAudio_LoadMusicHeader( const char* nameOfFile );
-bool	PCMAudio_PreLoadMusicStream( uint32 checksum );
-bool	PCMAudio_StartStreaming( void );
-bool	PCMAudio_StopStreaming( bool wait_for_last_write = true );
-bool	PCMAudio_PauseStream( bool pause );
-bool	PCMAudio_SetVolume( float volume );
-float	PCMAudio_GetVolume( void );
-void	PCMAudio_SetMusicVolume( float volume );
-float	PCMAudio_GetMusicVolume( void );
+static bool s_movie_playing = false;
 
-} // namespace Pcm
+/*****************************************************************************
+**							   Public Functions								**
+*****************************************************************************/
 
-#endif	// __GEL_MUSIC_P_MUSIC_H
+// Play a movie file
+bool PlayMovie( const char* pMovieName )
+{
+	// PC stub - movie playback not implemented
+	// In a full implementation, this would use Windows Media Foundation or FFmpeg
+	s_movie_playing = false;
+	return false;
+}
+
+// Check if a movie is currently playing
+bool IsPlayingMovie( void )
+{
+	return s_movie_playing;
+}
+
+// Stop the currently playing movie
+void StopMovie( void )
+{
+	// PC stub - movie playback not implemented
+	s_movie_playing = false;
+}
+
+// Pause/unpause the currently playing movie
+void PauseMovie( bool pause )
+{
+	// PC stub - movie playback not implemented
+}
+
+} // namespace Flx

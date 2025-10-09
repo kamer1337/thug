@@ -192,7 +192,18 @@ typedef signed long long	sint128;
 
 #endif
 
-#if defined(__PLAT_NGPS__) || defined(__PLAT_XBOX__) || defined(__PLAT_NGC__) || defined(__PLAT_WN32__)
+// Linux/Unix PC Port - use standard integer types
+#if defined(__PLAT_LINUX__) || defined(__PLAT_MACOS__)
+typedef int					int32;
+typedef unsigned int		uint32;
+typedef signed int			sint32;
+typedef long long			int64;
+typedef unsigned long long	uint64;
+typedef signed long long	sint64;
+
+#endif
+
+#if defined(__PLAT_NGPS__) || defined(__PLAT_XBOX__) || defined(__PLAT_NGC__) || defined(__PLAT_WN32__) || defined(__PLAT_LINUX__) || defined(__PLAT_MACOS__)
 
 class ostream
 {

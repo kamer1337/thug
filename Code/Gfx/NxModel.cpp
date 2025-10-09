@@ -29,6 +29,11 @@
 
 #include <sys/file/filesys.h>
 
+// Platform-specific model implementation
+#ifdef USE_VULKAN_RENDERER
+#include <gfx/Vulcan/p_nxmodel.h>
+#endif		// USE_VULKAN_RENDERER
+
 namespace Nx
 {
 	
@@ -1651,6 +1656,34 @@ void CModel::EnableShadowVolume( bool enabled )
 /*                                                                */
 /*                                                                */
 /******************************************************************/
+
+/*****************************************************************************
+**							Platform-Specific Functions						**
+*****************************************************************************/
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CModel* CEngine::s_plat_init_model()
+{
+#ifdef USE_VULKAN_RENDERER
+	return new CVulcanModel();
+#else
+	// Fallback to default implementation
+	return new CModel();
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool CEngine::s_plat_uninit_model(CModel* pModel)
+{
+	delete pModel;
+	return true;
+}
 
 } // Nx
 

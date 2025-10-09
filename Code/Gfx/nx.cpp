@@ -28,6 +28,11 @@
 #include <gfx/ngc/p_nxscene.h>
 #endif		// __PLAT_NGC__
 
+// Graphics backend includes
+#ifdef USE_VULKAN_RENDERER
+#include <gfx/Vulcan/NX/render.h>
+#endif		// USE_VULKAN_RENDERER
+
 //#include <sk/modules/skate/skate.h>		// For getting list of movable objects
 
 #include <sys/replay/replay.h>
@@ -1315,7 +1320,138 @@ void	CEngine::sSetColorBufferClear(bool clear)
 	s_plat_set_color_buffer_clear( clear );
 }
 
+/*****************************************************************************
+**							Platform-Specific Functions						**
+*****************************************************************************/
 
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_start_engine()
+{
+#ifdef USE_VULKAN_RENDERER
+	// Initialize Vulkan graphics backend
+	if (!NxVulcan::init_vulkan())
+	{
+		Dbg_Message("Warning: Failed to initialize Vulkan renderer, falling back to stub mode");
+	}
+	else
+	{
+		Dbg_Message("Vulkan renderer initialized successfully");
+	}
+#endif
+	// Other platform-specific initialization can go here
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_suspend_engine()
+{
+	// Stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_resumeEngine()
+{
+	// Stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_pre_render()
+{
+	// Stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_post_render()
+{
+	// Stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_render_world()
+{
+	// Stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_set_screen_blur(uint32 amount)
+{
+	// Stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_set_letterbox(bool letterbox)
+{
+	// Stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_set_color_buffer_clear(bool clear)
+{
+	// Stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CGeom* CEngine::s_plat_init_geom()
+{
+	return new CGeom();
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool CEngine::s_plat_uninit_geom(CGeom* pGeom)
+{
+	delete pGeom;
+	return true;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CQuickAnim* CEngine::s_plat_init_quick_anim()
+{
+	return new CQuickAnim();
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_uninit_quick_anim(CQuickAnim* pQuickAnim)
+{
+	delete pQuickAnim;
+}
 
 } // namespace Nx
 

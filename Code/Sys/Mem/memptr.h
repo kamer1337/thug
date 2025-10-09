@@ -148,7 +148,7 @@ public :
 /******************************************************************/
 
 template < class _T > inline   
-PtrToConst< _T >::PtrToConst< _T >( const _T* ptr ) 
+PtrToConst< _T >::PtrToConst( const _T* ptr ) 
 : m_const_ptr ( ptr )
 {
 	
@@ -203,7 +203,7 @@ PtrToConst< _T >&		PtrToConst< _T >::operator= ( const PtrToConst< _T >& rhs )
 /******************************************************************/
 	
 template < class _T > template < class _NewT > inline
-PtrToConst< _T >::PtrToConst< _T >( const PtrToConst< _NewT >& rhs )
+PtrToConst< _T >::PtrToConst( const PtrToConst< _NewT >& rhs )
 : m_const_ptr ( rhs.Addr() )
 {
 	

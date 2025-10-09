@@ -47,6 +47,63 @@ A `CMakeLists.txt` has been created that:
 - Collects source files automatically from Win32/Wn32 directories
 - Sets up include directories
 - Provides debug/release build configurations
+- **NEW**: Modular platform-specific compilation flags (see `cmake/platform_flags.cmake`)
+- **NEW**: Optional feature flags for profiling, memory debugging, etc.
+- **NEW**: Documentation build targets
+
+#### Build Configuration Options
+
+The build system now supports several configuration options:
+
+**Build Types:**
+```bash
+cmake -DCMAKE_BUILD_TYPE=Debug ..      # Debug build with assertions
+cmake -DCMAKE_BUILD_TYPE=Release ..    # Optimized release build
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo .. # Release with debug info
+cmake -DCMAKE_BUILD_TYPE=MinSizeRel .. # Size-optimized build
+```
+
+**Optional Features:**
+```bash
+# Enable Vulkan renderer (experimental)
+cmake -DUSE_VULKAN_RENDERER=ON ..
+
+# Enable performance profiling
+cmake -DENABLE_PROFILING=ON ..
+
+# Enable memory allocation debugging
+cmake -DENABLE_MEMORY_DEBUG=ON ..
+
+# Enable script system debugging
+cmake -DENABLE_SCRIPT_DEBUG=ON ..
+```
+
+**Combine Options:**
+```bash
+cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_PROFILING=ON ..
+```
+
+#### Platform Detection
+
+The build system automatically detects:
+- **Operating System**: Windows, Linux, macOS
+- **Architecture**: x86 (32-bit) or x64 (64-bit)
+- **Compiler**: MSVC, GCC, Clang
+
+Platform-specific macros are automatically defined:
+- `__PLAT_WN32__` - Windows platform
+- `__PLAT_LINUX__` - Linux platform
+- `__PLAT_MACOS__` - macOS platform
+- `__ARCH_X86__` - 32-bit architecture
+- `__ARCH_X64__` - 64-bit architecture
+
+Debug builds automatically enable:
+- `__NOPT_DEBUG__` - Debug mode
+- `__NOPT_ASSERT__` - Enable assertions
+- `__NOPT_MESSAGES__` - Enable debug messages
+
+Release builds enable:
+- `__NOPT_FINAL__` - Final release mode
 
 ### 2. Case-Sensitivity Fixes
 
@@ -172,6 +229,12 @@ This would require:
 
 ## Attempting a Build
 
+### Prerequisites
+
+- CMake 3.10 or later
+- C++11 compatible compiler (GCC 7+, Clang 5+, MSVC 2015+)
+- (Optional) Doxygen for documentation generation
+
 ### Step 1: Configure
 
 ```bash
@@ -180,7 +243,21 @@ mkdir build && cd build
 cmake ..
 ```
 
-This will succeed - CMake can configure the build.
+This will succeed - CMake can configure the build and display platform information:
+```
+-- Platform: Linux (x64)
+-- Build type: Debug
+-- Compiler: GCC 13.3.0
+```
+
+You can specify build options during configuration:
+```bash
+# Release build with profiling
+cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_PROFILING=ON ..
+
+# Debug build with memory debugging
+cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_MEMORY_DEBUG=ON ..
+```
 
 ### Step 2: Build
 
@@ -193,7 +270,21 @@ This will fail with errors like:
 - "'sint32' does not name a type"
 - Missing platform headers
 
-### Step 3: Understanding the Errors
+### Step 3: Build Documentation (Always Available)
+
+Even if the main build fails, you can build documentation:
+
+```bash
+# View available documentation files
+cmake --build . --target markdown_docs
+
+# Generate HTML documentation (if Doxygen is installed)
+cmake --build . --target docs
+```
+
+The markdown documentation target shows all available documentation files and doesn't require the code to compile.
+
+### Step 4: Understanding the Errors
 
 The errors are expected and indicate fundamental incompatibilities, not simple bugs.
 

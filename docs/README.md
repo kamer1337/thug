@@ -16,6 +16,10 @@ This directory contains comprehensive documentation for the Tony Hawk's Undergro
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute to the project
 - **[CREATING_PRS_FROM_ROADMAP.md](CREATING_PRS_FROM_ROADMAP.md)** - How to create PRs from roadmap items
 
+### Architecture and Design
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - ⭐ Overall system architecture and design
+- **[GAME_LOOP.md](GAME_LOOP.md)** - Frame processing and update cycle details
+
 ## Research and Analysis
 
 ### THUG2 Research
@@ -98,6 +102,8 @@ Detailed documentation for specific game subsystems:
 ```
 docs/
 ├── README.md                       # This file
+├── ARCHITECTURE.md                 # System architecture ⭐ NEW!
+├── GAME_LOOP.md                    # Game loop documentation ⭐ NEW!
 ├── CODE_STYLE.md                  # Coding standards and style guide
 ├── CONTRIBUTING.md                # Contribution guidelines
 ├── CREATING_PRS_FROM_ROADMAP.md   # How to create PRs from roadmap

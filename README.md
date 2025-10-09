@@ -48,14 +48,28 @@ This PC port now includes keyboard controls! See [PC Keyboard Controls Documenta
 
 ## Building
 
-This repository includes a CMake build system infrastructure. However, **the code cannot be built as-is** on modern systems due to several factors:
+This repository includes a CMake build system infrastructure. **Significant progress has been made on PC porting**, but compilation is currently blocked by C++ template compatibility issues.
 
-### Why It Can't Be Built Directly
+### Recent PC Port Progress ✨
 
-1. **Missing Assets**: Game assets (models, textures, sounds, scripts) are not included
-2. **Compiler Extensions**: Uses MSVC/CodeWarrior specific extensions and syntax
-3. **Binary Dependencies**: Requires proprietary middleware and libraries
-4. **Incomplete Windows Port**: The original Win32 port was incomplete with many stub functions
+**What's Been Fixed:**
+- ✅ Type definitions for Linux/macOS (sint32, uint32, sint64, uint64)
+- ✅ Variadic macro syntax compatibility
+- ✅ 64-bit pointer casting issues
+- ✅ Audio/video stub implementations (sound, music, movies)
+- ✅ Platform detection for Linux/Mac
+
+**What's Blocking Compilation:**
+- ❌ C++ template compatibility with modern GCC (requires refactoring memory management)
+
+See **[docs/PC_PORT_PROGRESS.md](docs/PC_PORT_PROGRESS.md)** for detailed progress report.
+
+### Why It Can't Be Fully Built Yet
+
+1. **C++ Template Issues**: Old template syntax incompatible with modern GCC (blocking compilation)
+2. **Missing Assets**: Game assets (models, textures, sounds, scripts) are not included
+3. **Graphics Backend**: Needs DirectX/OpenGL/Vulkan implementation
+4. **Audio Backend**: Needs OpenAL/FMOD/SDL_mixer implementation
 
 ### Prerequisites (If You Had Everything)
 
@@ -168,6 +182,9 @@ For more information about the project:
 - **[TASKS.md](TASKS.md)** - ⭐ Discrete tasks ready for pull requests!
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
+- **[LEGAL.md](LEGAL.md)** - Legal information, disclaimers, and copyright notices
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - ⭐ System architecture and design overview
+- **[docs/GAME_LOOP.md](docs/GAME_LOOP.md)** - Frame processing and update cycle details
 - **[docs/VULKAN_RENDERER.md](docs/VULKAN_RENDERER.md)** - Vulkan renderer documentation and integration guide
 - **[docs/THUG2_QUICK_REFERENCE.md](docs/THUG2_QUICK_REFERENCE.md)** - ⭐ Quick THUG vs THUG2 comparison guide
 - **[docs/THUG2_RESEARCH.md](docs/THUG2_RESEARCH.md)** - THUG2 game similarities and comparison analysis

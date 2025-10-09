@@ -103,7 +103,8 @@ void	error  ( char* text, ...);
 **									Macros									**
 *****************************************************************************/
 
-#if (defined ( __PLAT_XBOX__ ) || defined( __PLAT_WN32__ ))
+// PC builds (Win32, Linux, Mac) use inline function stubs
+#if (defined ( __PLAT_XBOX__ ) || defined( __PLAT_WN32__ ) || defined( __PLAT_LINUX__ ) || defined( __PLAT_MACOS__ ))
 
 inline void Dbg_SetOutput( const char* A ... )	{};
 #define	Dbg_LevelMask(A)						{ Dbg::level_mask(A); }
@@ -142,7 +143,7 @@ inline void Dbg_Error( const char* A ... )		{};
 
 #else
 
-#if ( defined ( __PLAT_XBOX__ ) || defined ( __PLAT_WN32__ ))
+#if ( defined ( __PLAT_XBOX__ ) || defined ( __PLAT_WN32__ ) || defined ( __PLAT_LINUX__ ) || defined ( __PLAT_MACOS__ ))
 inline void Dbg_SetOutput( const char* A ... )	{};
 #define	Dbg_LevelMask(A)
 inline void Dbg_Printf( const char* A ... )		{};
@@ -170,7 +171,7 @@ inline void Dbg_Error( const char* A ... )		{};
 // A special printf function that only works for Ryan
 // (since I love them so much)
 
-#if defined ( __PLAT_XBOX__ ) || defined ( __PLAT_WN32__ )
+#if defined ( __PLAT_XBOX__ ) || defined ( __PLAT_WN32__ ) || defined ( __PLAT_LINUX__ ) || defined ( __PLAT_MACOS__ )
 inline void Ryan(const char* A ...) {};
 inline void Ken(const char* A ...) {};
 inline void Matt(const char* A ...) {};

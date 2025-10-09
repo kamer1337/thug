@@ -214,7 +214,7 @@ SingletonPtr< _T >& SingletonPtr< _T >::operator= ( const SingletonPtr< _T >& rh
 /******************************************************************/
 	
 template < class _T > template < class _NewT > inline
-SingletonPtr< _T >::SingletonPtr< _T >( const SingletonPtr< _NewT >& rhs )
+SingletonPtr< _T >::SingletonPtr( const SingletonPtr< _NewT >& rhs )
 : mp_instance ( _NewT::sSgltnInstance() )
 {
 	

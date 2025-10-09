@@ -1,0 +1,118 @@
+# .clang-tidy configuration for THUG source code
+#
+# This configuration is tailored for legacy C++ code (C++03 era)
+# and focuses on catching common issues without enforcing modern C++ practices
+# that would require significant code changes.
+#
+# Note: This is a conservative configuration suitable for preservation
+# and educational purposes. For modernization efforts, additional checks
+# can be enabled incrementally.
+
+---
+# Disabled checks that would require significant refactoring
+# or are incompatible with the original code style
+Checks: >
+  -*,
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-narrowing-conversions,
+  performance-*,
+  -performance-no-int-to-ptr,
+  -performance-avoid-endl,
+  readability-*,
+  -readability-braces-around-statements,
+  -readability-else-after-return,
+  -readability-identifier-length,
+  -readability-function-cognitive-complexity,
+  -readability-magic-numbers,
+  -readability-uppercase-literal-suffix,
+  -readability-isolate-declaration,
+  -readability-implicit-bool-conversion,
+  -readability-avoid-const-params-in-decls,
+  -readability-make-member-function-const,
+  -readability-qualified-auto,
+  -readability-redundant-access-specifiers,
+  misc-*,
+  -misc-non-private-member-variables-in-classes,
+  -misc-const-correctness,
+  -misc-use-anonymous-namespace,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-avoid-const-or-ref-data-members,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-const-cast,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-init-variables,
+  -cppcoreguidelines-special-member-functions,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-narrowing-conversions,
+  -cppcoreguidelines-prefer-member-initializer,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  -modernize-use-auto,
+  -modernize-use-nodiscard,
+  -modernize-avoid-c-arrays,
+  -modernize-use-default-member-init,
+  -modernize-pass-by-value,
+  -modernize-return-braced-init-list,
+  -modernize-use-equals-default,
+  -modernize-use-equals-delete,
+  -modernize-use-override,
+  -modernize-use-using,
+  -modernize-loop-convert,
+  -modernize-raw-string-literal,
+  -modernize-concat-nested-namespaces,
+  -modernize-deprecated-headers,
+  -modernize-use-nullptr,
+  -modernize-make-unique,
+  -modernize-make-shared
+
+# Warning flags
+WarningsAsErrors: ''
+
+# Header filter (analyze all headers in the project)
+HeaderFilterRegex: '.*'
+
+# Formatting style (use .clang-format)
+FormatStyle: file
+
+# Check options
+CheckOptions:
+  # Readability checks
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.ClassPrefix
+    value: 'C'
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+  - key: readability-identifier-naming.EnumCase
+    value: CamelCase
+  - key: readability-identifier-naming.FunctionCase
+    value: CamelCase
+  - key: readability-identifier-naming.NamespaceCase
+    value: CamelCase
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+  - key: readability-identifier-naming.LocalVariableCase
+    value: lower_case
+  
+  # Performance checks
+  - key: performance-unnecessary-value-param.AllowedTypes
+    value: ''
+  
+  # Misc checks
+  - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value: 'true'
+
+# Additional configuration
+AnalyzeTemporaryDtors: false

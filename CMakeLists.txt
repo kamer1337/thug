@@ -6,8 +6,18 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 99)
 
-# Renderer options
-option(USE_VULKAN_RENDERER "Use Vulkan renderer backend (experimental)" OFF)
+# ============================================================================
+# Backend Architecture Configuration
+# ============================================================================
+
+# Graphics Backend Options
+option(USE_VULKAN_RENDERER "Use Vulkan renderer backend (recommended)" OFF)
+option(USE_DIRECTX_RENDERER "Use DirectX renderer backend (Windows only)" OFF)
+option(USE_OPENGL_RENDERER "Use OpenGL renderer backend" OFF)
+
+# Audio Backend Selection
+set(AUDIO_BACKEND "None" CACHE STRING "Audio backend to use (SDL2/OpenAL/FMOD/None)")
+set_property(CACHE AUDIO_BACKEND PROPERTY STRINGS SDL2 OpenAL FMOD None)
 
 # Compiler options
 if(MSVC)
@@ -49,19 +59,115 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/Code
 )
 
+# ============================================================================
+# Graphics Backend Configuration
+# ============================================================================
+
+# Validate graphics backend selection
+set(GRAPHICS_BACKEND_COUNT 0)
+if(USE_VULKAN_RENDERER)
+    math(EXPR GRAPHICS_BACKEND_COUNT "${GRAPHICS_BACKEND_COUNT} + 1")
+endif()
+if(USE_DIRECTX_RENDERER)
+    math(EXPR GRAPHICS_BACKEND_COUNT "${GRAPHICS_BACKEND_COUNT} + 1")
+endif()
+if(USE_OPENGL_RENDERER)
+    math(EXPR GRAPHICS_BACKEND_COUNT "${GRAPHICS_BACKEND_COUNT} + 1")
+endif()
+
+# Ensure only one graphics backend is selected
+if(GRAPHICS_BACKEND_COUNT GREATER 1)
+    message(FATAL_ERROR "Multiple graphics backends selected. Please select only one of: USE_VULKAN_RENDERER, USE_DIRECTX_RENDERER, USE_OPENGL_RENDERER")
+endif()
+
+# Platform-specific backend validation
+if(USE_DIRECTX_RENDERER AND NOT WIN32)
+    message(FATAL_ERROR "DirectX renderer is only supported on Windows")
+endif()
+
 # Vulkan renderer configuration
 if(USE_VULKAN_RENDERER)
-    message(STATUS "Vulkan renderer enabled (experimental)")
+    message(STATUS "Graphics Backend: Vulkan (recommended)")
     add_definitions(-DUSE_VULKAN_RENDERER)
     
     # Try to find Vulkan SDK (optional, for future full implementation)
     find_package(Vulkan QUIET)
     if(Vulkan_FOUND)
-        message(STATUS "Vulkan SDK found: ${Vulkan_LIBRARY}")
+        message(STATUS "  Vulkan SDK found: ${Vulkan_LIBRARY}")
         include_directories(${Vulkan_INCLUDE_DIRS})
     else()
-        message(STATUS "Vulkan SDK not found (optional for current implementation)")
+        message(STATUS "  Vulkan SDK not found (optional for current implementation)")
     endif()
+endif()
+
+# DirectX renderer configuration
+if(USE_DIRECTX_RENDERER)
+    message(STATUS "Graphics Backend: DirectX (Windows only)")
+    add_definitions(-DUSE_DIRECTX_RENDERER)
+    message(STATUS "  DirectX implementation is a stub - requires DirectX SDK integration")
+endif()
+
+# OpenGL renderer configuration
+if(USE_OPENGL_RENDERER)
+    message(STATUS "Graphics Backend: OpenGL (cross-platform)")
+    add_definitions(-DUSE_OPENGL_RENDERER)
+    
+    # Try to find OpenGL
+    find_package(OpenGL QUIET)
+    if(OPENGL_FOUND)
+        message(STATUS "  OpenGL found: ${OPENGL_LIBRARIES}")
+        include_directories(${OPENGL_INCLUDE_DIR})
+    else()
+        message(STATUS "  OpenGL not found (optional for current implementation)")
+    endif()
+endif()
+
+# Default message if no graphics backend is selected
+if(GRAPHICS_BACKEND_COUNT EQUAL 0)
+    message(STATUS "Graphics Backend: None selected (using platform default)")
+    message(STATUS "  Available options:")
+    message(STATUS "    -DUSE_VULKAN_RENDERER=ON   (recommended, cross-platform)")
+    if(WIN32)
+        message(STATUS "    -DUSE_DIRECTX_RENDERER=ON  (Windows only)")
+    endif()
+    message(STATUS "    -DUSE_OPENGL_RENDERER=ON   (cross-platform)")
+endif()
+
+# ============================================================================
+# Audio Backend Configuration
+# ============================================================================
+
+# Validate and configure audio backend
+if(NOT AUDIO_BACKEND STREQUAL "None")
+    message(STATUS "Audio Backend: ${AUDIO_BACKEND}")
+    
+    if(AUDIO_BACKEND STREQUAL "SDL2")
+        add_definitions(-DUSE_SDL2_AUDIO)
+        message(STATUS "  SDL2_mixer implementation is a stub - requires SDL2_mixer integration")
+        message(STATUS "  Install: sudo apt install libsdl2-mixer-dev (Linux)")
+        message(STATUS "           brew install sdl2_mixer (macOS)")
+        
+    elseif(AUDIO_BACKEND STREQUAL "OpenAL")
+        add_definitions(-DUSE_OPENAL_AUDIO)
+        message(STATUS "  OpenAL implementation is a stub - requires OpenAL integration")
+        message(STATUS "  Install: sudo apt install libopenal-dev (Linux)")
+        message(STATUS "           brew install openal-soft (macOS)")
+        
+    elseif(AUDIO_BACKEND STREQUAL "FMOD")
+        add_definitions(-DUSE_FMOD_AUDIO)
+        message(STATUS "  FMOD implementation is a stub - requires FMOD SDK")
+        message(STATUS "  Download: https://www.fmod.com/download")
+        message(STATUS "  Note: FMOD requires a commercial license for released games")
+        
+    else()
+        message(FATAL_ERROR "Invalid AUDIO_BACKEND: ${AUDIO_BACKEND}. Valid options: SDL2, OpenAL, FMOD, None")
+    endif()
+else()
+    message(STATUS "Audio Backend: None selected (using platform default stubs)")
+    message(STATUS "  Available options:")
+    message(STATUS "    -DAUDIO_BACKEND=SDL2   (recommended, simple API, free)")
+    message(STATUS "    -DAUDIO_BACKEND=OpenAL (3D positional audio, free)")
+    message(STATUS "    -DAUDIO_BACKEND=FMOD   (professional features, requires license)")
 endif()
 
 # Add subsystem directories (modular CMake structure)
@@ -104,17 +210,68 @@ elseif(APPLE)
     target_link_libraries(thug pthread dl m)
 endif()
 
-# Link Vulkan if available and enabled
+# Link graphics backend libraries
 if(USE_VULKAN_RENDERER AND Vulkan_FOUND)
     target_link_libraries(thug ${Vulkan_LIBRARIES})
-    message(STATUS "Vulkan library linked: ${Vulkan_LIBRARIES}")
+    message(STATUS "Linking Vulkan library: ${Vulkan_LIBRARIES}")
+endif()
+
+if(USE_OPENGL_RENDERER AND OPENGL_FOUND)
+    target_link_libraries(thug ${OPENGL_LIBRARIES})
+    message(STATUS "Linking OpenGL library: ${OPENGL_LIBRARIES}")
+endif()
+
+if(USE_DIRECTX_RENDERER)
+    if(WIN32)
+        # DirectX libraries (will be linked when implementation is complete)
+        # target_link_libraries(thug d3d9 d3dx9)
+        message(STATUS "DirectX linking will be enabled when implementation is complete")
+    endif()
+endif()
+
+# Link audio backend libraries (when implementations are complete)
+if(AUDIO_BACKEND STREQUAL "SDL2")
+    # find_package(SDL2 REQUIRED)
+    # find_package(SDL2_mixer REQUIRED)
+    # target_link_libraries(thug SDL2::SDL2 SDL2::SDL2_mixer)
+    message(STATUS "SDL2_mixer linking will be enabled when implementation is complete")
+elseif(AUDIO_BACKEND STREQUAL "OpenAL")
+    # find_package(OpenAL REQUIRED)
+    # target_link_libraries(thug ${OPENAL_LIBRARY})
+    message(STATUS "OpenAL linking will be enabled when implementation is complete")
+elseif(AUDIO_BACKEND STREQUAL "FMOD")
+    # Manual FMOD linking will be required
+    message(STATUS "FMOD linking will be enabled when implementation is complete")
 endif()
 
 # Installation
 install(TARGETS thug DESTINATION bin)
 
-# Print build information
-message(STATUS "Building THUG for ${PLATFORM_NAME}")
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")
-message(STATUS "C Compiler: ${CMAKE_C_COMPILER}")
+# ============================================================================
+# Build Summary
+# ============================================================================
+message(STATUS "")
+message(STATUS "=================================================================")
+message(STATUS "THUG Build Configuration Summary")
+message(STATUS "=================================================================")
+message(STATUS "Platform:        ${PLATFORM_NAME}")
+message(STATUS "Build type:      ${CMAKE_BUILD_TYPE}")
+message(STATUS "C++ Compiler:    ${CMAKE_CXX_COMPILER}")
+message(STATUS "C Compiler:      ${CMAKE_C_COMPILER}")
+message(STATUS "")
+if(USE_VULKAN_RENDERER)
+    message(STATUS "Graphics:        Vulkan (recommended)")
+elseif(USE_DIRECTX_RENDERER)
+    message(STATUS "Graphics:        DirectX (Windows)")
+elseif(USE_OPENGL_RENDERER)
+    message(STATUS "Graphics:        OpenGL (cross-platform)")
+else()
+    message(STATUS "Graphics:        Platform default (no backend selected)")
+endif()
+if(NOT AUDIO_BACKEND STREQUAL "None")
+    message(STATUS "Audio:           ${AUDIO_BACKEND}")
+else()
+    message(STATUS "Audio:           Platform default (no backend selected)")
+endif()
+message(STATUS "=================================================================")
+message(STATUS "")

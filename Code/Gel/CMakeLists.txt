@@ -23,6 +23,18 @@ if(WIN32)
     target_compile_definitions(thug_gel PRIVATE __PLAT_WN32__)
 endif()
 
+# Audio backend configuration
+if(AUDIO_BACKEND STREQUAL "SDL2")
+    target_compile_definitions(thug_gel PRIVATE USE_SDL2_AUDIO)
+    message(STATUS "  Gel: SDL2_mixer audio backend enabled")
+elseif(AUDIO_BACKEND STREQUAL "OpenAL")
+    target_compile_definitions(thug_gel PRIVATE USE_OPENAL_AUDIO)
+    message(STATUS "  Gel: OpenAL audio backend enabled")
+elseif(AUDIO_BACKEND STREQUAL "FMOD")
+    target_compile_definitions(thug_gel PRIVATE USE_FMOD_AUDIO)
+    message(STATUS "  Gel: FMOD audio backend enabled")
+endif()
+
 # Debug configurations
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     target_compile_definitions(thug_gel PRIVATE

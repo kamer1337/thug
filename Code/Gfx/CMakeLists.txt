@@ -23,12 +23,26 @@ if(WIN32)
     target_compile_definitions(thug_gfx PRIVATE __PLAT_WN32__)
 endif()
 
-# Vulkan renderer support
+# Graphics backend configuration
 if(USE_VULKAN_RENDERER)
     target_compile_definitions(thug_gfx PRIVATE USE_VULKAN_RENDERER)
     if(Vulkan_FOUND)
         target_include_directories(thug_gfx PRIVATE ${Vulkan_INCLUDE_DIRS})
     endif()
+    message(STATUS "  Gfx: Vulkan renderer enabled")
+endif()
+
+if(USE_DIRECTX_RENDERER)
+    target_compile_definitions(thug_gfx PRIVATE USE_DIRECTX_RENDERER)
+    message(STATUS "  Gfx: DirectX renderer enabled")
+endif()
+
+if(USE_OPENGL_RENDERER)
+    target_compile_definitions(thug_gfx PRIVATE USE_OPENGL_RENDERER)
+    if(OPENGL_FOUND)
+        target_include_directories(thug_gfx PRIVATE ${OPENGL_INCLUDE_DIR})
+    endif()
+    message(STATUS "  Gfx: OpenGL renderer enabled")
 endif()
 
 # Debug configurations

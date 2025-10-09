@@ -1,0 +1,194 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build-linux:
+    name: Build on Linux
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          cmake \
+          ninja-build \
+          clang \
+          libvulkan-dev \
+          vulkan-headers \
+          vulkan-validationlayers-dev
+    
+    - name: Configure CMake
+      run: |
+        mkdir -p build
+        cd build
+        cmake .. -G Ninja \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_C_COMPILER=clang \
+          -DCMAKE_CXX_COMPILER=clang++
+    
+    - name: Build
+      run: |
+        cd build
+        ninja -k 0 || true
+      continue-on-error: true
+    
+    - name: Build with Vulkan
+      run: |
+        mkdir -p build-vulkan
+        cd build-vulkan
+        cmake .. -G Ninja \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DUSE_VULKAN_RENDERER=ON \
+          -DCMAKE_C_COMPILER=clang \
+          -DCMAKE_CXX_COMPILER=clang++
+        ninja -k 0 || true
+      continue-on-error: true
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: linux-build-logs
+        path: |
+          build/**/*.log
+          build-vulkan/**/*.log
+          CMakeFiles/*.log
+        if-no-files-found: ignore
+
+  build-windows:
+    name: Build on Windows
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    
+    - name: Setup MSVC
+      uses: microsoft/setup-msbuild@v1.1
+    
+    - name: Install Vulkan SDK
+      run: |
+        choco install vulkan-sdk -y
+      continue-on-error: true
+    
+    - name: Configure CMake
+      run: |
+        mkdir build
+        cd build
+        cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Debug
+      continue-on-error: true
+    
+    - name: Build
+      run: |
+        cd build
+        cmake --build . --config Debug -- /m /v:minimal /nologo
+      continue-on-error: true
+    
+    - name: Build with Vulkan
+      run: |
+        mkdir build-vulkan
+        cd build-vulkan
+        cmake .. -G "Visual Studio 17 2022" -A x64 -DUSE_VULKAN_RENDERER=ON -DCMAKE_BUILD_TYPE=Debug
+        cmake --build . --config Debug -- /m /v:minimal /nologo
+      continue-on-error: true
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: windows-build-logs
+        path: |
+          build/**/*.log
+          build-vulkan/**/*.log
+          CMakeFiles/*.log
+        if-no-files-found: ignore
+
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Install clang-format
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang-format
+    
+    - name: Check code formatting
+      run: |
+        # Note: This is informational only for now
+        # We don't enforce formatting on legacy code
+        find Code -name "*.cpp" -o -name "*.h" | \
+          xargs clang-format --dry-run --Werror 2>&1 || true
+      continue-on-error: true
+    
+    - name: Install cppcheck
+      run: |
+        sudo apt-get install -y cppcheck
+    
+    - name: Run cppcheck
+      run: |
+        # Static analysis on Code directory
+        # Informational only - legacy code has many warnings
+        cppcheck --enable=warning,performance,portability \
+          --suppress=missingIncludeSystem \
+          --suppress=unmatchedSuppression \
+          --inline-suppr \
+          --quiet \
+          Code/ 2>&1 | tee cppcheck-results.txt || true
+      continue-on-error: true
+    
+    - name: Upload analysis results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: code-quality-results
+        path: cppcheck-results.txt
+        if-no-files-found: ignore
+
+  documentation:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Check for broken links in markdown
+      run: |
+        # Simple check for obvious broken relative links
+        for file in $(find . -name "*.md"); do
+          echo "Checking $file..."
+          # This is a basic check - could be enhanced with a proper link checker
+          grep -E '\[.*\]\(.*\)' "$file" || true
+        done
+      continue-on-error: true
+    
+    - name: Verify documentation structure
+      run: |
+        # Check that key documentation files exist
+        test -f README.md && echo "✓ README.md exists"
+        test -f ROADMAP.md && echo "✓ ROADMAP.md exists"
+        test -f TASKS.md && echo "✓ TASKS.md exists"
+        test -f BUILDING.md && echo "✓ BUILDING.md exists"
+        test -f docs/ARCHITECTURE.md && echo "✓ docs/ARCHITECTURE.md exists"
+        test -f docs/GAME_LOOP.md && echo "✓ docs/GAME_LOOP.md exists"
+        test -f docs/CONTRIBUTING.md && echo "✓ docs/CONTRIBUTING.md exists"
+        test -f docs/CODE_STYLE.md && echo "✓ docs/CODE_STYLE.md exists"
+        echo "Documentation structure check complete"

@@ -64,32 +64,15 @@ if(USE_VULKAN_RENDERER)
     endif()
 endif()
 
-# Collect source files
-# We don't follow symlinks to avoid duplicates from case-insensitive symlinks
-file(GLOB_RECURSE CORE_SOURCES 
-    "${CMAKE_SOURCE_DIR}/Code/Core/*.cpp"
-)
+# Add subsystem directories (modular CMake structure)
+# Each subsystem has its own CMakeLists.txt
+add_subdirectory(Code/Core)
+add_subdirectory(Code/Gel)
+add_subdirectory(Code/Gfx)
+add_subdirectory(Code/Sk)
+add_subdirectory(Code/Sys)
 
-file(GLOB_RECURSE GEL_SOURCES 
-    "${CMAKE_SOURCE_DIR}/Code/Gel/*.cpp"
-)
-
-file(GLOB_RECURSE GFX_SOURCES 
-    "${CMAKE_SOURCE_DIR}/Code/Gfx/*.cpp"
-)
-
-file(GLOB_RECURSE SK_SOURCES 
-    "${CMAKE_SOURCE_DIR}/Code/Sk/*.cpp"
-)
-
-file(GLOB_RECURSE SYS_SOURCES 
-    "${CMAKE_SOURCE_DIR}/Code/Sys/*.cpp"
-)
-
-# Console-specific platform directories have been removed
-# This is now a PC-only port
-
-# Combine all sources
+# Combine all subsystem sources
 set(ALL_SOURCES
     ${CORE_SOURCES}
     ${GEL_SOURCES}
@@ -100,13 +83,19 @@ set(ALL_SOURCES
 
 # Debug: Print source count
 list(LENGTH ALL_SOURCES SOURCE_COUNT)
-message(STATUS "Found ${SOURCE_COUNT} source files")
+message(STATUS "Found ${SOURCE_COUNT} source files from modular subsystems")
 if(SOURCE_COUNT EQUAL 0)
     message(FATAL_ERROR "No source files found! Check the Code directory structure.")
 endif()
 
-# Create executable
-add_executable(thug ${ALL_SOURCES})
+# Create executable using object libraries from subsystems
+add_executable(thug 
+    $<TARGET_OBJECTS:thug_core>
+    $<TARGET_OBJECTS:thug_gel>
+    $<TARGET_OBJECTS:thug_gfx>
+    $<TARGET_OBJECTS:thug_sk>
+    $<TARGET_OBJECTS:thug_sys>
+)
 
 # Link libraries
 if(UNIX AND NOT APPLE)

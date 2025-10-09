@@ -1,10 +1,54 @@
-# Audio System Documentation
+# Audio System
 
 ## Overview
 
-The THUG audio system has been modernized with a Hardware Abstraction Layer (HAL) that supports multiple audio backends. This allows the game to work on different platforms without changing the core audio code.
+The THUG audio system handles music playback, sound effects, and positional audio. The system has been modernized with a Hardware Abstraction Layer (HAL) that supports multiple audio backends while maintaining the original architecture for sound management.
 
-## Architecture
+## Original Architecture
+
+### Core Components
+
+#### 1. Sound Effects System (`Code/Gel/SoundFX/`)
+
+The SoundFX subsystem manages short audio samples and positional sounds:
+
+**Key Files**:
+- `soundfx.h/cpp` - Core sound effects interface
+- `win32/p_sfx.h/cpp` - Win32 platform implementation
+
+**Features**:
+- Wave table management (non-permanent and permanent sounds)
+- 3D positional audio
+- Distance-based attenuation
+- Volume and pitch control
+- Looping sounds
+- Sound streaming
+
+#### 2. Music System (`Code/Gel/Music/`)
+
+Handles music playback and streaming:
+
+**Key Files**:
+- Music management and streaming
+- Platform-specific music decoders
+- Playlist management
+- Cross-fade support
+
+#### 3. Sound Components
+
+Object-based sound management through components:
+
+**Sound Component** (`Code/Gel/Components/soundcomponent.h/cpp`):
+- Attach sounds to game objects
+- Automatic position updates
+- Object lifetime management
+
+**Skater Sound Component** (`Code/Sk/Components/SkaterSoundComponent.h/cpp`):
+- Skateboard-specific sound effects
+- Trick sounds
+- Movement sounds (rolling, landing)
+
+## Modern HAL Implementation
 
 ### Hardware Abstraction Layer (HAL)
 
@@ -127,6 +171,18 @@ The Win32 platform implementation (`Code/Gel/SoundFX/Win32/` and `Code/Gel/Music
 - `PCMAudio_PlayStream()` - Play streams through HAL
 - `PCMAudio_SetMusicVolume()` - Control music volume
 
+## Audio File Formats
+
+The audio system is designed to support multiple formats:
+
+**Sound Effects:**
+- WAV (uncompressed)
+- OGG Vorbis (compressed)
+
+**Music/Streaming:**
+- OGG Vorbis
+- MP3 (if supported by backend)
+
 ## Usage Example
 
 ```cpp
@@ -152,18 +208,6 @@ if (device && device->Initialize()) {
 }
 HAL::DestroyAudioDevice(device);
 ```
-
-## Audio File Formats
-
-The audio system is designed to support multiple formats:
-
-**Sound Effects:**
-- WAV (uncompressed)
-- OGG Vorbis (compressed)
-
-**Music/Streaming:**
-- OGG Vorbis
-- MP3 (if supported by backend)
 
 ## Implementation Status
 

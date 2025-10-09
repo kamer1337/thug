@@ -1453,6 +1453,272 @@ void CEngine::s_plat_uninit_quick_anim(CQuickAnim* pQuickAnim)
 	delete pQuickAnim;
 }
 
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+const char* CEngine::s_plat_get_platform_extension()
+{
+	// Return appropriate extension for platform
+	return ".tex";  // Default texture extension
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CScene* CEngine::s_plat_create_scene(const char *p_name, CTexDict *p_tex_dict, bool add_super_sectors)
+{
+	// Create a new scene
+	return new CScene();
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CScene* CEngine::s_plat_load_scene(const char *p_name, CTexDict *p_tex_dict, bool add_super_sectors, bool is_sky, bool is_dictionary)
+{
+	// Load scene from file - stub implementation
+	return NULL;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CScene* CEngine::s_plat_load_scene_from_memory(void *p_data, CTexDict *p_tex_dict, bool add_super_sectors, bool is_sky, bool is_dictionary)
+{
+	// Load scene from memory - stub implementation
+	return NULL;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool CEngine::s_plat_add_scene(CScene *p_scene, const char *p_filename)
+{
+	// Add scene - stub implementation
+	return true;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool CEngine::s_plat_unload_scene(CScene *p_scene)
+{
+	// Unload scene - stub implementation
+	delete p_scene;
+	return true;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CSprite* CEngine::s_plat_create_sprite(CWindow2D *p_window)
+{
+	// Create sprite - stub implementation
+	return NULL;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool CEngine::s_plat_destroy_sprite(CSprite *p_sprite)
+{
+	// Destroy sprite - stub implementation
+	delete p_sprite;
+	return true;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CTextured3dPoly* CEngine::s_plat_create_textured_3d_poly()
+{
+	// Create textured 3D poly - stub implementation
+	return NULL;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool CEngine::s_plat_destroy_textured_3d_poly(CTextured3dPoly *p_poly)
+{
+	// Destroy textured 3D poly - stub implementation
+	delete p_poly;
+	return true;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CTexture* CEngine::s_plat_create_render_target_texture(int width, int height, int depth, int z_depth)
+{
+	// Create render target texture - stub implementation
+	return NULL;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_project_texture_into_scene(Nx::CTexture *p_texture, Nx::CModel *p_model, Nx::CScene *p_scene)
+{
+	// Project texture into scene - stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_set_projection_texture_camera(Nx::CTexture *p_texture, Gfx::Camera *p_camera)
+{
+	// Set projection texture camera - stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_stop_projection_texture(Nx::CTexture *p_texture)
+{
+	// Stop projection texture - stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_add_occlusion_poly(uint32 num_verts, Mth::Vector *p_vert_array, uint32 checksum)
+{
+	// Add occlusion poly - stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_enable_occlusion_poly(uint32 checksum, bool enable)
+{
+	// Enable occlusion poly - stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_remove_all_occlusion_polys()
+{
+	// Remove all occlusion polys - stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CMesh* CEngine::s_plat_load_mesh(const char* meshName, CTexDict* pTexDict, uint32 texDictOffset, bool& foundSkin, bool doShadowVolume)
+{
+	// Load mesh from file - stub implementation
+	foundSkin = false;
+	return NULL;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+CMesh* CEngine::s_plat_load_mesh(uint32 id, void* pModelData, int modelDataSize, void* pCASData, CTexDict* pTexDict, uint32 textureDictOffset, bool isSkin, bool doShadowVolume)
+{
+	// Load mesh from memory - stub implementation
+	return NULL;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool CEngine::s_plat_unload_mesh(CMesh* pMesh)
+{
+	// Unload mesh - stub implementation
+	delete pMesh;
+	return true;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_set_mesh_scaling_parameters(SMeshScalingParameters* pParams)
+{
+	// Set mesh scaling parameters - stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_finish_rendering()
+{
+	// Finish rendering - stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool CEngine::s_plat_is_visible(Mth::Vector &center, float radius)
+{
+	// Check visibility - stub implementation (always visible for now)
+	return true;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_set_max_multipass_distance(float dist)
+{
+	// Set max multipass distance - stub implementation
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+int CEngine::s_plat_get_num_soundtracks()
+{
+	// Get number of soundtracks - stub implementation
+	return 0;
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+const char* CEngine::s_plat_get_soundtrack_name(int soundtrack_number)
+{
+	// Get soundtrack name - stub implementation
+	return "";
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void CEngine::s_plat_get_metrics(Script::CStruct *p_info)
+{
+	// Get engine metrics - stub implementation
+	// Platform-specific metrics would be added to p_info struct here
+}
+
 } // namespace Nx
 
 

@@ -148,7 +148,7 @@ public :
 /******************************************************************/
 
 template < class _T > inline   
-PtrToConst< _T >::PtrToConst< _T >( const _T* ptr ) 
+PtrToConst< _T >::PtrToConst( const _T* ptr ) 
 : m_const_ptr ( ptr )
 {
 	
@@ -203,7 +203,7 @@ PtrToConst< _T >&		PtrToConst< _T >::operator= ( const PtrToConst< _T >& rhs )
 /******************************************************************/
 	
 template < class _T > template < class _NewT > inline
-PtrToConst< _T >::PtrToConst< _T >( const PtrToConst< _NewT >& rhs )
+PtrToConst< _T >::PtrToConst( const PtrToConst< _NewT >& rhs )
 : m_const_ptr ( rhs.Addr() )
 {
 	
@@ -485,7 +485,7 @@ Ptr< _T >&		Ptr< _T >::operator= ( const Ptr< _T >& rhs )
 {
 	
 	
-	m_const_ptr = rhs.Addr();
+	this->m_const_ptr = rhs.Addr();
 	return *this;	
 }
 
@@ -517,7 +517,7 @@ Ptr< _T >&		Ptr< _T >::operator= ( const Ptr< _NewT >& rhs )
 
 	Dbg_MsgAssert( false, ( "Microsoft VC++ sucks - don't do this (yet)" ));
 
-	m_const_ptr = rhs.Addr();
+	this->m_const_ptr = rhs.Addr();
 	return *this;	
 }
 
@@ -533,7 +533,7 @@ Ptr< _T >&		Ptr< _T >::operator= ( const _T* ptr )
 {
 	
 
-	m_const_ptr = ptr;
+	this->m_const_ptr = ptr;
 	return *this;	
 }
 
@@ -548,9 +548,9 @@ _T&		Ptr< _T >::operator * ( void ) const
 {
 	
 
-	Dbg_AssertType( m_ptr, _T );
+	Dbg_AssertType( this->m_ptr, _T );
 
-	return *m_ptr;	
+	return *this->m_ptr;	
 }
 
 /******************************************************************/
@@ -563,9 +563,9 @@ _T*		Ptr< _T >::operator -> ( void ) const
 {
 	
 	
-	Dbg_AssertType( m_ptr, _T );
+	Dbg_AssertType( this->m_ptr, _T );
 	
-	return m_ptr;	
+	return this->m_ptr;	
 }
 
 /******************************************************************/
@@ -578,7 +578,7 @@ _T*		Ptr< _T >::Addr ( void ) const
 {
 	
 
-	return m_ptr;	
+	return this->m_ptr;	
 }
 
 /******************************************************************/

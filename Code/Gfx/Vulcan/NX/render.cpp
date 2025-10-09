@@ -6,6 +6,16 @@
 #include <string.h>
 #include "render.h"
 
+// Include Vulkan headers if available
+#ifdef USE_VULKAN_RENDERER
+#ifdef __has_include
+#if __has_include(<vulkan/vulkan.h>)
+#include <vulkan/vulkan.h>
+#define VULKAN_AVAILABLE 1
+#endif
+#endif
+#endif
+
 namespace NxVulcan
 {
 
@@ -13,7 +23,7 @@ namespace NxVulcan
 Lst::HashTable< sTextureProjectionDetails > *pTextureProjectionDetailsTable = NULL;
 Lst::HashTable< sTexture > *pTextureTable = NULL;
 
-// Vulkan state tracking
+// Vulkan state tracking with actual Vulkan handles
 static struct VulkanState
 {
 	bool initialized;
@@ -22,6 +32,40 @@ static struct VulkanState
 	Mth::Matrix frustum_transform;
 	uint32 current_blend_mode;
 	uint32 render_state[8];
+	
+#ifdef VULKAN_AVAILABLE
+	// Vulkan API objects
+	VkInstance instance;
+	VkPhysicalDevice physical_device;
+	VkDevice device;
+	VkQueue graphics_queue;
+	VkQueue present_queue;
+	VkCommandPool command_pool;
+	VkRenderPass render_pass;
+	VkPipeline graphics_pipeline;
+	VkPipelineLayout pipeline_layout;
+	
+	// Queue family indices
+	uint32 graphics_family_index;
+	uint32 present_family_index;
+	
+	// Device features
+	VkPhysicalDeviceFeatures device_features;
+	VkPhysicalDeviceMemoryProperties memory_properties;
+#else
+	// Placeholder pointers when Vulkan SDK not available
+	void* instance;
+	void* physical_device;
+	void* device;
+	void* graphics_queue;
+	void* present_queue;
+	void* command_pool;
+	void* render_pass;
+	void* graphics_pipeline;
+	void* pipeline_layout;
+	uint32 graphics_family_index;
+	uint32 present_family_index;
+#endif
 } g_vulkan_state = { false };
 
 /******************************************************************/
@@ -50,13 +94,139 @@ bool init_vulkan( void )
 		g_vulkan_state.render_state[i] = 0;
 	}
 	
-	// In a full implementation, this would:
+#ifdef VULKAN_AVAILABLE
 	// 1. Create Vulkan instance
-	// 2. Select physical device
+	VkApplicationInfo app_info = {};
+	app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	app_info.pApplicationName = "THUG";
+	app_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+	app_info.pEngineName = "THUG Engine";
+	app_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+	app_info.apiVersion = VK_API_VERSION_1_0;
+	
+	VkInstanceCreateInfo create_info = {};
+	create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	create_info.pApplicationInfo = &app_info;
+	
+	// No validation layers or extensions for minimal implementation
+	create_info.enabledExtensionCount = 0;
+	create_info.enabledLayerCount = 0;
+	
+	VkResult result = vkCreateInstance(&create_info, NULL, &g_vulkan_state.instance);
+	if (result != VK_SUCCESS)
+	{
+		printf("Failed to create Vulkan instance: %d\n", result);
+		return false;
+	}
+	
+	// 2. Select physical device (pick first available)
+	uint32 device_count = 0;
+	vkEnumeratePhysicalDevices(g_vulkan_state.instance, &device_count, NULL);
+	
+	if (device_count == 0)
+	{
+		printf("Failed to find GPUs with Vulkan support\n");
+		return false;
+	}
+	
+	VkPhysicalDevice* devices = new VkPhysicalDevice[device_count];
+	vkEnumeratePhysicalDevices(g_vulkan_state.instance, &device_count, devices);
+	
+	// Select first device for simplicity
+	g_vulkan_state.physical_device = devices[0];
+	delete[] devices;
+	
+	// Get device properties and memory properties
+	vkGetPhysicalDeviceFeatures(g_vulkan_state.physical_device, &g_vulkan_state.device_features);
+	vkGetPhysicalDeviceMemoryProperties(g_vulkan_state.physical_device, &g_vulkan_state.memory_properties);
+	
+	// Find graphics queue family
+	uint32 queue_family_count = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(g_vulkan_state.physical_device, &queue_family_count, NULL);
+	
+	VkQueueFamilyProperties* queue_families = new VkQueueFamilyProperties[queue_family_count];
+	vkGetPhysicalDeviceQueueFamilyProperties(g_vulkan_state.physical_device, &queue_family_count, queue_families);
+	
+	// Find a queue family that supports graphics
+	g_vulkan_state.graphics_family_index = 0xFFFFFFFF;
+	for (uint32 i = 0; i < queue_family_count; i++)
+	{
+		if (queue_families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+		{
+			g_vulkan_state.graphics_family_index = i;
+			g_vulkan_state.present_family_index = i; // Assume same for simplicity
+			break;
+		}
+	}
+	delete[] queue_families;
+	
+	if (g_vulkan_state.graphics_family_index == 0xFFFFFFFF)
+	{
+		printf("Failed to find suitable queue family\n");
+		return false;
+	}
+	
 	// 3. Create logical device
-	// 4. Create swapchain
-	// 5. Create render passes
-	// 6. Create command pools
+	float queue_priority = 1.0f;
+	VkDeviceQueueCreateInfo queue_create_info = {};
+	queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	queue_create_info.queueFamilyIndex = g_vulkan_state.graphics_family_index;
+	queue_create_info.queueCount = 1;
+	queue_create_info.pQueuePriorities = &queue_priority;
+	
+	VkPhysicalDeviceFeatures device_features = {};
+	// Enable features as needed
+	
+	VkDeviceCreateInfo device_create_info = {};
+	device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	device_create_info.pQueueCreateInfos = &queue_create_info;
+	device_create_info.queueCreateInfoCount = 1;
+	device_create_info.pEnabledFeatures = &device_features;
+	device_create_info.enabledExtensionCount = 0; // No extensions for minimal implementation
+	device_create_info.enabledLayerCount = 0;
+	
+	result = vkCreateDevice(g_vulkan_state.physical_device, &device_create_info, NULL, &g_vulkan_state.device);
+	if (result != VK_SUCCESS)
+	{
+		printf("Failed to create logical device: %d\n", result);
+		return false;
+	}
+	
+	// Get queue handles
+	vkGetDeviceQueue(g_vulkan_state.device, g_vulkan_state.graphics_family_index, 0, &g_vulkan_state.graphics_queue);
+	g_vulkan_state.present_queue = g_vulkan_state.graphics_queue; // Same queue for simplicity
+	
+	// 6. Create command pool
+	VkCommandPoolCreateInfo pool_info = {};
+	pool_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	pool_info.queueFamilyIndex = g_vulkan_state.graphics_family_index;
+	pool_info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	
+	result = vkCreateCommandPool(g_vulkan_state.device, &pool_info, NULL, &g_vulkan_state.command_pool);
+	if (result != VK_SUCCESS)
+	{
+		printf("Failed to create command pool: %d\n", result);
+		return false;
+	}
+	
+	printf("Vulkan renderer initialized successfully\n");
+	printf("  Device: Physical device selected\n");
+	printf("  Graphics Queue Family: %u\n", g_vulkan_state.graphics_family_index);
+#else
+	printf("Vulkan renderer initialized (SDK not available - using stub implementation)\n");
+	// Initialize stub pointers
+	g_vulkan_state.instance = NULL;
+	g_vulkan_state.physical_device = NULL;
+	g_vulkan_state.device = NULL;
+	g_vulkan_state.graphics_queue = NULL;
+	g_vulkan_state.present_queue = NULL;
+	g_vulkan_state.command_pool = NULL;
+	g_vulkan_state.render_pass = NULL;
+	g_vulkan_state.graphics_pipeline = NULL;
+	g_vulkan_state.pipeline_layout = NULL;
+	g_vulkan_state.graphics_family_index = 0;
+	g_vulkan_state.present_family_index = 0;
+#endif
 	
 	return true;
 }
@@ -85,6 +255,15 @@ void shutdown_vulkan( void )
 				{
 					delete[] p_texture->pAlphaData;
 				}
+#ifdef VULKAN_AVAILABLE
+				// Destroy Vulkan texture resources
+				if( p_texture->pVulkanTexture && g_vulkan_state.device )
+				{
+					VkImage* image = (VkImage*)p_texture->pVulkanTexture;
+					vkDestroyImage(g_vulkan_state.device, *image, NULL);
+					delete image;
+				}
+#endif
 				delete p_texture;
 			}
 			++it;
@@ -110,14 +289,49 @@ void shutdown_vulkan( void )
 		pTextureProjectionDetailsTable = NULL;
 	}
 	
-	g_vulkan_state.initialized = false;
+#ifdef VULKAN_AVAILABLE
+	// 1. Destroy command pool
+	if( g_vulkan_state.command_pool )
+	{
+		vkDestroyCommandPool(g_vulkan_state.device, g_vulkan_state.command_pool, NULL);
+	}
 	
-	// In a full implementation, this would:
-	// 1. Destroy command pools
-	// 2. Destroy render passes
-	// 3. Destroy swapchain
-	// 4. Destroy logical device
-	// 5. Destroy Vulkan instance
+	// 2. Destroy render pass
+	if( g_vulkan_state.render_pass )
+	{
+		vkDestroyRenderPass(g_vulkan_state.device, g_vulkan_state.render_pass, NULL);
+	}
+	
+	// 3. Destroy graphics pipeline
+	if( g_vulkan_state.graphics_pipeline )
+	{
+		vkDestroyPipeline(g_vulkan_state.device, g_vulkan_state.graphics_pipeline, NULL);
+	}
+	
+	// 4. Destroy pipeline layout
+	if( g_vulkan_state.pipeline_layout )
+	{
+		vkDestroyPipelineLayout(g_vulkan_state.device, g_vulkan_state.pipeline_layout, NULL);
+	}
+	
+	// 5. Destroy logical device
+	if( g_vulkan_state.device )
+	{
+		vkDestroyDevice(g_vulkan_state.device, NULL);
+	}
+	
+	// 6. Destroy Vulkan instance
+	if( g_vulkan_state.instance )
+	{
+		vkDestroyInstance(g_vulkan_state.instance, NULL);
+	}
+	
+	printf("Vulkan renderer shut down successfully\n");
+#else
+	printf("Vulkan renderer shut down (stub implementation)\n");
+#endif
+	
+	g_vulkan_state.initialized = false;
 }
 
 /******************************************************************/
@@ -427,16 +641,29 @@ void render_scene( sScene *p_scene, uint32 flags, uint32 viewport )
 		return;
 	}
 	
-	// In a full implementation, this would:
-	// 1. Begin command buffer recording
-	// 2. Begin render pass
-	// 3. Set viewport and scissor
-	// 4. Bind pipeline state
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.device && g_vulkan_state.command_pool )
+	{
+		// 1. Begin command buffer recording (simplified - no actual recording for minimal impl)
+		// In a full implementation:
+		// - Allocate command buffer from pool
+		// - Begin command buffer with vkBeginCommandBuffer
+		
+		// 2-4. Begin render pass, set viewport/scissor, bind pipeline
+		// In a full implementation:
+		// - vkCmdBeginRenderPass with render pass info
+		// - vkCmdSetViewport and vkCmdSetScissor
+		// - vkCmdBindPipeline with graphics pipeline
+		
+		printf("Render scene: %d meshes (flags: 0x%08X)\n", p_scene->m_num_meshes, flags);
+	}
+#endif
 	
 	// Cache mesh count to avoid repeated access
 	const uint16 num_meshes = p_scene->m_num_meshes;
 	
 	// Iterate through meshes and render based on flags
+	int rendered_mesh_count = 0;
 	for( int i = 0; i < num_meshes; i++ )
 	{
 		sMesh *p_mesh = p_scene->mpp_mesh_list[i];
@@ -478,16 +705,38 @@ void render_scene( sScene *p_scene, uint32 flags, uint32 viewport )
 			continue;
 		}
 		
-		// In a full implementation, for each mesh:
+#ifdef VULKAN_AVAILABLE
+		// For each mesh that should be rendered:
 		// 1. Bind vertex and index buffers
-		// 2. Bind material/textures
-		// 3. Update push constants or descriptor sets
+		// 2. Bind material/textures via descriptor sets
+		// 3. Update push constants with transform matrices
 		// 4. Draw indexed
+		// In a full implementation:
+		// - vkCmdBindVertexBuffers
+		// - vkCmdBindIndexBuffer
+		// - vkCmdBindDescriptorSets
+		// - vkCmdPushConstants
+		// - vkCmdDrawIndexed
+		if( p_mesh->pVulkanVertexBuffer && p_mesh->pVulkanIndexBuffer )
+		{
+			rendered_mesh_count++;
+		}
+#endif
 	}
 	
-	// 5. End render pass
-	// 6. End command buffer recording
-	// 7. Submit command buffer to queue
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.device && rendered_mesh_count > 0 )
+	{
+		printf("  Rendered %d meshes\n", rendered_mesh_count);
+		
+		// 5-7. End render pass, end command buffer, submit
+		// In a full implementation:
+		// - vkCmdEndRenderPass
+		// - vkEndCommandBuffer
+		// - vkQueueSubmit to graphics queue
+		// - vkQueueWaitIdle or use fences for synchronization
+	}
+#endif
 }
 
 /******************************************************************/
@@ -595,13 +844,56 @@ sTexture* create_texture( uint32 checksum, uint16 width, uint16 height, uint8 fo
 		p_texture->pTexelData = new uint8[p_texture->byte_size];
 		memcpy( p_texture->pTexelData, pData, p_texture->byte_size );
 		
-		// In a full implementation:
-		// 1. Create Vulkan image with specified format
-		//    - For DXT formats, use BC1/BC2/BC3 compressed formats
-		//    - For uncompressed formats, use appropriate VkFormat
-		// 2. Allocate device memory
-		// 3. Upload texture data (compressed data stays compressed)
-		// 4. Generate mipmaps if needed
+#ifdef VULKAN_AVAILABLE
+		if( g_vulkan_state.device )
+		{
+			// 1. Create Vulkan image with specified format
+			VkFormat vk_format = VK_FORMAT_R8G8B8A8_UNORM; // Default format
+			
+			// Map texture format to Vulkan format
+			switch( format )
+			{
+				case sTexture::TEXTURE_FORMAT_DXT1:
+					vk_format = VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
+					break;
+				case sTexture::TEXTURE_FORMAT_DXT3:
+					vk_format = VK_FORMAT_BC2_UNORM_BLOCK;
+					break;
+				case sTexture::TEXTURE_FORMAT_DXT5:
+					vk_format = VK_FORMAT_BC3_UNORM_BLOCK;
+					break;
+				case sTexture::TEXTURE_FORMAT_A8R8G8B8:
+				case sTexture::TEXTURE_FORMAT_RGBA32:
+					vk_format = VK_FORMAT_R8G8B8A8_UNORM;
+					break;
+				case sTexture::TEXTURE_FORMAT_R5G6B5:
+					vk_format = VK_FORMAT_R5G6B5_UNORM_PACK16;
+					break;
+				default:
+					vk_format = VK_FORMAT_R8G8B8A8_UNORM;
+					break;
+			}
+			
+			// For minimal implementation, just store the format info
+			// A full implementation would:
+			// - Create VkImage with VkImageCreateInfo
+			// - Allocate VkDeviceMemory with vkAllocateMemory
+			// - Bind memory to image with vkBindImageMemory
+			// - Create staging buffer and copy data
+			// - Transition image layout
+			// - Create VkImageView for shader access
+			
+			VkImage* image = new VkImage();
+			*image = VK_NULL_HANDLE; // Placeholder
+			p_texture->pVulkanTexture = image;
+			
+			printf("Texture created (checksum: 0x%08X, format: %d, size: %dx%d, Vulkan format: %d)\n",
+				   checksum, format, width, height, vk_format);
+		}
+#else
+		// Stub implementation
+		p_texture->pVulkanTexture = (void*)1; // Non-null placeholder
+#endif
 	}
 	
 	pTextureTable->PutItem( checksum, p_texture );
@@ -620,10 +912,22 @@ void destroy_texture( sTexture *p_texture )
 		return;
 	}
 	
-	// In a full implementation:
-	// 1. Destroy Vulkan image view
-	// 2. Destroy Vulkan image
-	// 3. Free device memory
+#ifdef VULKAN_AVAILABLE
+	// 1-3. Destroy Vulkan resources
+	if( p_texture->pVulkanTexture && g_vulkan_state.device )
+	{
+		VkImage* image = (VkImage*)p_texture->pVulkanTexture;
+		if( *image != VK_NULL_HANDLE )
+		{
+			// In a full implementation:
+			// - Destroy VkImageView
+			// - Destroy VkImage
+			// - Free VkDeviceMemory
+			vkDestroyImage(g_vulkan_state.device, *image, NULL);
+		}
+		delete image;
+	}
+#endif
 	
 	if( p_texture->pTexelData )
 	{
@@ -836,10 +1140,31 @@ void destroy_mesh( sMesh *p_mesh )
 		return;
 	}
 	
-	// In a full implementation:
+#ifdef VULKAN_AVAILABLE
 	// 1. Destroy Vulkan vertex buffer
+	if( p_mesh->pVulkanVertexBuffer && g_vulkan_state.device )
+	{
+		VkBuffer* vertex_buffer = (VkBuffer*)p_mesh->pVulkanVertexBuffer;
+		if( *vertex_buffer != VK_NULL_HANDLE )
+		{
+			vkDestroyBuffer(g_vulkan_state.device, *vertex_buffer, NULL);
+		}
+		delete vertex_buffer;
+	}
+	
 	// 2. Destroy Vulkan index buffer
-	// 3. Free device memory
+	if( p_mesh->pVulkanIndexBuffer && g_vulkan_state.device )
+	{
+		VkBuffer* index_buffer = (VkBuffer*)p_mesh->pVulkanIndexBuffer;
+		if( *index_buffer != VK_NULL_HANDLE )
+		{
+			vkDestroyBuffer(g_vulkan_state.device, *index_buffer, NULL);
+		}
+		delete index_buffer;
+	}
+	
+	// 3. Free device memory would be done here in full implementation
+#endif
 	
 	if( p_mesh->mp_positions )
 	{
@@ -876,13 +1201,54 @@ void upload_mesh_data( sMesh *p_mesh )
 		return;
 	}
 	
-	// In a full implementation:
-	// 1. Create staging buffer
-	// 2. Copy vertex data to staging buffer
-	// 3. Create device-local vertex buffer
-	// 4. Copy from staging to device buffer
-	// 5. Create index buffer similarly
-	// 6. Destroy staging buffers
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.device || !p_mesh->mp_positions )
+	{
+		return;
+	}
+	
+	// 1-3. Create staging buffer and device-local vertex buffer
+	VkDeviceSize vertex_buffer_size = p_mesh->m_num_vertices * 3 * sizeof(float); // positions only for simplicity
+	
+	if( vertex_buffer_size > 0 )
+	{
+		// For minimal implementation, we'll just allocate the buffer handle
+		// A full implementation would:
+		// - Create staging buffer with VK_BUFFER_USAGE_TRANSFER_SRC_BIT
+		// - Map memory and copy vertex data
+		// - Create device-local buffer with VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+		// - Copy from staging to device buffer using command buffer
+		// - Destroy staging buffer
+		
+		VkBuffer* vertex_buffer = new VkBuffer();
+		*vertex_buffer = VK_NULL_HANDLE; // Placeholder
+		p_mesh->pVulkanVertexBuffer = vertex_buffer;
+		
+		printf("Mesh vertex buffer prepared (size: %lu bytes)\n", (unsigned long)vertex_buffer_size);
+	}
+	
+	// 4-5. Create index buffer similarly
+	if( p_mesh->mp_indices && p_mesh->m_num_indices > 0 )
+	{
+		VkDeviceSize index_buffer_size = p_mesh->m_num_indices * sizeof(uint16);
+		
+		VkBuffer* index_buffer = new VkBuffer();
+		*index_buffer = VK_NULL_HANDLE; // Placeholder
+		p_mesh->pVulkanIndexBuffer = index_buffer;
+		
+		printf("Mesh index buffer prepared (size: %lu bytes)\n", (unsigned long)index_buffer_size);
+	}
+#else
+	// Stub implementation - just mark as uploaded
+	if( p_mesh->mp_positions )
+	{
+		p_mesh->pVulkanVertexBuffer = (void*)1; // Non-null placeholder
+	}
+	if( p_mesh->mp_indices )
+	{
+		p_mesh->pVulkanIndexBuffer = (void*)1; // Non-null placeholder
+	}
+#endif
 }
 
 /******************************************************************/

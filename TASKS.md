@@ -109,7 +109,7 @@ Document the graphics pipeline in detail.
 
 ### Medium Priority
 
-#### TASK-DOC-005: Document Physics Engine
+#### TASK-DOC-005: Document Physics Engine ✓ COMPLETED
 **Priority**: Medium | **Complexity**: Medium | **Effort**: 4-8 hours
 
 Document the physics engine and collision detection systems.
@@ -120,14 +120,16 @@ Document the physics engine and collision detection systems.
 - Explain skateboarding-specific physics
 - Include code examples
 
-**Files to create**:
-- `docs/subsystems/PHYSICS.md`
+**Files created**:
+- `docs/subsystems/PHYSICS.md` ✓
+
+**Status**: Completed. Comprehensive physics documentation including feeler system, collision detection, and skateboard-specific physics.
 
 **Related**: ROADMAP.md Section 1.3
 
 ---
 
-#### TASK-DOC-006: Document Animation System
+#### TASK-DOC-006: Document Animation System ✓ COMPLETED
 **Priority**: Medium | **Complexity**: Medium | **Effort**: 3-6 hours
 
 Document the animation system architecture.
@@ -138,14 +140,16 @@ Document the animation system architecture.
 - Explain skeletal animation system
 - Include usage examples
 
-**Files to create**:
-- `docs/subsystems/ANIMATION.md`
+**Files created**:
+- `docs/subsystems/ANIMATION.md` ✓
+
+**Status**: Completed. Detailed animation system documentation including blend channels, animation components, and script integration.
 
 **Related**: ROADMAP.md Section 1.3
 
 ---
 
-#### TASK-DOC-007: Document Audio System
+#### TASK-DOC-007: Document Audio System ✓ COMPLETED
 **Priority**: Medium | **Complexity**: Medium | **Effort**: 3-6 hours
 
 Document the audio system architecture.
@@ -156,8 +160,10 @@ Document the audio system architecture.
 - Explain 3D audio positioning
 - Document audio file formats
 
-**Files to create**:
-- `docs/subsystems/AUDIO.md`
+**Files created**:
+- `docs/subsystems/AUDIO.md` ✓
+
+**Status**: Completed. Comprehensive audio documentation including SoundFX system, music playback, 3D positioning, and Win32 stub status.
 
 **Related**: ROADMAP.md Section 1.3
 
@@ -313,7 +319,7 @@ Create example projects demonstrating key systems.
 
 ### High Priority
 
-#### TASK-BUILD-001: Modular CMakeLists.txt Structure
+#### TASK-BUILD-001: Modular CMakeLists.txt Structure ✓ COMPLETED
 **Priority**: High | **Complexity**: Medium | **Effort**: 6-10 hours
 
 Create modular CMake configuration for each major directory.
@@ -324,13 +330,15 @@ Create modular CMake configuration for each major directory.
 - Maintain compatibility with main build
 - Add proper dependency tracking
 
-**Files to create/modify**:
-- `Code/Core/CMakeLists.txt`
-- `Code/Gel/CMakeLists.txt`
-- `Code/Gfx/CMakeLists.txt`
-- `Code/Sk/CMakeLists.txt`
-- `Code/Sys/CMakeLists.txt`
-- Update root `CMakeLists.txt`
+**Files created**:
+- `Code/Core/CMakeLists.txt` ✓
+- `Code/Gel/CMakeLists.txt` ✓
+- `Code/Gfx/CMakeLists.txt` ✓
+- `Code/Sk/CMakeLists.txt` ✓
+- `Code/Sys/CMakeLists.txt` ✓
+- Updated root `CMakeLists.txt` ✓
+
+**Status**: Completed. Each subsystem now has its own CMakeLists.txt using OBJECT libraries. Proper dependency tracking implemented. Build system tested and functional.
 
 **Related**: ROADMAP.md Section 2.1
 

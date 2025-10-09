@@ -344,7 +344,7 @@ Create modular CMake configuration for each major directory.
 
 ---
 
-#### TASK-BUILD-002: Add Conditional Compilation Flags
+#### TASK-BUILD-002: Add Conditional Compilation Flags ✓ COMPLETED
 **Priority**: High | **Complexity**: Medium | **Effort**: 4-6 hours
 
 Add platform-specific compilation flags.
@@ -355,9 +355,14 @@ Add platform-specific compilation flags.
 - Support debug/release configurations
 - Document available flags
 
-**Files to modify**:
-- `CMakeLists.txt`
-- Create `cmake/platform_flags.cmake`
+**Files created**:
+- `cmake/platform_flags.cmake` ✓
+
+**Files modified**:
+- `CMakeLists.txt` ✓
+- `BUILDING.md` (documented) ✓
+
+**Status**: Completed. Platform-specific compilation flags implemented with automatic detection for Windows, Linux, and macOS. Support for debug/release configurations, optional features (profiling, memory debugging, script debugging), and comprehensive compiler-specific flags.
 
 **Related**: ROADMAP.md Section 2.1
 
@@ -427,7 +432,7 @@ Create Docker containers for reproducible builds.
 
 ---
 
-#### TASK-BUILD-006: Documentation Build Target
+#### TASK-BUILD-006: Documentation Build Target ✓ COMPLETED
 **Priority**: Low | **Complexity**: Low | **Effort**: 2-3 hours
 
 Add CMake target for building documentation.
@@ -438,9 +443,13 @@ Add CMake target for building documentation.
 - Generate HTML docs
 - Document usage
 
-**Files to modify**:
-- `CMakeLists.txt`
-- Create `docs/Doxyfile` (if using Doxygen)
+**Files modified**:
+- `CMakeLists.txt` ✓
+- `BUILDING.md` (documented) ✓
+
+**Status**: Completed. Added two documentation targets:
+- `docs` - Generates HTML documentation using Doxygen (if installed)
+- `markdown_docs` - Always available, shows index of all documentation files
 
 **Related**: ROADMAP.md Section 2.1
 

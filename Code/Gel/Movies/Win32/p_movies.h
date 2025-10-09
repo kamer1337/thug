@@ -40,11 +40,11 @@ namespace Flx
 **							   Public Prototypes							**
 *****************************************************************************/
 
-// PC platform movie stubs
-inline bool PlayMovie( const char* pMovieName ) { return false; }
-inline bool IsPlayingMovie( void ) { return false; }
-inline void StopMovie( void ) {}
-inline void PauseMovie( bool pause ) {}
+// PC platform movie functions
+bool	PlayMovie( const char* pMovieName );
+bool	IsPlayingMovie( void );
+void	StopMovie( void );
+void	PauseMovie( bool pause );
 
 } // namespace Flx
 

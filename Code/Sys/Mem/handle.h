@@ -89,7 +89,7 @@ protected :
 *****************************************************************************/
 
 template < class _T > inline   
-Handle< _T >::Handle< _T >( _T* ptr ) 
+Handle< _T >::Handle( _T* ptr ) 
 : m_ptr ( ptr ), m_id ( Allocator::sGetId( ptr ))
 {
 	
@@ -104,7 +104,7 @@ Handle< _T >::Handle< _T >( _T* ptr )
 // This version to fix Visual C++ compiler lack of ANSI C++ compliance.
 #else
 template < class _T > template < class _NewT > inline
-Handle< _T >::Handle< _T >( Handle< _NewT >& rhs )
+Handle< _T >::Handle( Handle< _NewT >& rhs )
 : m_ptr ( rhs.m_ptr ), m_id ( rhs.m_id )
 {
 	

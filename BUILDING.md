@@ -33,9 +33,9 @@ This document explains the current state and what would be needed for a full bui
 
 ### What Still Needs Work
 
-1. **C++ Template Compatibility** - The memory management templates use old MSVC syntax that doesn't compile on modern GCC
-2. **Graphics Implementation** - DirectX 8 or modern OpenGL/Vulkan rendering
-3. **Complete Audio Implementation** - OpenAL, FMOD, or similar
+1. **C++ Template Compatibility** - The memory management templates use old MSVC syntax that doesn't compile on modern GCC (being addressed in separate PR)
+2. **Graphics Implementation** - Backend architecture documented and integrated into CMake, stub implementations exist for DirectX/OpenGL, Vulkan implementation exists but needs integration
+3. **Complete Audio Implementation** - Backend architecture documented and integrated into CMake, stub implementations exist for SDL2/OpenAL/FMOD
 4. **Asset Pipeline** - Convert console assets to PC formats
 
 ## Build Infrastructure Added
@@ -47,6 +47,33 @@ A `CMakeLists.txt` has been created that:
 - Collects source files automatically from Win32/Wn32 directories
 - Sets up include directories
 - Provides debug/release build configurations
+- **NEW**: Supports multiple graphics backends (Vulkan, DirectX, OpenGL)
+- **NEW**: Supports multiple audio backends (SDL2, OpenAL, FMOD)
+
+#### Backend Architecture
+
+The build system now supports configurable graphics and audio backends:
+
+**Graphics Backend Options:**
+```bash
+cmake -DUSE_VULKAN_RENDERER=ON ..   # Vulkan (recommended, cross-platform)
+cmake -DUSE_DIRECTX_RENDERER=ON ..  # DirectX (Windows only)
+cmake -DUSE_OPENGL_RENDERER=ON ..   # OpenGL (cross-platform)
+```
+
+**Audio Backend Options:**
+```bash
+cmake -DAUDIO_BACKEND=SDL2 ..       # SDL2_mixer (recommended, simple API)
+cmake -DAUDIO_BACKEND=OpenAL ..     # OpenAL (3D positional audio)
+cmake -DAUDIO_BACKEND=FMOD ..       # FMOD (professional, requires license)
+```
+
+**Combined Example:**
+```bash
+cmake -DUSE_VULKAN_RENDERER=ON -DAUDIO_BACKEND=SDL2 ..
+```
+
+See `docs/BACKEND_ARCHITECTURE.md` for detailed backend documentation.
 
 ### 2. Case-Sensitivity Fixes
 
@@ -174,13 +201,31 @@ This would require:
 
 ### Step 1: Configure
 
+**Basic configuration (no backends):**
 ```bash
 cd /path/to/thug
 mkdir build && cd build
 cmake ..
 ```
 
-This will succeed - CMake can configure the build.
+**With graphics backend:**
+```bash
+cmake -DUSE_VULKAN_RENDERER=ON ..
+# or
+cmake -DUSE_OPENGL_RENDERER=ON ..
+```
+
+**With audio backend:**
+```bash
+cmake -DAUDIO_BACKEND=SDL2 ..
+```
+
+**With both:**
+```bash
+cmake -DUSE_VULKAN_RENDERER=ON -DAUDIO_BACKEND=SDL2 ..
+```
+
+This will succeed - CMake can configure the build and will display a summary showing selected backends.
 
 ### Step 2: Build
 

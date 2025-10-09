@@ -50,34 +50,40 @@ This roadmap is organized into short-term, medium-term, and long-term goals. Eac
 #### 1.3 Subsystem Documentation
 **Priority**: Medium | **Complexity**: Medium | **Impact**: Medium
 
-- [ ] Document the physics engine and collision detection
-- [ ] Document the animation system
-- [ ] Document the audio system architecture
+- [x] Document the physics engine and collision detection
+- [x] Document the animation system
+- [x] Document the audio system architecture
 - [ ] Document the networking/multiplayer system
 - [ ] Document the park editor system
 - [ ] Document memory management strategies
 
+**Files created**:
+- `docs/subsystems/PHYSICS.md` ✓
+- `docs/subsystems/ANIMATION.md` ✓
+- `docs/subsystems/AUDIO.md` ✓
+
 **Files to create**:
-- `docs/subsystems/PHYSICS.md`
-- `docs/subsystems/ANIMATION.md`
-- `docs/subsystems/AUDIO.md`
 - `docs/subsystems/NETWORKING.md`
 - `docs/subsystems/PARK_EDITOR.md`
 - `docs/subsystems/MEMORY.md`
+
+**Status**: Core subsystem documentation complete! Networking, park editor, and memory management documentation remain.
 
 ### 2. Build System Enhancements
 
 #### 2.1 CMake Improvements
 **Priority**: High | **Complexity**: Medium | **Impact**: High
 
-- [ ] Add support for building individual subsystems separately
-- [ ] Create modular CMakeLists.txt for each major directory
+- [x] Add support for building individual subsystems separately
+- [x] Create modular CMakeLists.txt for each major directory
 - [ ] Add conditional compilation flags for different platforms
-- [ ] Implement proper dependency tracking
-- [ ] Add support for static analysis tools (cppcheck, clang-tidy)
+- [x] Implement proper dependency tracking
+- [x] Add support for static analysis tools (cppcheck, clang-tidy)
 - [ ] Create separate build targets for documentation building
 
 **Benefits**: Better organization, faster iteration, easier testing
+
+**Status**: Modular CMake structure implemented! Each subsystem (Core, Gel, Gfx, Sk, Sys) now has its own CMakeLists.txt. Conditional compilation flags and documentation build targets remain.
 
 #### 2.2 Cross-Platform Compatibility
 **Priority**: Medium | **Complexity**: Medium | **Impact**: Medium
@@ -552,7 +558,9 @@ docs/
    
 2. **Build System** - Modular CMake, CI/CD setup
    - ✓ GitHub Actions CI/CD pipeline configured
-   - ⧗ Modular CMake structure (in progress)
+   - ✓ Modular CMake structure implemented
+   - ⧗ Conditional compilation flags (remaining)
+   - ⧗ Documentation build targets (remaining)
    
 3. **Legal Clarity** - License documentation, disclaimers
    - ✓ LEGAL.md created with comprehensive disclaimers

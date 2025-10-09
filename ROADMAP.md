@@ -76,14 +76,14 @@ This roadmap is organized into short-term, medium-term, and long-term goals. Eac
 
 - [x] Add support for building individual subsystems separately
 - [x] Create modular CMakeLists.txt for each major directory
-- [ ] Add conditional compilation flags for different platforms
+- [x] Add conditional compilation flags for different platforms
 - [x] Implement proper dependency tracking
 - [x] Add support for static analysis tools (cppcheck, clang-tidy)
-- [ ] Create separate build targets for documentation building
+- [x] Create separate build targets for documentation building
 
 **Benefits**: Better organization, faster iteration, easier testing
 
-**Status**: Modular CMake structure implemented! Each subsystem (Core, Gel, Gfx, Sk, Sys) now has its own CMakeLists.txt. Conditional compilation flags and documentation build targets remain.
+**Status**: Complete! Modular CMake structure implemented with conditional compilation flags and documentation build targets.
 
 #### 2.2 Cross-Platform Compatibility
 **Priority**: Medium | **Complexity**: Medium | **Impact**: Medium
@@ -559,8 +559,8 @@ docs/
 2. **Build System** - Modular CMake, CI/CD setup
    - ✓ GitHub Actions CI/CD pipeline configured
    - ✓ Modular CMake structure implemented
-   - ⧗ Conditional compilation flags (remaining)
-   - ⧗ Documentation build targets (remaining)
+   - ✓ Conditional compilation flags (completed)
+   - ✓ Documentation build targets (completed)
    
 3. **Legal Clarity** - License documentation, disclaimers
    - ✓ LEGAL.md created with comprehensive disclaimers

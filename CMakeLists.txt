@@ -6,43 +6,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 99)
 
-# Renderer options
-option(USE_VULKAN_RENDERER "Use Vulkan renderer backend (experimental)" OFF)
-
-# Compiler options
-if(MSVC)
-    add_compile_options(/W3)
-else()
-    add_compile_options(-Wall -Wno-unknown-pragmas -Wno-format)
-endif()
-
-# Platform detection
-if(WIN32)
-    set(PLATFORM_NAME "Win32")
-    add_definitions(-D__PLAT_WN32__)
-elseif(UNIX AND NOT APPLE)
-    set(PLATFORM_NAME "Linux")
-    add_definitions(-D__PLAT_LINUX__)
-elseif(APPLE)
-    set(PLATFORM_NAME "MacOS")
-    add_definitions(-D__PLAT_MACOS__)
-endif()
-
-# Build type
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
-endif()
-
-# Debug flags
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    add_definitions(-D__NOPT_DEBUG__ -D__NOPT_ASSERT__ -D__NOPT_MESSAGES__)
-endif()
-
-# Create case-insensitive include wrapper
-# The original code was written for Windows (case-insensitive filesystem)
-# We need to handle this on Linux
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-write-strings")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated -Wno-write-strings")
+# Include platform-specific compilation flags
+include(cmake/platform_flags.cmake)
 
 # Include directories
 include_directories(
@@ -51,9 +16,6 @@ include_directories(
 
 # Vulkan renderer configuration
 if(USE_VULKAN_RENDERER)
-    message(STATUS "Vulkan renderer enabled (experimental)")
-    add_definitions(-DUSE_VULKAN_RENDERER)
-    
     # Try to find Vulkan SDK (optional, for future full implementation)
     find_package(Vulkan QUIET)
     if(Vulkan_FOUND)
@@ -97,11 +59,9 @@ add_executable(thug
     $<TARGET_OBJECTS:thug_sys>
 )
 
-# Link libraries
-if(UNIX AND NOT APPLE)
-    target_link_libraries(thug pthread dl m)
-elseif(APPLE)
-    target_link_libraries(thug pthread dl m)
+# Link libraries (using THUG_PLATFORM_LIBS from platform_flags.cmake)
+if(THUG_PLATFORM_LIBS)
+    target_link_libraries(thug ${THUG_PLATFORM_LIBS})
 endif()
 
 # Link Vulkan if available and enabled
@@ -113,8 +73,72 @@ endif()
 # Installation
 install(TARGETS thug DESTINATION bin)
 
-# Print build information
-message(STATUS "Building THUG for ${PLATFORM_NAME}")
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")
-message(STATUS "C Compiler: ${CMAKE_C_COMPILER}")
+# =============================================================================
+# Documentation Build Target (TASK-BUILD-006)
+# =============================================================================
+
+# Find Doxygen (optional)
+find_package(Doxygen QUIET)
+
+if(DOXYGEN_FOUND)
+    # Doxygen configuration
+    set(DOXYGEN_PROJECT_NAME "THUG Source Code")
+    set(DOXYGEN_PROJECT_BRIEF "Tony Hawk's Underground - Source Code Documentation")
+    set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/docs")
+    set(DOXYGEN_INPUT "${CMAKE_SOURCE_DIR}/Code ${CMAKE_SOURCE_DIR}/docs")
+    set(DOXYGEN_RECURSIVE YES)
+    set(DOXYGEN_EXTRACT_ALL YES)
+    set(DOXYGEN_EXTRACT_PRIVATE YES)
+    set(DOXYGEN_EXTRACT_STATIC YES)
+    set(DOXYGEN_GENERATE_HTML YES)
+    set(DOXYGEN_GENERATE_LATEX NO)
+    set(DOXYGEN_HTML_OUTPUT "html")
+    set(DOXYGEN_FILE_PATTERNS "*.cpp *.h *.c *.md")
+    set(DOXYGEN_EXCLUDE_PATTERNS "*/build/* */.git/*")
+    
+    # Create docs target
+    doxygen_add_docs(
+        docs
+        ${CMAKE_SOURCE_DIR}/Code
+        ${CMAKE_SOURCE_DIR}/docs
+        COMMENT "Generating documentation with Doxygen"
+    )
+    
+    message(STATUS "Documentation target 'docs' available (run 'make docs' or 'cmake --build . --target docs')")
+else()
+    message(STATUS "Doxygen not found - documentation target not available")
+    message(STATUS "Install Doxygen to enable: apt-get install doxygen (Linux) or brew install doxygen (macOS)")
+endif()
+
+# Markdown documentation target (always available)
+add_custom_target(markdown_docs
+    COMMAND ${CMAKE_COMMAND} -E echo "=== THUG Documentation ==="
+    COMMAND ${CMAKE_COMMAND} -E echo ""
+    COMMAND ${CMAKE_COMMAND} -E echo "Main Documentation Files:"
+    COMMAND ${CMAKE_COMMAND} -E echo "  README.md - Project overview"
+    COMMAND ${CMAKE_COMMAND} -E echo "  BUILDING.md - Build instructions"
+    COMMAND ${CMAKE_COMMAND} -E echo "  ROADMAP.md - Development roadmap"
+    COMMAND ${CMAKE_COMMAND} -E echo "  TASKS.md - Available tasks"
+    COMMAND ${CMAKE_COMMAND} -E echo "  LEGAL.md - Legal information"
+    COMMAND ${CMAKE_COMMAND} -E echo ""
+    COMMAND ${CMAKE_COMMAND} -E echo "Architecture Documentation:"
+    COMMAND ${CMAKE_COMMAND} -E echo "  docs/ARCHITECTURE.md"
+    COMMAND ${CMAKE_COMMAND} -E echo "  docs/GAME_LOOP.md"
+    COMMAND ${CMAKE_COMMAND} -E echo "  docs/RENDERING.md"
+    COMMAND ${CMAKE_COMMAND} -E echo "  docs/SCRIPTING.md"
+    COMMAND ${CMAKE_COMMAND} -E echo ""
+    COMMAND ${CMAKE_COMMAND} -E echo "All documentation available in the docs/ directory"
+    COMMENT "Markdown documentation index"
+)
+
+message(STATUS "Markdown documentation target 'markdown_docs' available")
+
+# =============================================================================
+# Build Information
+# =============================================================================
+
+# =============================================================================
+# Build Information
+# =============================================================================
+
+# Print build information (now handled by platform_flags.cmake summary)

@@ -75,6 +75,18 @@ See **[docs/PC_PORT_PROGRESS.md](docs/PC_PORT_PROGRESS.md)** for detailed progre
 
 This repository includes a proper PC-compatible asset directory structure but does **not** include actual game assets due to copyright.
 
+**Asset Directories:**
+
+1. **`pre/`** - PRE archive files (original compressed archives)
+   - Place `.pre` files from original game here
+   - Engine loads assets directly from these archives
+   - See `pre/README.md` for details
+
+2. **`Data/`** - Extracted asset files (for development)
+   - Individual asset files organized by type
+   - Easier to modify and test
+   - See `Data/README.md` for structure
+
 **Asset Structure**: `Data/`
 ```
 Data/
@@ -93,13 +105,26 @@ Data/
 └── Config/                # Configuration files
 ```
 
+**PRE Archive Structure**: `pre/`
+```
+pre/
+├── README.md              # PRE archive documentation
+├── qb.pre                 # QB script archives
+├── skaterparts.pre        # Skater customization
+├── levels.pre             # Level geometry
+├── models.pre             # Character models
+└── ... (other .pre files from original game)
+```
+
 **To obtain assets:**
 1. You must own a legal copy of Tony Hawk's Underground
-2. Extract assets using tools in `tools/` directory
-3. See `docs/ASSET_EXTRACTION.md` for detailed instructions
-4. See `docs/ASSET_FORMATS.md` for technical format details
+2. **Option A:** Copy `.pre` files to `pre/` directory (quick setup)
+3. **Option B:** Extract assets to `Data/` using tools in `tools/` directory
+4. See `docs/ASSET_EXTRACTION.md` for detailed instructions
+5. See `docs/ASSET_FORMATS.md` for technical format details
 
 **Asset Documentation:**
+- 📦 **[pre/README.md](pre/README.md)** - PRE archive files documentation
 - 📁 **[Data/README.md](Data/README.md)** - Complete directory structure and conventions
 - 📄 **[Data/ASSET_MANIFEST.md](Data/ASSET_MANIFEST.md)** - Full list of required assets
 - 🔧 **[docs/ASSET_EXTRACTION.md](docs/ASSET_EXTRACTION.md)** - How to extract from original game

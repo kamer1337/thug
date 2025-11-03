@@ -109,3 +109,11 @@ Data/**/*.wad
 !Data/README.md
 !Data/ASSET_MANIFEST.md
 !Data/**/.gitkeep
+
+# PRE Archive Files (Do not commit copyrighted game archives)
+# Keep directory structure with .gitkeep, but ignore actual .pre files
+pre/*.pre
+
+# BUT keep documentation and structure
+!pre/README.md
+!pre/.gitkeep

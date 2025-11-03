@@ -193,11 +193,30 @@ Data/Scenes/Levels/NJ/
 - Audio via SDL2_mixer
 - Same as Linux for models
 
+## PRE Archive Files vs. Extracted Assets
+
+The game engine supports two methods for loading assets:
+
+### Method 1: PRE Archives (Original Method)
+- Place `.pre` archive files in the `pre/` directory at repository root
+- Game loads assets directly from compressed archives
+- Matches original game behavior
+- See `pre/README.md` for details on working with PRE files
+
+### Method 2: Extracted Assets (Modern Method)
+- Extract assets from `.pre` files to this `Data/` directory structure
+- Game loads individual files directly
+- Easier for development and asset modification
+- See `docs/ASSET_EXTRACTION.md` for extraction procedures
+
+**Note**: The code in `Code/Sys/File/pip.cpp` expects `.pre` files in the `pre/` directory. Extracted assets in `Data/` are accessed differently through the Asset Manager.
+
 ## Missing Assets
 
 **Note**: This repository does not include actual game assets due to copyright. You will need:
 - Original game files (from THUG PC installation)
-- Asset extraction tools (see `tools/` directory)
+- Either place `.pre` files in `pre/` directory (see `pre/README.md`)
+- Or extract assets to this `Data/` directory (see `docs/ASSET_EXTRACTION.md`)
 - Or create your own assets following the formats
 
 ## Asset Extraction
@@ -206,10 +225,12 @@ See `docs/ASSET_EXTRACTION.md` for information on extracting assets from the ori
 
 ## See Also
 
+- `pre/README.md` - Documentation for PRE archive files
 - `docs/ASSET_FORMATS.md` - Detailed file format specifications
+- `docs/ASSET_EXTRACTION.md` - Extracting assets from PRE files
 - `docs/BUILDING.md` - Build instructions including asset pipeline
 - `Code/Gel/AssMan/` - Asset Manager implementation
-- `Code/Sys/File/` - File I/O system
+- `Code/Sys/File/` - File I/O system (including PRE loading)
 
 ---
 

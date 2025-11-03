@@ -21,9 +21,10 @@ See `LEGAL.md` for full legal information.
 1. [Requirements](#requirements)
 2. [Locating Game Files](#locating-game-files)
 3. [Understanding File Structure](#understanding-file-structure)
-4. [Extraction Methods](#extraction-methods)
-5. [Asset Conversion](#asset-conversion)
-6. [Organizing Extracted Assets](#organizing-extracted-assets)
+4. [Two Usage Methods](#two-usage-methods)
+5. [Extraction Methods](#extraction-methods)
+6. [Asset Conversion](#asset-conversion)
+7. [Organizing Extracted Assets](#organizing-extracted-assets)
 
 ---
 
@@ -113,6 +114,45 @@ Compressed Data
 - `anims.pre` - Animation data
 - `scripts.pre` - QB script files
 - `sounds.pre` - Sound effects
+
+---
+
+## Two Usage Methods
+
+You have two options for using game assets with this engine:
+
+### Option A: Use PRE Archives Directly (Recommended for Initial Setup)
+
+**Advantages:**
+- Matches original game behavior exactly
+- Faster to set up (just copy files)
+- Smaller disk footprint (compressed)
+- No extraction needed
+
+**Steps:**
+1. Copy `.pre` files from your THUG installation to the `pre/` directory
+2. The engine will load assets directly from the archives
+3. See `pre/README.md` for details
+
+```bash
+# Example: Copy PRE files to pre/ directory
+cp "/path/to/THUG/Data/"*.pre ./pre/
+```
+
+### Option B: Extract Assets to Data/ Directory (Better for Development)
+
+**Advantages:**
+- Easier to modify individual assets
+- Better for development and debugging
+- Can mix custom assets with original ones
+- No need to rebuild archives
+
+**Steps:**
+1. Extract assets from `.pre` files using methods below
+2. Place extracted files in appropriate `Data/` subdirectories
+3. Modify engine code to load from loose files instead of archives
+
+**Note:** The engine currently expects PRE files in `pre/` directory by default. To use extracted assets, you'll need to modify the asset loading code in `Code/Sys/File/` or use both methods simultaneously.
 
 ---
 

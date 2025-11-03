@@ -67,9 +67,43 @@ See **[docs/PC_PORT_PROGRESS.md](docs/PC_PORT_PROGRESS.md)** for detailed progre
 ### Why It Can't Be Fully Built Yet
 
 1. **C++ Template Issues**: Old template syntax incompatible with modern GCC (blocking compilation)
-2. **Missing Assets**: Game assets (models, textures, sounds, scripts) are not included
+2. **Missing Assets**: Game assets (models, textures, sounds, scripts) are not included - **See [Data Structure](#data-structure-and-assets)**
 3. **Graphics Backend**: Needs DirectX/OpenGL/Vulkan implementation
 4. **Audio Backend**: Needs OpenAL/FMOD/SDL_mixer implementation
+
+## Data Structure and Assets
+
+This repository includes a proper PC-compatible asset directory structure but does **not** include actual game assets due to copyright.
+
+**Asset Structure**: `Data/`
+```
+Data/
+├── README.md              # Asset directory documentation
+├── ASSET_MANIFEST.md      # Complete list of required assets
+├── Models/                # 3D models (.mdl files)
+│   ├── GameObjects/       # SKATE/COMBO letters, collectibles
+│   ├── Characters/        # Skater and NPC models
+│   ├── Vehicles/          # Cars and vehicles
+│   └── Props/             # Level props and objects
+├── Textures/              # Texture files (.tex, .img)
+├── Scenes/                # Level geometry (.scn)
+├── Animations/            # Animation data (.ska)
+├── Audio/                 # Music and sound effects
+├── Scripts/               # QB script files (.qb)
+└── Config/                # Configuration files
+```
+
+**To obtain assets:**
+1. You must own a legal copy of Tony Hawk's Underground
+2. Extract assets using tools in `tools/` directory
+3. See `docs/ASSET_EXTRACTION.md` for detailed instructions
+4. See `docs/ASSET_FORMATS.md` for technical format details
+
+**Asset Documentation:**
+- 📁 **[Data/README.md](Data/README.md)** - Complete directory structure and conventions
+- 📄 **[Data/ASSET_MANIFEST.md](Data/ASSET_MANIFEST.md)** - Full list of required assets
+- 🔧 **[docs/ASSET_EXTRACTION.md](docs/ASSET_EXTRACTION.md)** - How to extract from original game
+- 📋 **[docs/ASSET_FORMATS.md](docs/ASSET_FORMATS.md)** - Detailed file format specifications
 
 ### Prerequisites (If You Had Everything)
 
@@ -126,15 +160,18 @@ This repository has been cleaned to focus on PC development only. All console-sp
 ### Missing Dependencies
 
 The code still requires several components not included in this repository:
-- Game assets (models, textures, sounds, scripts)
+- Game assets (models, textures, sounds, scripts) - **See [Data Structure and Assets](#data-structure-and-assets)**
 - Various middleware (sound, video, etc.)
 - Complete implementations of Win32 stub functions
 
 To fully compile and run this code, you would need:
-1. Game assets (models, textures, scripts)
-2. Audio libraries
-3. Video codec libraries
-4. Complete Win32 platform layer implementations
+1. **Game assets** - Extract from original THUG PC installation using tools in `tools/` directory
+   - See `docs/ASSET_EXTRACTION.md` for extraction guide
+   - See `Data/ASSET_MANIFEST.md` for complete asset list
+   - See `docs/ASSET_FORMATS.md` for format specifications
+2. **Audio libraries** - OpenAL, FMOD, or SDL2_mixer
+3. **Video codec libraries** - For cutscenes
+4. **Complete Win32 platform layer implementations**
 
 ### Legal Disclaimer
 
@@ -190,6 +227,12 @@ For more information about the project:
 - **[docs/THUG2_RESEARCH.md](docs/THUG2_RESEARCH.md)** - THUG2 game similarities and comparison analysis
 - **[docs/THUG2_IMPLEMENTATION.md](docs/THUG2_IMPLEMENTATION.md)** - Technical guide for implementing THUG2 features
 - **[docs/subsystems/RECORDS.md](docs/subsystems/RECORDS.md)** - Records system documentation
+
+### Asset Documentation
+- **[Data/README.md](Data/README.md)** - ⭐ Complete asset directory structure and conventions
+- **[Data/ASSET_MANIFEST.md](Data/ASSET_MANIFEST.md)** - ⭐ Full list of required game assets
+- **[docs/ASSET_EXTRACTION.md](docs/ASSET_EXTRACTION.md)** - ⭐ Guide to extracting assets from original game
+- **[docs/ASSET_FORMATS.md](docs/ASSET_FORMATS.md)** - ⭐ Detailed file format specifications (.mdl, .tex, .scn, etc.)
 
 ### Vulkan Renderer Documentation
 

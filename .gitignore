@@ -88,3 +88,24 @@ thug.exe
 *.zip
 *.tar.gz
 *.tgz
+
+# Game Assets (Do not commit copyrighted game assets)
+# Keep directory structure with .gitkeep, but ignore actual asset files
+Data/**/*.mdl
+Data/**/*.tex
+Data/**/*.img
+Data/**/*.scn
+Data/**/*.col
+Data/**/*.ska
+Data/**/*.ske
+Data/**/*.qb
+Data/**/*.wav
+Data/**/*.ogg
+Data/**/*.mp3
+Data/**/*.pre
+Data/**/*.wad
+
+# BUT keep documentation and structure
+!Data/README.md
+!Data/ASSET_MANIFEST.md
+!Data/**/.gitkeep

@@ -148,3 +148,4 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+build_test/

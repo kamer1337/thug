@@ -84,6 +84,12 @@ thug.exe
 *.temp
 *.log
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
 # Package managers
 *.zip
 *.tar.gz

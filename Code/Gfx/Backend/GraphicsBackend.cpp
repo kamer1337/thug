@@ -3,7 +3,13 @@
 
 #include "GraphicsBackend.h"
 #include "OpenGLBackend.h"
-#include <Core/Defines/Defines.h>
+
+#ifdef __THUG_BUILD__
+#include <Core/Defines.h>
+#else
+#include <stdint.h>
+#endif
+
 #include <string.h>
 
 namespace Gfx
@@ -13,34 +19,6 @@ namespace Backend
 
 // Global backend instance
 static IGraphicsBackend* s_pCurrentBackend = nullptr;
-
-// Forward declare backend implementations
-class StubBackend;
-
-IGraphicsBackend* CreateBackend(const char* backendType)
-{
-    if (strcmp(backendType, "opengl") == 0)
-    {
-        return new OpenGLBackend();
-    }
-    else if (strcmp(backendType, "stub") == 0)
-    {
-        return new StubBackend();
-    }
-    
-    // Default to stub backend
-    return new StubBackend();
-}
-
-IGraphicsBackend* GetBackend()
-{
-    return s_pCurrentBackend;
-}
-
-void SetBackend(IGraphicsBackend* backend)
-{
-    s_pCurrentBackend = backend;
-}
 
 // Stub backend for when no real backend is available
 class StubBackend : public IGraphicsBackend
@@ -83,6 +61,31 @@ public:
     virtual const char* GetVersion() const { return "1.0"; }
     virtual bool SupportsFeature(const char* feature) const { return false; }
 };
+
+IGraphicsBackend* CreateBackend(const char* backendType)
+{
+    if (strcmp(backendType, "opengl") == 0)
+    {
+        return new OpenGLBackend();
+    }
+    else if (strcmp(backendType, "stub") == 0)
+    {
+        return new StubBackend();
+    }
+    
+    // Default to stub backend
+    return new StubBackend();
+}
+
+IGraphicsBackend* GetBackend()
+{
+    return s_pCurrentBackend;
+}
+
+void SetBackend(IGraphicsBackend* backend)
+{
+    s_pCurrentBackend = backend;
+}
 
 } // namespace Backend
 } // namespace Gfx

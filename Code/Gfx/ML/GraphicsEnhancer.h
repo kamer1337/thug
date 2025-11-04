@@ -4,7 +4,15 @@
 #ifndef __GFX_ML_GRAPHICS_ENHANCER_H
 #define __GFX_ML_GRAPHICS_ENHANCER_H
 
-#include <Core/Defines/Defines.h>
+// Include THUG types if available, otherwise use standard types
+#ifdef __THUG_BUILD__
+#include <Core/Defines.h>
+#else
+#include <stdint.h>
+typedef uint8_t uint8;
+typedef uint32_t uint32;
+typedef int32_t sint32;
+#endif
 
 namespace Gfx
 {

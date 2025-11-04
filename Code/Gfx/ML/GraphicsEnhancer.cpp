@@ -2,7 +2,13 @@
 // Simple ML-inspired enhancement algorithms for graphics improvements
 
 #include "GraphicsEnhancer.h"
-#include <Core/Defines/Defines.h>
+
+#ifdef __THUG_BUILD__
+#include <Core/Defines.h>
+#else
+#include <stdint.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <math.h>

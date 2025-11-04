@@ -1,7 +1,13 @@
 // OpenGL Graphics Backend Implementation
 
 #include "OpenGLBackend.h"
-#include <Core/Defines/Defines.h>
+
+#ifdef __THUG_BUILD__
+#include <Core/Defines.h>
+#else
+#include <stdint.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 

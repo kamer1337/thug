@@ -6,6 +6,13 @@ file(GLOB_RECURSE SYS_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
+# Exclude platform-specific files based on the platform
+if(NOT WIN32)
+    # Exclude Win32/Wn32 specific files on non-Windows platforms
+    list(FILTER SYS_SOURCES EXCLUDE REGEX ".*/Win32/.*")
+    list(FILTER SYS_SOURCES EXCLUDE REGEX ".*/Wn32/.*")
+endif()
+
 # Create Sys library
 add_library(thug_sys OBJECT ${SYS_SOURCES})
 

@@ -99,7 +99,7 @@ public:
 
 template < class _T > inline	
 Head< _T >::Head( void )
-: Node< _T > ( reinterpret_cast < _T* >( vHEAD_NODE ) ) 
+: Node< _T > ( reinterpret_cast < _T* >( Node< _T >::vHEAD_NODE ) ) 
 {
 	
 }
@@ -132,7 +132,7 @@ void	Head< _T >::AddNode( Node< _T >* node )
 	Dbg_MsgAssert( !node->InList (),( "Object is already in a list" ));
 
 	Node< _T >*		node_ptr =	this;
-	Priority		new_pri	 =	node->GetPri();
+	typename Node< _T >::Priority		new_pri	 =	node->GetPri();
 
 	while (( node_ptr = node_ptr->GetNext() ))
 	{
@@ -143,7 +143,7 @@ void	Head< _T >::AddNode( Node< _T >* node )
 		}
 	}
 
-	Insert( node );
+	this->Insert( node );
 }
 
 /******************************************************************/
@@ -161,7 +161,7 @@ void	Head< _T >::AddNodeFromTail( Node< _T >* node )
 	Dbg_MsgAssert( !node->InList (),( "Object is already in a list" ));
 
 	Node< _T >*		node_ptr =	this;
-	Priority		new_pri	 =	node->GetPri();
+	typename Node< _T >::Priority		new_pri	 =	node->GetPri();
 
 	while (( node_ptr = node_ptr->GetPrev() ))
 	{
@@ -172,7 +172,7 @@ void	Head< _T >::AddNodeFromTail( Node< _T >* node )
 		}
 	}
 
-	Append( node );
+	this->Append( node );
 }
 
 /******************************************************************/
@@ -190,7 +190,7 @@ bool	Head< _T >::AddUniqueSequence( Node< _T >* node )
 	Dbg_MsgAssert( !node->InList (),( "Object is already in a list" ));
 
 	Node< _T >*		node_ptr =	this;
-	Priority		new_pri	 =	node->GetPri();
+	typename Node< _T >::Priority		new_pri	 =	node->GetPri();
 
 	while (( node_ptr = node_ptr->GetNext() ))
 	{
@@ -205,7 +205,7 @@ bool	Head< _T >::AddUniqueSequence( Node< _T >* node )
 		}
 	}
 
-	Insert( node );
+	this->Insert( node );
 	return true;
 }
 
@@ -223,8 +223,8 @@ void		Head< _T >::Merge( Head< _T >* dest )
 	Dbg_MsgAssert( this->is_head (),( "Object is not a list" ));
 	Dbg_MsgAssert( dest->is_head (),( "Object is not a list" ));
 
-	Node< _T >*		first = next;	
-	Node< _T >*		last = prev;
+	Node< _T >*		first = this->next;	
+	Node< _T >*		last = this->prev;
 	Node< _T >*		node = dest->GetPrev();
 	
 	if ( this == first )			// source list is empty
@@ -238,7 +238,7 @@ void		Head< _T >::Merge( Head< _T >* dest )
 	last->SetNext( dest );
 	dest->SetPrev( last );
 	
-	node_init();					// make the source list empty
+	this->node_init();					// make the source list empty
 }
 
 /******************************************************************/
@@ -253,7 +253,7 @@ Node< _T >*		Head< _T >::GetItem( uint number )
 	
 	Dbg_MsgAssert( this->is_head (),( "Object is not a list" ));
 
-	Node< _T >*		node = GetNext();
+	Node< _T >*		node = this->GetNext();
 
 	while ( node )
 	{
@@ -285,7 +285,7 @@ Node< _T >*		Head< _T >::FirstItem( )
 	
 	Dbg_MsgAssert( this->is_head (),( "Object is not a list" ));
 
-	return GetNext();
+	return this->GetNext();
 }
 
 
@@ -302,7 +302,7 @@ uint		Head< _T >::CountItems( void )
 	Dbg_MsgAssert( this->is_head (),( "Object is not a list" ));
 
 	uint			count = 0;
-	Node< _T >*	node = GetNext();
+	Node< _T >*	node = this->GetNext();
 
 	while ( node )
 	{
@@ -326,7 +326,7 @@ void		Head< _T >::RemoveAllNodes( void )
 	Dbg_MsgAssert( this->is_head (),( "Object is not a list" ));
 
 	Node< _T >*		next_nd;
-	Node< _T >*		node = GetNext();
+	Node< _T >*		node = this->GetNext();
 
 	while ( node )
 	{
@@ -349,7 +349,7 @@ void		Head< _T >::DestroyAllNodes( void )
 	Dbg_MsgAssert( this->is_head (),( "Object is not a list" ));
 
 	Node< _T >*		next_nd;
-	Node< _T >*		node = GetNext();
+	Node< _T >*		node = this->GetNext();
 
 	while ( node )
 	{
@@ -374,7 +374,7 @@ void		Head< _T >::AddToTail( Node< _T >* node )
 	Dbg_MsgAssert( this->is_head (),( "Object is not a list" ));
 	Dbg_MsgAssert( !node->InList (),( "Node is already in a list" ));
 
-	Insert ( node );
+	this->Insert ( node );
 }
 
 /******************************************************************/
@@ -391,7 +391,7 @@ void		Head< _T >::AddToHead ( Node< _T >* node )
 	Dbg_MsgAssert( this->is_head(),(( "Object is not a list" )));
 	Dbg_MsgAssert( !node->InList(),(( "Node is already in a list" )));
 
-	Append( node );
+	this->Append( node );
 }
 
 /******************************************************************/
@@ -406,7 +406,7 @@ bool		Head< _T >::IsEmpty( void )
 	
 	Dbg_MsgAssert ( this->is_head(),( "Object is not a list" ));
 
-	return ( !InList() );
+	return ( !this->InList() );
 }
 
 /******************************************************************/

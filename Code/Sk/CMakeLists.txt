@@ -6,6 +6,13 @@ file(GLOB_RECURSE SK_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
+# Exclude platform-specific files based on the platform
+if(NOT WIN32)
+    # Exclude Win32/Wn32 specific files on non-Windows platforms
+    list(FILTER SK_SOURCES EXCLUDE REGEX ".*/Win32/.*")
+    list(FILTER SK_SOURCES EXCLUDE REGEX ".*/Wn32/.*")
+endif()
+
 # Create Sk library
 add_library(thug_sk OBJECT ${SK_SOURCES})
 

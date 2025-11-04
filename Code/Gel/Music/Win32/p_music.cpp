@@ -33,106 +33,198 @@ namespace Pcm
 {
 
 /*****************************************************************************
-**							   Private Data									**
-*****************************************************************************/
-
-static float s_music_volume = 1.0f;
-static float s_stream_volume = 1.0f;
-static bool s_streaming = false;
-
-/*****************************************************************************
 **							   Public Functions								**
 *****************************************************************************/
 
 // Initialize PCM audio system
 void PCMAudio_Init( void )
 {
-	// PC stub - music system not implemented
-	// In a full implementation, this would initialize DirectSound/OpenAL/etc. for streaming
+#if defined(USE_SDL2_AUDIO)
+	SDL2::Audio_Init();
+#elif defined(USE_OPENAL_AUDIO)
+	OpenAL::Audio_Init();
+#elif defined(USE_FMOD_AUDIO)
+	FMOD::Audio_Init();
+#else
+	// No audio backend selected - stub implementation
+#endif
 }
 
 // Deinitialize PCM audio system
 void PCMAudio_Deinit( void )
 {
-	// PC stub - music system not implemented
-	s_streaming = false;
+#if defined(USE_SDL2_AUDIO)
+	SDL2::Audio_Deinit();
+#elif defined(USE_OPENAL_AUDIO)
+	OpenAL::Audio_Deinit();
+#elif defined(USE_FMOD_AUDIO)
+	FMOD::Audio_Deinit();
+#else
+	// No audio backend selected - stub implementation
+#endif
 }
 
 // Per-frame update
 void PCMAudio_Update( void )
 {
-	// PC stub - music system not implemented
+#if defined(USE_SDL2_AUDIO)
+	SDL2::Audio_Update();
+#elif defined(USE_OPENAL_AUDIO)
+	OpenAL::Audio_Update();
+#elif defined(USE_FMOD_AUDIO)
+	FMOD::Audio_Update();
+#else
+	// No audio backend selected - stub implementation
+#endif
 }
 
 // Check if a music track exists
 bool PCMAudio_TrackExists( const char* nameOfFile, int trackNumber )
 {
-	// PC stub - music system not implemented
+#if defined(USE_SDL2_AUDIO)
+	return SDL2::Audio_TrackExists(nameOfFile, trackNumber);
+#elif defined(USE_OPENAL_AUDIO)
+	return OpenAL::Audio_TrackExists(nameOfFile, trackNumber);
+#elif defined(USE_FMOD_AUDIO)
+	return FMOD::Audio_TrackExists(nameOfFile, trackNumber);
+#else
+	// No audio backend selected - stub implementation
 	return false;
+#endif
 }
 
 // Load music header
 bool PCMAudio_LoadMusicHeader( const char* nameOfFile )
 {
-	// PC stub - music system not implemented
+#if defined(USE_SDL2_AUDIO)
+	return SDL2::Audio_LoadMusicHeader(nameOfFile);
+#elif defined(USE_OPENAL_AUDIO)
+	return OpenAL::Audio_LoadMusicHeader(nameOfFile);
+#elif defined(USE_FMOD_AUDIO)
+	return FMOD::Audio_LoadMusicHeader(nameOfFile);
+#else
+	// No audio backend selected - stub implementation
 	return false;
+#endif
 }
 
 // Preload music stream
 bool PCMAudio_PreLoadMusicStream( uint32 checksum )
 {
-	// PC stub - music system not implemented
+#if defined(USE_SDL2_AUDIO)
+	return SDL2::Audio_PreLoadMusicStream(checksum);
+#elif defined(USE_OPENAL_AUDIO)
+	return OpenAL::Audio_PreLoadMusicStream(checksum);
+#elif defined(USE_FMOD_AUDIO)
+	return FMOD::Audio_PreLoadMusicStream(checksum);
+#else
+	// No audio backend selected - stub implementation
 	return false;
+#endif
 }
 
 // Start streaming music
 bool PCMAudio_StartStreaming( void )
 {
-	// PC stub - music system not implemented
-	s_streaming = true;
+#if defined(USE_SDL2_AUDIO)
+	return SDL2::Audio_StartStreaming();
+#elif defined(USE_OPENAL_AUDIO)
+	return OpenAL::Audio_StartStreaming();
+#elif defined(USE_FMOD_AUDIO)
+	return FMOD::Audio_StartStreaming();
+#else
+	// No audio backend selected - stub implementation
 	return true; // Return true to avoid blocking game
+#endif
 }
 
 // Stop streaming music
 bool PCMAudio_StopStreaming( bool wait_for_last_write )
 {
-	// PC stub - music system not implemented
-	s_streaming = false;
+#if defined(USE_SDL2_AUDIO)
+	return SDL2::Audio_StopStreaming(wait_for_last_write);
+#elif defined(USE_OPENAL_AUDIO)
+	return OpenAL::Audio_StopStreaming(wait_for_last_write);
+#elif defined(USE_FMOD_AUDIO)
+	return FMOD::Audio_StopStreaming(wait_for_last_write);
+#else
+	// No audio backend selected - stub implementation
 	return true;
+#endif
 }
 
 // Pause/unpause music stream
 bool PCMAudio_PauseStream( bool pause )
 {
-	// PC stub - music system not implemented
+#if defined(USE_SDL2_AUDIO)
+	return SDL2::Audio_PauseStream(pause);
+#elif defined(USE_OPENAL_AUDIO)
+	return OpenAL::Audio_PauseStream(pause);
+#elif defined(USE_FMOD_AUDIO)
+	return FMOD::Audio_PauseStream(pause);
+#else
+	// No audio backend selected - stub implementation
 	return true;
+#endif
 }
 
 // Set stream volume
 bool PCMAudio_SetVolume( float volume )
 {
-	// PC stub - music system not implemented
-	s_stream_volume = volume;
+#if defined(USE_SDL2_AUDIO)
+	return SDL2::Audio_SetVolume(volume);
+#elif defined(USE_OPENAL_AUDIO)
+	return OpenAL::Audio_SetVolume(volume);
+#elif defined(USE_FMOD_AUDIO)
+	return FMOD::Audio_SetVolume(volume);
+#else
+	// No audio backend selected - stub implementation
 	return true;
+#endif
 }
 
 // Get stream volume
 float PCMAudio_GetVolume( void )
 {
-	return s_stream_volume;
+#if defined(USE_SDL2_AUDIO)
+	return SDL2::Audio_GetVolume();
+#elif defined(USE_OPENAL_AUDIO)
+	return OpenAL::Audio_GetVolume();
+#elif defined(USE_FMOD_AUDIO)
+	return FMOD::Audio_GetVolume();
+#else
+	// No audio backend selected - stub implementation
+	return 1.0f;
+#endif
 }
 
 // Set music volume
 void PCMAudio_SetMusicVolume( float volume )
 {
-	// PC stub - music system not implemented
-	s_music_volume = volume;
+#if defined(USE_SDL2_AUDIO)
+	SDL2::Audio_SetMusicVolume(volume);
+#elif defined(USE_OPENAL_AUDIO)
+	OpenAL::Audio_SetMusicVolume(volume);
+#elif defined(USE_FMOD_AUDIO)
+	FMOD::Audio_SetMusicVolume(volume);
+#else
+	// No audio backend selected - stub implementation
+#endif
 }
 
 // Get music volume
 float PCMAudio_GetMusicVolume( void )
 {
-	return s_music_volume;
+#if defined(USE_SDL2_AUDIO)
+	return SDL2::Audio_GetMusicVolume();
+#elif defined(USE_OPENAL_AUDIO)
+	return OpenAL::Audio_GetMusicVolume();
+#elif defined(USE_FMOD_AUDIO)
+	return FMOD::Audio_GetMusicVolume();
+#else
+	// No audio backend selected - stub implementation
+	return 1.0f;
+#endif
 }
 
 } // namespace Pcm

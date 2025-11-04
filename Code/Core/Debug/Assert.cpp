@@ -32,6 +32,9 @@
 
 #ifndef __PLAT_WN32__
 #include <gfx/gfxman.h>
+#ifdef __PLAT_LINUX__
+#include <gfx/Win32/p_memview.h>
+#endif
 #endif // __PLAT_WN32__
 
 #ifdef __PLAT_NGPS__

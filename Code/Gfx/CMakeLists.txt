@@ -6,6 +6,13 @@ file(GLOB_RECURSE GFX_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
+# Exclude platform-specific files based on the platform
+if(NOT WIN32)
+    # Exclude Win32/Wn32 specific files on non-Windows platforms
+    list(FILTER GFX_SOURCES EXCLUDE REGEX ".*/Win32/.*")
+    list(FILTER GFX_SOURCES EXCLUDE REGEX ".*/Wn32/.*")
+endif()
+
 # Create Gfx library
 add_library(thug_gfx OBJECT ${GFX_SOURCES})
 

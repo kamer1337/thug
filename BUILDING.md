@@ -4,18 +4,19 @@ This document provides technical details about building Tony Hawk's Underground 
 
 ## Current Status
 
-This repository has been cleaned to focus on PC-only development. All console-specific code (PlayStation 2, GameCube, Xbox) has been removed. The code still **cannot be compiled as-is** on modern systems due to C++ template compatibility issues, but significant progress has been made:
+This repository has been cleaned to focus on PC-only development. All console-specific code (PlayStation 2, GameCube, Xbox) has been removed. Significant progress has been made on PC compatibility:
 
 **✅ Recently Fixed:**
 - Type definitions for Linux/macOS platforms (sint32, uint32, sint64, uint64)
 - Variadic macro syntax issues (changed to inline functions for PC)
 - Pointer casting for 64-bit compatibility
 - Added stub implementations for sound, music, and movie systems
+- **C++ template syntax compatibility with modern GCC** (November 2024)
 
 **❌ Still Blocking:**
-- C++ template syntax compatibility with modern GCC
 - Missing graphics/rendering implementations
 - Missing game assets
+- Additional platform-specific stubs needed
 
 This document explains the current state and what would be needed for a full build.
 
@@ -30,13 +31,18 @@ This document explains the current state and what would be needed for a full bui
    - Sound effects system (`p_sfx.cpp`)
    - Movie playback (`p_movies.cpp`)
    - Music streaming (`p_music.cpp`)
+5. **C++ Template Compatibility** (November 2024) - Fixed template member access issues in `Lst::Head<_T>` class:
+   - Added `typename` qualifier for dependent types (e.g., `typename Node<_T>::Priority`)
+   - Added `this->` prefix for inherited member access in templates
+   - Added `Node<_T>::` qualifier for base class constants
+   - Fixed platform-specific build issues (excluded Win32 files on Linux/macOS)
 
 ### What Still Needs Work
 
-1. **C++ Template Compatibility** - The memory management templates use old MSVC syntax that doesn't compile on modern GCC (being addressed in separate PR)
-2. **Graphics Implementation** - Backend architecture documented and integrated into CMake, stub implementations exist for DirectX/OpenGL, Vulkan implementation exists but needs integration
-3. **Complete Audio Implementation** - Backend architecture documented and integrated into CMake, stub implementations exist for SDL2/OpenAL/FMOD
-4. **Asset Pipeline** - Convert console assets to PC formats
+1. **Graphics Implementation** - Backend architecture documented and integrated into CMake, stub implementations exist for DirectX/OpenGL, Vulkan implementation exists but needs integration
+2. **Complete Audio Implementation** - Backend architecture documented and integrated into CMake, stub implementations exist for SDL2/OpenAL/FMOD
+3. **Asset Pipeline** - Convert console assets to PC formats
+4. **Additional Platform Stubs** - Some platform-specific code still needs stub implementations
 
 ## Build Infrastructure Added
 
@@ -138,15 +144,30 @@ The Win32/Wn32 directories contain many stub functions that were never fully imp
 
 These stubs allow the code to link properly even though the functionality is not yet implemented.
 
-### 4. C++ Template Compatibility Issues (BLOCKING)
+### 4. C++ Template Compatibility Issues (FIXED)
 
-The code uses older C++ template syntax that is incompatible with modern GCC:
+The code used older C++ template syntax that was incompatible with modern GCC. This has been fixed in November 2024:
+
+**Issues Fixed:**
+- Template-dependent type names now use `typename` qualifier
+- Inherited template members accessed via `this->` prefix
+- Base class constants qualified with `Node<_T>::` syntax
+- Platform-specific includes for template-using files
+
+**Example of fixes applied:**
 ```cpp
-// Old syntax that doesn't compile on modern GCC
-PtrToConst< _T >::PtrToConst< _T >( const _T* ptr )
+// Before (doesn't compile on modern GCC):
+Priority new_pri = node->GetPri();
+node_init();
+GetNext();
+
+// After (compatible with modern GCC):
+typename Node<_T>::Priority new_pri = node->GetPri();
+this->node_init();
+this->GetNext();
 ```
 
-**Status**: These are complex C++ template issues that require significant refactoring of the memory management and smart pointer classes. This is the current blocking issue for compilation.
+**Status**: ✅ Template compatibility issues in `Code/core/list/head.h` have been resolved. The code now compiles past template errors on modern GCC.
 
 ### 5. Missing Dependencies
 

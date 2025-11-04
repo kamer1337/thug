@@ -2,6 +2,12 @@
 
 ## Overview
 
+> **Note:** This implementation provides a complete Vulkan rendering API that works in two modes:
+> 1. **Full Vulkan Mode** - When compiled with Vulkan SDK, uses actual Vulkan API calls
+> 2. **Stub Mode** - When compiled without Vulkan SDK, provides stub implementations for testing
+> 
+> Some features are simulated for simplicity (e.g., headless swapchain without WSI). See [Implementation Notes](#implementation-notes) for details.
+
 This document describes the complete Vulkan rendering API implementation for the THUG engine, including:
 - Instance and device creation
 - Swapchain management

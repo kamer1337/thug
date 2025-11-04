@@ -9,13 +9,20 @@
  * - Buffer and texture upload
  * - Draw call submission
  * 
- * Compile with Vulkan SDK:
- *   g++ -std=c++11 -DUSE_VULKAN_RENDERER -I../../../.. -I/usr/include test_vulkan_rendering.cpp NX/render.cpp \
- *       -L../../../../Core -lcore -lvulkan -o test_vulkan_rendering
+ * Build using CMake (recommended):
+ *   mkdir build && cd build
+ *   cmake -DUSE_VULKAN_RENDERER=ON ..
+ *   make test_vulkan_rendering
+ * 
+ * Or compile manually with Vulkan SDK:
+ *   g++ -std=c++11 -DUSE_VULKAN_RENDERER -I<path-to-project>/Code \
+ *       test_vulkan_rendering.cpp NX/render.cpp \
+ *       -L<path-to-core-lib> -lcore -lvulkan -o test_vulkan_rendering
  * 
  * Or without Vulkan SDK (stub mode):
- *   g++ -std=c++11 -I../../../.. test_vulkan_rendering.cpp NX/render.cpp \
- *       -L../../../../Core -lcore -o test_vulkan_rendering_stub
+ *   g++ -std=c++11 -I<path-to-project>/Code \
+ *       test_vulkan_rendering.cpp NX/render.cpp \
+ *       -L<path-to-core-lib> -lcore -o test_vulkan_rendering_stub
  */
 
 #include <stdio.h>

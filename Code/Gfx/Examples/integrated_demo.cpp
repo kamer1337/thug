@@ -7,8 +7,8 @@
 #include <math.h>
 
 // Use standalone mode
-#include "Backend/GraphicsBackend.h"
-#include "ML/GraphicsEnhancer.h"
+#include "../Backend/GraphicsBackend.h"
+#include "../ML/GraphicsEnhancer.h"
 
 using namespace Gfx::Backend;
 using namespace Gfx::ML;

@@ -1,10 +1,11 @@
 // ML Enhancement Test Example
 // Demonstrates usage of the ML-based graphics enhancement system
 
-#include <Gfx/ML/GraphicsEnhancer.h>
+#include "../ML/GraphicsEnhancer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 using namespace Gfx::ML;
 

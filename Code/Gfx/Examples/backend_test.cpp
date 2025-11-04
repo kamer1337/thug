@@ -1,7 +1,7 @@
 // Graphics Backend Test Example
 // Demonstrates basic usage of the graphics backend abstraction layer
 
-#include <Gfx/Backend/GraphicsBackend.h>
+#include "../Backend/GraphicsBackend.h"
 #include <stdio.h>
 #include <stdlib.h>
 

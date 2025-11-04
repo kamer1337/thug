@@ -29,6 +29,15 @@
 #include <core/defines.h>
 #endif
 
+// Include appropriate audio backend based on compile-time configuration
+#if defined(USE_SDL2_AUDIO)
+#include <gel/music/SDL2/p_audio.h>
+#elif defined(USE_OPENAL_AUDIO)
+#include <gel/music/OpenAL/p_audio.h>
+#elif defined(USE_FMOD_AUDIO)
+#include <gel/music/FMOD/p_audio.h>
+#endif
+
 /*****************************************************************************
 **								   Defines									**
 *****************************************************************************/

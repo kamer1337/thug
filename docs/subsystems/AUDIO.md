@@ -4,6 +4,31 @@
 
 The THUG audio system handles music playback, sound effects, and positional audio. The system is implemented in `Code/Gel/SoundFX/` and `Code/Gel/Music/` with platform-specific implementations for different target platforms.
 
+### Audio Backend Architecture (PC Port)
+
+The PC port now supports multiple audio backends through a compile-time configuration system:
+
+**Available Backends**:
+- **SDL2_mixer** - Recommended, simple API, cross-platform, free
+- **OpenAL** - 3D positional audio, cross-platform, free
+- **FMOD** - Professional features, requires commercial license
+
+**Configuration**: Select backend via CMake:
+```bash
+cmake -DAUDIO_BACKEND=SDL2    # SDL2_mixer (recommended)
+cmake -DAUDIO_BACKEND=OpenAL  # OpenAL
+cmake -DAUDIO_BACKEND=FMOD    # FMOD
+cmake -DAUDIO_BACKEND=None    # No backend (stubs only)
+```
+
+**Implementation Location**:
+- `Code/Gel/Music/Win32/p_music.h/cpp` - Platform dispatcher layer
+- `Code/Gel/Music/SDL2/p_audio.h/cpp` - SDL2_mixer backend (stub)
+- `Code/Gel/Music/OpenAL/p_audio.h/cpp` - OpenAL backend (stub)
+- `Code/Gel/Music/FMOD/p_audio.h/cpp` - FMOD backend (stub)
+
+The Win32 platform layer now acts as a dispatcher, routing audio calls to the selected backend based on preprocessor defines (`USE_SDL2_AUDIO`, `USE_OPENAL_AUDIO`, `USE_FMOD_AUDIO`).
+
 ## Architecture
 
 ### Core Components
@@ -167,11 +192,48 @@ Different sounds for different surface types:
 
 ## Platform Implementation
 
-### Win32/DirectSound Implementation
+### Audio Backend Implementation (PC Port)
+
+Located in `Code/Gel/Music/`:
+
+**Platform Dispatcher** (`Win32/p_music.h/cpp`):
+- Routes audio calls to selected backend
+- Compile-time backend selection via preprocessor defines
+- Falls back to stubs when no backend is selected
+
+**SDL2 Backend** (`SDL2/p_audio.h/cpp`):
+- Simple, cross-platform audio library
+- Easy integration with SDL2_mixer
+- Good for basic music and sound playback
+- **Status**: Stub implementation, needs SDL2_mixer integration
+
+**OpenAL Backend** (`OpenAL/p_audio.h/cpp`):
+- 3D positional audio support
+- Cross-platform, free and open-source
+- Best for spatial audio and sound effects
+- **Status**: Stub implementation, needs OpenAL-soft integration
+
+**FMOD Backend** (`FMOD/p_audio.h/cpp`):
+- Professional audio middleware
+- Advanced features and DSP effects
+- Requires commercial license for releases
+- **Status**: Stub implementation, needs FMOD SDK integration
+
+**Backend Selection**:
+Configure via CMake at build time:
+```bash
+cmake -DAUDIO_BACKEND=SDL2    # Uses USE_SDL2_AUDIO define
+cmake -DAUDIO_BACKEND=OpenAL  # Uses USE_OPENAL_AUDIO define
+cmake -DAUDIO_BACKEND=FMOD    # Uses USE_FMOD_AUDIO define
+```
+
+### Win32/DirectSound Implementation (Legacy)
 
 Located in `Code/Gel/SoundFX/win32/p_sfx.h/cpp`:
 
-**Platform-Specific Features**:
+**Note**: The DirectSound-based implementation is for the original Windows build. The PC port now uses the modern audio backend system described above (SDL2/OpenAL/FMOD).
+
+**Platform-Specific Features** (Original DirectSound):
 - DirectSound integration
 - 3D sound buffer management
 - Hardware acceleration support
@@ -463,40 +525,109 @@ StopLoopingSound(loopId);
 
 ### Current State
 
-⚠️ **Win32 audio implementation is mostly stubs** (see [STUB_FUNCTIONS.md](../platforms/STUB_FUNCTIONS.md))
+✅ **Audio Backend Architecture Implemented**
 
-**Needs Implementation**:
-- DirectSound initialization
-- 3D sound buffer creation
-- Positional audio updates
-- Sound streaming
-- Music playback
+The PC port now has a working audio backend selection system:
+
+**Completed**:
+- ✅ Audio backend dispatcher in Win32 platform layer (`Code/Gel/Music/Win32/p_music.cpp`)
+- ✅ Backend selection via CMake configuration (`-DAUDIO_BACKEND=<SDL2|OpenAL|FMOD|None>`)
+- ✅ Preprocessor-based backend routing using `USE_SDL2_AUDIO`, `USE_OPENAL_AUDIO`, `USE_FMOD_AUDIO` defines
+- ✅ Stub implementations for all three backends (SDL2, OpenAL, FMOD)
+- ✅ All PCMAudio functions dispatch to selected backend:
+  - `PCMAudio_Init()` / `PCMAudio_Deinit()`
+  - `PCMAudio_Update()`
+  - `PCMAudio_LoadMusicHeader()` / `PCMAudio_TrackExists()`
+  - `PCMAudio_StartStreaming()` / `PCMAudio_StopStreaming()` / `PCMAudio_PauseStream()`
+  - `PCMAudio_SetVolume()` / `PCMAudio_GetVolume()`
+  - `PCMAudio_SetMusicVolume()` / `PCMAudio_GetMusicVolume()`
+
+⚠️ **Backend Implementations Are Stubs**
+
+While the dispatcher is complete, the actual backend implementations are stubs that need library integration:
+
+**Needs Implementation for SDL2 Backend** (`Code/Gel/Music/SDL2/p_audio.cpp`):
+- SDL audio initialization: `SDL_Init(SDL_INIT_AUDIO)`, `Mix_OpenAudio()`
+- Music loading: `Mix_LoadMUS()`
+- Playback control: `Mix_PlayMusic()`, `Mix_HaltMusic()`, `Mix_PauseMusic()`
+- Volume control: `Mix_VolumeMusic()`
+- Cleanup: `Mix_CloseAudio()`
+
+**Needs Implementation for OpenAL Backend** (`Code/Gel/Music/OpenAL/p_audio.cpp`):
+- OpenAL initialization: `alcOpenDevice()`, `alcCreateContext()`
+- Buffer and source management: `alGenBuffers()`, `alGenSources()`
+- Streaming audio: Buffer queuing and unqueuing
+- 3D positioning: `alSourcefv()` for position
+- Cleanup: `alcDestroyContext()`, `alcCloseDevice()`
+
+**Needs Implementation for FMOD Backend** (`Code/Gel/Music/FMOD/p_audio.cpp`):
+- FMOD system creation: `FMOD::System_Create()`, `system->init()`
+- Stream creation: `system->createStream()`
+- Playback: `system->playSound()`
+- Update: `system->update()` (required each frame)
+- Cleanup: `system->close()`, `system->release()`
 
 ### Implementation Priority
 
+**Phase 1: Backend Dispatcher** ✅ **COMPLETE**
+1. ✅ Audio backend selection system
+2. ✅ Win32 platform dispatcher
+3. ✅ CMake integration
+
+**Phase 2: SDL2 Backend Implementation** (Recommended for initial implementation)
+1. Initialize SDL2_mixer library
+2. Implement basic music playback
+3. Implement volume controls
+4. Test with audio files
+
+**Phase 3: OpenAL Backend** (For 3D audio support)
+1. Initialize OpenAL device and context
+2. Implement streaming audio
+3. Add 3D positioning
+4. Test spatial audio
+
+**Phase 4: FMOD Backend** (Optional, for professional features)
+1. Integrate FMOD SDK
+2. Implement advanced audio features
+3. Add DSP effects
+4. Commercial license required for release
+
 **High Priority** (Critical for basic functionality):
-1. Audio device initialization
-2. Simple sound playback
+1. Choose and implement one backend (SDL2 recommended)
+2. Basic music playback
 3. Volume control
-4. Basic 3D positioning
 
 **Medium Priority**:
-1. Full 3D audio with doppler
-2. Music streaming
-3. Advanced effects
+1. Sound effect playback
+2. 3D positioning (if using OpenAL)
+3. File format support (OGG, MP3, WAV)
 
 **Low Priority**:
-1. Hardware acceleration
-2. Advanced spatial audio
-3. Effect processing
+1. Advanced effects
+2. Multiple backend support
+3. Performance optimization
 
 ## Notes
 
-The audio system was designed for the original console platforms (PS2, Xbox, GameCube) and requires significant work to fully support modern platforms. The Win32 implementation is largely incomplete and serves as stubs showing the intended interface.
+The audio system was designed for the original console platforms (PS2, Xbox, GameCube) and has been updated for the PC port with a modern audio backend architecture.
 
-For a modern port:
-- Consider using established audio middleware (FMOD, Wwise)
-- Implement modern spatial audio techniques
+### PC Port Audio System
+
+**Architecture**: 
+- The PC port uses a dispatcher pattern with selectable backends (SDL2, OpenAL, FMOD)
+- Backend selection happens at compile-time via CMake configuration
+- The Win32 platform layer routes calls to the appropriate backend
+
+**Current Status**:
+- ✅ Backend dispatcher implemented and functional
+- ⚠️ Backend implementations are stubs awaiting library integration
+- 📦 Libraries need to be installed separately (SDL2_mixer, OpenAL-soft, or FMOD SDK)
+
+**For a modern port**:
+- Start with SDL2 backend for simplicity (recommended)
+- Use OpenAL backend for 3D spatial audio
+- Consider FMOD for professional features (requires license)
 - Add comprehensive debugging and profiling tools
+- Implement modern audio formats (OGG, MP3, FLAC)
 - Support modern audio formats and compression
 - Ensure cross-platform compatibility

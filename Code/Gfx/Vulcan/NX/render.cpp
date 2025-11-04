@@ -52,6 +52,24 @@ static struct VulkanState
 	// Device features
 	VkPhysicalDeviceFeatures device_features;
 	VkPhysicalDeviceMemoryProperties memory_properties;
+	
+	// Swapchain
+	VkSwapchainKHR swapchain;
+	VkFormat swapchain_image_format;
+	VkExtent2D swapchain_extent;
+	uint32 swapchain_image_count;
+	VkImage* swapchain_images;
+	VkImageView* swapchain_image_views;
+	VkFramebuffer* swapchain_framebuffers;
+	
+	// Command buffers
+	VkCommandBuffer* command_buffers;
+	uint32 command_buffer_count;
+	
+	// Synchronization
+	VkSemaphore image_available_semaphore;
+	VkSemaphore render_finished_semaphore;
+	VkFence in_flight_fence;
 #else
 	// Placeholder pointers when Vulkan SDK not available
 	void* instance;
@@ -65,6 +83,15 @@ static struct VulkanState
 	void* pipeline_layout;
 	uint32 graphics_family_index;
 	uint32 present_family_index;
+	
+	// Swapchain stubs
+	void* swapchain;
+	uint32 swapchain_image_count;
+	void** swapchain_images;
+	void** swapchain_image_views;
+	void** swapchain_framebuffers;
+	void** command_buffers;
+	uint32 command_buffer_count;
 #endif
 } g_vulkan_state = { false };
 
@@ -522,6 +549,18 @@ bool init_vulkan( void )
 	printf("Vulkan renderer initialized successfully\n");
 	printf("  Device: Physical device selected\n");
 	printf("  Graphics Queue Family: %u\n", g_vulkan_state.graphics_family_index);
+	
+	// Initialize swapchain fields
+	g_vulkan_state.swapchain = VK_NULL_HANDLE;
+	g_vulkan_state.swapchain_image_count = 0;
+	g_vulkan_state.swapchain_images = NULL;
+	g_vulkan_state.swapchain_image_views = NULL;
+	g_vulkan_state.swapchain_framebuffers = NULL;
+	g_vulkan_state.command_buffers = NULL;
+	g_vulkan_state.command_buffer_count = 0;
+	g_vulkan_state.image_available_semaphore = VK_NULL_HANDLE;
+	g_vulkan_state.render_finished_semaphore = VK_NULL_HANDLE;
+	g_vulkan_state.in_flight_fence = VK_NULL_HANDLE;
 #else
 	printf("Vulkan renderer initialized (SDK not available - using stub implementation)\n");
 	// Initialize stub pointers
@@ -536,6 +575,13 @@ bool init_vulkan( void )
 	g_vulkan_state.pipeline_layout = NULL;
 	g_vulkan_state.graphics_family_index = 0;
 	g_vulkan_state.present_family_index = 0;
+	g_vulkan_state.swapchain = NULL;
+	g_vulkan_state.swapchain_image_count = 0;
+	g_vulkan_state.swapchain_images = NULL;
+	g_vulkan_state.swapchain_image_views = NULL;
+	g_vulkan_state.swapchain_framebuffers = NULL;
+	g_vulkan_state.command_buffers = NULL;
+	g_vulkan_state.command_buffer_count = 0;
 #endif
 	
 	return true;
@@ -611,29 +657,23 @@ void shutdown_vulkan( void )
 	}
 	
 #ifdef VULKAN_AVAILABLE
+	// Clean up command buffers
+	free_command_buffers();
+	
+	// Clean up swapchain
+	destroy_swapchain();
+	
 	// 1. Destroy command pool
 	if( g_vulkan_state.command_pool )
 	{
 		vkDestroyCommandPool(g_vulkan_state.device, g_vulkan_state.command_pool, NULL);
 	}
 	
-	// 2. Destroy render pass
-	if( g_vulkan_state.render_pass )
-	{
-		vkDestroyRenderPass(g_vulkan_state.device, g_vulkan_state.render_pass, NULL);
-	}
+	// 2. Destroy render pass (handled by destroy_render_pass)
+	destroy_render_pass();
 	
-	// 3. Destroy graphics pipeline
-	if( g_vulkan_state.graphics_pipeline )
-	{
-		vkDestroyPipeline(g_vulkan_state.device, g_vulkan_state.graphics_pipeline, NULL);
-	}
-	
-	// 4. Destroy pipeline layout
-	if( g_vulkan_state.pipeline_layout )
-	{
-		vkDestroyPipelineLayout(g_vulkan_state.device, g_vulkan_state.pipeline_layout, NULL);
-	}
+	// 3. Destroy graphics pipeline (handled by destroy_graphics_pipeline)
+	destroy_graphics_pipeline();
 	
 	// 5. Destroy logical device
 	if( g_vulkan_state.device )
@@ -641,7 +681,13 @@ void shutdown_vulkan( void )
 		vkDestroyDevice(g_vulkan_state.device, NULL);
 	}
 	
-	// 6. Destroy Vulkan instance
+	// 4. Destroy logical device
+	if( g_vulkan_state.device )
+	{
+		vkDestroyDevice(g_vulkan_state.device, NULL);
+	}
+	
+	// 5. Destroy Vulkan instance
 	if( g_vulkan_state.instance )
 	{
 		vkDestroyInstance(g_vulkan_state.instance, NULL);
@@ -653,6 +699,646 @@ void shutdown_vulkan( void )
 #endif
 	
 	g_vulkan_state.initialized = false;
+}
+
+/******************************************************************/
+/* Swapchain Management                                           */
+/******************************************************************/
+bool create_swapchain( void *window_handle, uint32 width, uint32 height )
+{
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.device )
+	{
+		printf("Cannot create swapchain: device not initialized\n");
+		return false;
+	}
+	
+	// For minimal implementation without WSI (Window System Integration),
+	// we create a headless swapchain simulation
+	// In a full implementation with WSI:
+	// 1. Query surface capabilities
+	// 2. Choose surface format
+	// 3. Choose present mode
+	// 4. Determine swapchain extent
+	// 5. Create swapchain
+	// 6. Get swapchain images
+	// 7. Create image views
+	
+	// Set swapchain parameters
+	g_vulkan_state.swapchain_image_format = VK_FORMAT_B8G8R8A8_UNORM;
+	g_vulkan_state.swapchain_extent.width = width;
+	g_vulkan_state.swapchain_extent.height = height;
+	g_vulkan_state.swapchain_image_count = 2; // Double buffering
+	
+	printf("Swapchain created (simulated headless): %ux%u, %u images\n", 
+		   width, height, g_vulkan_state.swapchain_image_count);
+	
+	// Note: Without WSI, swapchain is simulated
+	// Full WSI implementation requires VK_KHR_surface and platform-specific extensions
+	g_vulkan_state.swapchain = VK_NULL_HANDLE;
+	
+	return true;
+#else
+	printf("Swapchain created (stub): %ux%u\n", width, height);
+	g_vulkan_state.swapchain = (void*)1;
+	g_vulkan_state.swapchain_image_count = 2;
+	return true;
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void destroy_swapchain( void )
+{
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.device )
+	{
+		// Destroy framebuffers
+		if( g_vulkan_state.swapchain_framebuffers )
+		{
+			for( uint32 i = 0; i < g_vulkan_state.swapchain_image_count; i++ )
+			{
+				if( g_vulkan_state.swapchain_framebuffers[i] != VK_NULL_HANDLE )
+				{
+					vkDestroyFramebuffer(g_vulkan_state.device, 
+										 g_vulkan_state.swapchain_framebuffers[i], NULL);
+				}
+			}
+			delete[] g_vulkan_state.swapchain_framebuffers;
+			g_vulkan_state.swapchain_framebuffers = NULL;
+		}
+		
+		// Destroy image views
+		if( g_vulkan_state.swapchain_image_views )
+		{
+			for( uint32 i = 0; i < g_vulkan_state.swapchain_image_count; i++ )
+			{
+				if( g_vulkan_state.swapchain_image_views[i] != VK_NULL_HANDLE )
+				{
+					vkDestroyImageView(g_vulkan_state.device, 
+									   g_vulkan_state.swapchain_image_views[i], NULL);
+				}
+			}
+			delete[] g_vulkan_state.swapchain_image_views;
+			g_vulkan_state.swapchain_image_views = NULL;
+		}
+		
+		// Free swapchain images array (images owned by swapchain)
+		if( g_vulkan_state.swapchain_images )
+		{
+			delete[] g_vulkan_state.swapchain_images;
+			g_vulkan_state.swapchain_images = NULL;
+		}
+		
+		// Destroy swapchain
+		if( g_vulkan_state.swapchain != VK_NULL_HANDLE )
+		{
+			vkDestroySwapchainKHR(g_vulkan_state.device, g_vulkan_state.swapchain, NULL);
+			g_vulkan_state.swapchain = VK_NULL_HANDLE;
+		}
+	}
+	
+	printf("Swapchain destroyed\n");
+#else
+	printf("Swapchain destroyed (stub)\n");
+	g_vulkan_state.swapchain = NULL;
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool recreate_swapchain( uint32 width, uint32 height )
+{
+	// Wait for device to be idle before recreating
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.device )
+	{
+		vkDeviceWaitIdle(g_vulkan_state.device);
+	}
+#endif
+	
+	destroy_swapchain();
+	return create_swapchain(NULL, width, height);
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool acquire_next_image( uint32 *image_index )
+{
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.device || g_vulkan_state.swapchain == VK_NULL_HANDLE )
+	{
+		return false;
+	}
+	
+	// In full implementation with real swapchain:
+	// VkResult result = vkAcquireNextImageKHR(g_vulkan_state.device, 
+	//                                          g_vulkan_state.swapchain,
+	//                                          UINT64_MAX,
+	//                                          g_vulkan_state.image_available_semaphore,
+	//                                          VK_NULL_HANDLE,
+	//                                          image_index);
+	// if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+	//     // Recreate swapchain
+	//     return false;
+	// }
+	// return result == VK_SUCCESS || result == VK_SUBOPTIMAL_KHR;
+	
+	// Simulated for headless
+	*image_index = 0;
+	return true;
+#else
+	*image_index = 0;
+	return true;
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool present_image( uint32 image_index )
+{
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.present_queue || g_vulkan_state.swapchain == VK_NULL_HANDLE )
+	{
+		return false;
+	}
+	
+	// In full implementation with real swapchain:
+	// VkPresentInfoKHR present_info = {};
+	// present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+	// present_info.waitSemaphoreCount = 1;
+	// present_info.pWaitSemaphores = &g_vulkan_state.render_finished_semaphore;
+	// present_info.swapchainCount = 1;
+	// present_info.pSwapchains = &g_vulkan_state.swapchain;
+	// present_info.pImageIndices = &image_index;
+	// 
+	// VkResult result = vkQueuePresentKHR(g_vulkan_state.present_queue, &present_info);
+	// return result == VK_SUCCESS || result == VK_SUBOPTIMAL_KHR;
+	
+	// Simulated for headless
+	return true;
+#else
+	return true;
+#endif
+}
+
+/******************************************************************/
+/* Render Pass                                                    */
+/******************************************************************/
+bool create_render_pass( void )
+{
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.device )
+	{
+		printf("Cannot create render pass: device not initialized\n");
+		return false;
+	}
+	
+	// Color attachment description
+	VkAttachmentDescription color_attachment = {};
+	color_attachment.format = g_vulkan_state.swapchain_image_format;
+	color_attachment.samples = VK_SAMPLE_COUNT_1_BIT;
+	color_attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	color_attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	color_attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	color_attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	color_attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	color_attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	
+	VkAttachmentReference color_attachment_ref = {};
+	color_attachment_ref.attachment = 0;
+	color_attachment_ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	
+	// Subpass
+	VkSubpassDescription subpass = {};
+	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	subpass.colorAttachmentCount = 1;
+	subpass.pColorAttachments = &color_attachment_ref;
+	
+	// Subpass dependency
+	VkSubpassDependency dependency = {};
+	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+	dependency.dstSubpass = 0;
+	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.srcAccessMask = 0;
+	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	
+	// Create render pass
+	VkRenderPassCreateInfo render_pass_info = {};
+	render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+	render_pass_info.attachmentCount = 1;
+	render_pass_info.pAttachments = &color_attachment;
+	render_pass_info.subpassCount = 1;
+	render_pass_info.pSubpasses = &subpass;
+	render_pass_info.dependencyCount = 1;
+	render_pass_info.pDependencies = &dependency;
+	
+	VkResult result = vkCreateRenderPass(g_vulkan_state.device, &render_pass_info, NULL, 
+										 &g_vulkan_state.render_pass);
+	if (result != VK_SUCCESS)
+	{
+		printf("Failed to create render pass: %d\n", result);
+		return false;
+	}
+	
+	printf("Render pass created successfully\n");
+	return true;
+#else
+	printf("Render pass created (stub)\n");
+	g_vulkan_state.render_pass = (void*)1;
+	return true;
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void destroy_render_pass( void )
+{
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.render_pass && g_vulkan_state.device )
+	{
+		vkDestroyRenderPass(g_vulkan_state.device, g_vulkan_state.render_pass, NULL);
+		g_vulkan_state.render_pass = VK_NULL_HANDLE;
+		printf("Render pass destroyed\n");
+	}
+#else
+	printf("Render pass destroyed (stub)\n");
+	g_vulkan_state.render_pass = NULL;
+#endif
+}
+
+/******************************************************************/
+/* Graphics Pipeline                                              */
+/******************************************************************/
+bool create_graphics_pipeline( void )
+{
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.device || !g_vulkan_state.render_pass )
+	{
+		printf("Cannot create graphics pipeline: prerequisites not met\n");
+		return false;
+	}
+	
+	// For minimal implementation, create a simple pipeline without shaders
+	// In full implementation:
+	// 1. Load and compile shader modules (vertex and fragment)
+	// 2. Define vertex input state
+	// 3. Define input assembly state
+	// 4. Define viewport and scissor state
+	// 5. Define rasterization state
+	// 6. Define multisampling state
+	// 7. Define depth stencil state
+	// 8. Define color blend state
+	// 9. Define dynamic state
+	// 10. Create pipeline layout
+	// 11. Create graphics pipeline
+	
+	// Create pipeline layout (empty for now)
+	VkPipelineLayoutCreateInfo pipeline_layout_info = {};
+	pipeline_layout_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipeline_layout_info.setLayoutCount = 0;
+	pipeline_layout_info.pSetLayouts = NULL;
+	pipeline_layout_info.pushConstantRangeCount = 0;
+	pipeline_layout_info.pPushConstantRanges = NULL;
+	
+	VkResult result = vkCreatePipelineLayout(g_vulkan_state.device, &pipeline_layout_info, NULL,
+											 &g_vulkan_state.pipeline_layout);
+	if (result != VK_SUCCESS)
+	{
+		printf("Failed to create pipeline layout: %d\n", result);
+		return false;
+	}
+	
+	// Note: Full pipeline creation requires shader modules
+	// For now, we mark it as created but with null handle
+	g_vulkan_state.graphics_pipeline = VK_NULL_HANDLE;
+	
+	printf("Graphics pipeline layout created successfully\n");
+	printf("  Note: Full pipeline requires shader modules (not included in minimal impl)\n");
+	return true;
+#else
+	printf("Graphics pipeline created (stub)\n");
+	g_vulkan_state.pipeline_layout = (void*)1;
+	g_vulkan_state.graphics_pipeline = (void*)1;
+	return true;
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void destroy_graphics_pipeline( void )
+{
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.device )
+	{
+		if( g_vulkan_state.graphics_pipeline != VK_NULL_HANDLE )
+		{
+			vkDestroyPipeline(g_vulkan_state.device, g_vulkan_state.graphics_pipeline, NULL);
+			g_vulkan_state.graphics_pipeline = VK_NULL_HANDLE;
+		}
+		
+		if( g_vulkan_state.pipeline_layout != VK_NULL_HANDLE )
+		{
+			vkDestroyPipelineLayout(g_vulkan_state.device, g_vulkan_state.pipeline_layout, NULL);
+			g_vulkan_state.pipeline_layout = VK_NULL_HANDLE;
+		}
+		
+		printf("Graphics pipeline destroyed\n");
+	}
+#else
+	printf("Graphics pipeline destroyed (stub)\n");
+	g_vulkan_state.graphics_pipeline = NULL;
+	g_vulkan_state.pipeline_layout = NULL;
+#endif
+}
+
+/******************************************************************/
+/* Command Buffer Management                                      */
+/******************************************************************/
+bool allocate_command_buffers( void )
+{
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.device || !g_vulkan_state.command_pool )
+	{
+		printf("Cannot allocate command buffers: prerequisites not met\n");
+		return false;
+	}
+	
+	// Allocate one command buffer per swapchain image
+	g_vulkan_state.command_buffer_count = g_vulkan_state.swapchain_image_count;
+	g_vulkan_state.command_buffers = new VkCommandBuffer[g_vulkan_state.command_buffer_count];
+	
+	VkCommandBufferAllocateInfo alloc_info = {};
+	alloc_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	alloc_info.commandPool = g_vulkan_state.command_pool;
+	alloc_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	alloc_info.commandBufferCount = g_vulkan_state.command_buffer_count;
+	
+	VkResult result = vkAllocateCommandBuffers(g_vulkan_state.device, &alloc_info, 
+											   g_vulkan_state.command_buffers);
+	if (result != VK_SUCCESS)
+	{
+		printf("Failed to allocate command buffers: %d\n", result);
+		delete[] g_vulkan_state.command_buffers;
+		g_vulkan_state.command_buffers = NULL;
+		return false;
+	}
+	
+	printf("Command buffers allocated: %u buffers\n", g_vulkan_state.command_buffer_count);
+	return true;
+#else
+	printf("Command buffers allocated (stub): %u buffers\n", g_vulkan_state.swapchain_image_count);
+	g_vulkan_state.command_buffer_count = g_vulkan_state.swapchain_image_count;
+	g_vulkan_state.command_buffers = new void*[g_vulkan_state.command_buffer_count];
+	for( uint32 i = 0; i < g_vulkan_state.command_buffer_count; i++ )
+	{
+		g_vulkan_state.command_buffers[i] = (void*)(uintptr_t)(i + 1);
+	}
+	return true;
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void free_command_buffers( void )
+{
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.command_buffers && g_vulkan_state.device && g_vulkan_state.command_pool )
+	{
+		vkFreeCommandBuffers(g_vulkan_state.device, g_vulkan_state.command_pool,
+							 g_vulkan_state.command_buffer_count, g_vulkan_state.command_buffers);
+		delete[] g_vulkan_state.command_buffers;
+		g_vulkan_state.command_buffers = NULL;
+		g_vulkan_state.command_buffer_count = 0;
+		printf("Command buffers freed\n");
+	}
+#else
+	printf("Command buffers freed (stub)\n");
+	if( g_vulkan_state.command_buffers )
+	{
+		delete[] g_vulkan_state.command_buffers;
+		g_vulkan_state.command_buffers = NULL;
+		g_vulkan_state.command_buffer_count = 0;
+	}
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool begin_command_buffer( uint32 buffer_index )
+{
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.command_buffers || buffer_index >= g_vulkan_state.command_buffer_count )
+	{
+		return false;
+	}
+	
+	VkCommandBufferBeginInfo begin_info = {};
+	begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	begin_info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+	begin_info.pInheritanceInfo = NULL;
+	
+	VkResult result = vkBeginCommandBuffer(g_vulkan_state.command_buffers[buffer_index], &begin_info);
+	return result == VK_SUCCESS;
+#else
+	return buffer_index < g_vulkan_state.command_buffer_count;
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool end_command_buffer( uint32 buffer_index )
+{
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.command_buffers || buffer_index >= g_vulkan_state.command_buffer_count )
+	{
+		return false;
+	}
+	
+	VkResult result = vkEndCommandBuffer(g_vulkan_state.command_buffers[buffer_index]);
+	return result == VK_SUCCESS;
+#else
+	return buffer_index < g_vulkan_state.command_buffer_count;
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool begin_render_pass( uint32 buffer_index, uint32 framebuffer_index )
+{
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.command_buffers || buffer_index >= g_vulkan_state.command_buffer_count ||
+		!g_vulkan_state.render_pass )
+	{
+		return false;
+	}
+	
+	VkRenderPassBeginInfo render_pass_info = {};
+	render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	render_pass_info.renderPass = g_vulkan_state.render_pass;
+	
+	// In full implementation with framebuffers:
+	// render_pass_info.framebuffer = g_vulkan_state.swapchain_framebuffers[framebuffer_index];
+	render_pass_info.framebuffer = VK_NULL_HANDLE; // No framebuffer in minimal impl
+	
+	render_pass_info.renderArea.offset = {0, 0};
+	render_pass_info.renderArea.extent = g_vulkan_state.swapchain_extent;
+	
+	VkClearValue clear_color = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+	render_pass_info.clearValueCount = 1;
+	render_pass_info.pClearValues = &clear_color;
+	
+	// Note: This will fail without valid framebuffer, kept for API demonstration
+	// vkCmdBeginRenderPass(g_vulkan_state.command_buffers[buffer_index], 
+	//                      &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);
+	
+	return true;
+#else
+	return buffer_index < g_vulkan_state.command_buffer_count;
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void end_render_pass( uint32 buffer_index )
+{
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.command_buffers && buffer_index < g_vulkan_state.command_buffer_count )
+	{
+		// vkCmdEndRenderPass(g_vulkan_state.command_buffers[buffer_index]);
+		// Commented out as render pass begin would fail without framebuffer
+	}
+#endif
+}
+
+/******************************************************************/
+/* Drawing Commands                                               */
+/******************************************************************/
+void bind_pipeline( uint32 buffer_index )
+{
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.command_buffers && buffer_index < g_vulkan_state.command_buffer_count &&
+		g_vulkan_state.graphics_pipeline != VK_NULL_HANDLE )
+	{
+		vkCmdBindPipeline(g_vulkan_state.command_buffers[buffer_index], 
+						  VK_PIPELINE_BIND_POINT_GRAPHICS, 
+						  g_vulkan_state.graphics_pipeline);
+	}
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void bind_vertex_buffer( uint32 buffer_index, void *vertex_buffer )
+{
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.command_buffers && buffer_index < g_vulkan_state.command_buffer_count &&
+		vertex_buffer )
+	{
+		BufferInfo* buffer_info = (BufferInfo*)vertex_buffer;
+		VkBuffer buffers[] = {buffer_info->buffer};
+		VkDeviceSize offsets[] = {0};
+		vkCmdBindVertexBuffers(g_vulkan_state.command_buffers[buffer_index], 0, 1, buffers, offsets);
+	}
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void bind_index_buffer( uint32 buffer_index, void *index_buffer )
+{
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.command_buffers && buffer_index < g_vulkan_state.command_buffer_count &&
+		index_buffer )
+	{
+		BufferInfo* buffer_info = (BufferInfo*)index_buffer;
+		vkCmdBindIndexBuffer(g_vulkan_state.command_buffers[buffer_index], 
+							 buffer_info->buffer, 0, VK_INDEX_TYPE_UINT16);
+	}
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+void draw_indexed( uint32 buffer_index, uint32 index_count )
+{
+#ifdef VULKAN_AVAILABLE
+	if( g_vulkan_state.command_buffers && buffer_index < g_vulkan_state.command_buffer_count )
+	{
+		vkCmdDrawIndexed(g_vulkan_state.command_buffers[buffer_index], index_count, 1, 0, 0, 0);
+	}
+#endif
+}
+
+/******************************************************************/
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+bool submit_command_buffer( uint32 buffer_index )
+{
+#ifdef VULKAN_AVAILABLE
+	if( !g_vulkan_state.command_buffers || buffer_index >= g_vulkan_state.command_buffer_count ||
+		!g_vulkan_state.graphics_queue )
+	{
+		return false;
+	}
+	
+	VkSubmitInfo submit_info = {};
+	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submit_info.commandBufferCount = 1;
+	submit_info.pCommandBuffers = &g_vulkan_state.command_buffers[buffer_index];
+	
+	// In full implementation with synchronization:
+	// VkSemaphore wait_semaphores[] = {g_vulkan_state.image_available_semaphore};
+	// VkPipelineStageFlags wait_stages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+	// submit_info.waitSemaphoreCount = 1;
+	// submit_info.pWaitSemaphores = wait_semaphores;
+	// submit_info.pWaitDstStageMask = wait_stages;
+	// submit_info.signalSemaphoreCount = 1;
+	// submit_info.pSignalSemaphores = &g_vulkan_state.render_finished_semaphore;
+	
+	VkResult result = vkQueueSubmit(g_vulkan_state.graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
+	if (result == VK_SUCCESS)
+	{
+		// Wait for command to complete (not optimal, but simple)
+		vkQueueWaitIdle(g_vulkan_state.graphics_queue);
+		return true;
+	}
+	
+	printf("Failed to submit command buffer: %d\n", result);
+	return false;
+#else
+	return buffer_index < g_vulkan_state.command_buffer_count;
+#endif
 }
 
 /******************************************************************/

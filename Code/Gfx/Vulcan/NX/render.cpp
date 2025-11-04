@@ -68,6 +68,316 @@ static struct VulkanState
 #endif
 } g_vulkan_state = { false };
 
+#ifdef VULKAN_AVAILABLE
+/******************************************************************/
+/* Vulkan Data Structures                                         */
+/******************************************************************/
+
+// Structure to hold buffer and memory together for cleanup
+struct BufferInfo
+{
+	VkBuffer buffer;
+	VkDeviceMemory memory;
+};
+
+// Structure to hold image, memory, and view together for cleanup
+struct ImageInfo
+{
+	VkImage image;
+	VkDeviceMemory memory;
+	VkImageView view;
+};
+
+/******************************************************************/
+/* Vulkan Helper Functions                                        */
+/******************************************************************/
+
+// Find suitable memory type for buffer allocation
+static uint32 find_memory_type(uint32 type_filter, VkMemoryPropertyFlags properties)
+{
+	for (uint32 i = 0; i < g_vulkan_state.memory_properties.memoryTypeCount; i++)
+	{
+		if ((type_filter & (1 << i)) &&
+			(g_vulkan_state.memory_properties.memoryTypes[i].propertyFlags & properties) == properties)
+		{
+			return i;
+		}
+	}
+	
+	printf("Failed to find suitable memory type (filter: 0x%08X, properties: 0x%08X)\n", 
+		   type_filter, properties);
+	return 0;
+}
+
+// Create a Vulkan buffer with memory allocation
+static bool create_buffer(VkDeviceSize size, VkBufferUsageFlags usage, 
+						  VkMemoryPropertyFlags properties, 
+						  VkBuffer* buffer, VkDeviceMemory* buffer_memory)
+{
+	// Create buffer
+	VkBufferCreateInfo buffer_info = {};
+	buffer_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	buffer_info.size = size;
+	buffer_info.usage = usage;
+	buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	
+	VkResult result = vkCreateBuffer(g_vulkan_state.device, &buffer_info, NULL, buffer);
+	if (result != VK_SUCCESS)
+	{
+		printf("Failed to create buffer: %d\n", result);
+		return false;
+	}
+	
+	// Get memory requirements
+	VkMemoryRequirements mem_requirements;
+	vkGetBufferMemoryRequirements(g_vulkan_state.device, *buffer, &mem_requirements);
+	
+	// Allocate memory
+	VkMemoryAllocateInfo alloc_info = {};
+	alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	alloc_info.allocationSize = mem_requirements.size;
+	alloc_info.memoryTypeIndex = find_memory_type(mem_requirements.memoryTypeBits, properties);
+	
+	result = vkAllocateMemory(g_vulkan_state.device, &alloc_info, NULL, buffer_memory);
+	if (result != VK_SUCCESS)
+	{
+		printf("Failed to allocate buffer memory: %d\n", result);
+		vkDestroyBuffer(g_vulkan_state.device, *buffer, NULL);
+		return false;
+	}
+	
+	// Bind memory to buffer
+	vkBindBufferMemory(g_vulkan_state.device, *buffer, *buffer_memory, 0);
+	
+	return true;
+}
+
+// Copy data from one buffer to another
+static void copy_buffer(VkBuffer src_buffer, VkBuffer dst_buffer, VkDeviceSize size)
+{
+	// Allocate a temporary command buffer
+	VkCommandBufferAllocateInfo alloc_info = {};
+	alloc_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	alloc_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	alloc_info.commandPool = g_vulkan_state.command_pool;
+	alloc_info.commandBufferCount = 1;
+	
+	VkCommandBuffer command_buffer;
+	vkAllocateCommandBuffers(g_vulkan_state.device, &alloc_info, &command_buffer);
+	
+	// Begin recording
+	VkCommandBufferBeginInfo begin_info = {};
+	begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	
+	vkBeginCommandBuffer(command_buffer, &begin_info);
+	
+	// Copy command
+	VkBufferCopy copy_region = {};
+	copy_region.srcOffset = 0;
+	copy_region.dstOffset = 0;
+	copy_region.size = size;
+	vkCmdCopyBuffer(command_buffer, src_buffer, dst_buffer, 1, &copy_region);
+	
+	// End recording
+	vkEndCommandBuffer(command_buffer);
+	
+	// Submit and wait
+	VkSubmitInfo submit_info = {};
+	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submit_info.commandBufferCount = 1;
+	submit_info.pCommandBuffers = &command_buffer;
+	
+	vkQueueSubmit(g_vulkan_state.graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
+	vkQueueWaitIdle(g_vulkan_state.graphics_queue);
+	
+	// Cleanup
+	vkFreeCommandBuffers(g_vulkan_state.device, g_vulkan_state.command_pool, 1, &command_buffer);
+}
+
+// Create a Vulkan image with memory allocation
+static bool create_image(uint32 width, uint32 height, VkFormat format, VkImageTiling tiling,
+						 VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
+						 VkImage* image, VkDeviceMemory* image_memory)
+{
+	// Create image
+	VkImageCreateInfo image_info = {};
+	image_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	image_info.imageType = VK_IMAGE_TYPE_2D;
+	image_info.extent.width = width;
+	image_info.extent.height = height;
+	image_info.extent.depth = 1;
+	image_info.mipLevels = 1;
+	image_info.arrayLayers = 1;
+	image_info.format = format;
+	image_info.tiling = tiling;
+	image_info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	image_info.usage = usage;
+	image_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	image_info.samples = VK_SAMPLE_COUNT_1_BIT;
+	image_info.flags = 0;
+	
+	VkResult result = vkCreateImage(g_vulkan_state.device, &image_info, NULL, image);
+	if (result != VK_SUCCESS)
+	{
+		printf("Failed to create image: %d\n", result);
+		return false;
+	}
+	
+	// Get memory requirements
+	VkMemoryRequirements mem_requirements;
+	vkGetImageMemoryRequirements(g_vulkan_state.device, *image, &mem_requirements);
+	
+	// Allocate memory
+	VkMemoryAllocateInfo alloc_info = {};
+	alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	alloc_info.allocationSize = mem_requirements.size;
+	alloc_info.memoryTypeIndex = find_memory_type(mem_requirements.memoryTypeBits, properties);
+	
+	result = vkAllocateMemory(g_vulkan_state.device, &alloc_info, NULL, image_memory);
+	if (result != VK_SUCCESS)
+	{
+		printf("Failed to allocate image memory: %d\n", result);
+		vkDestroyImage(g_vulkan_state.device, *image, NULL);
+		return false;
+	}
+	
+	// Bind memory to image
+	vkBindImageMemory(g_vulkan_state.device, *image, *image_memory, 0);
+	
+	return true;
+}
+
+// Transition image layout
+static void transition_image_layout(VkImage image, VkFormat format, 
+									VkImageLayout old_layout, VkImageLayout new_layout)
+{
+	// Allocate a temporary command buffer
+	VkCommandBufferAllocateInfo alloc_info = {};
+	alloc_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	alloc_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	alloc_info.commandPool = g_vulkan_state.command_pool;
+	alloc_info.commandBufferCount = 1;
+	
+	VkCommandBuffer command_buffer;
+	vkAllocateCommandBuffers(g_vulkan_state.device, &alloc_info, &command_buffer);
+	
+	// Begin recording
+	VkCommandBufferBeginInfo begin_info = {};
+	begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	
+	vkBeginCommandBuffer(command_buffer, &begin_info);
+	
+	// Image memory barrier
+	VkImageMemoryBarrier barrier = {};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout = old_layout;
+	barrier.newLayout = new_layout;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image = image;
+	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	barrier.subresourceRange.baseMipLevel = 0;
+	barrier.subresourceRange.levelCount = 1;
+	barrier.subresourceRange.baseArrayLayer = 0;
+	barrier.subresourceRange.layerCount = 1;
+	
+	// Set access masks based on layouts
+	VkPipelineStageFlags source_stage;
+	VkPipelineStageFlags destination_stage;
+	
+	if (old_layout == VK_IMAGE_LAYOUT_UNDEFINED && new_layout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+	{
+		barrier.srcAccessMask = 0;
+		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		source_stage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+		destination_stage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+	}
+	else if (old_layout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && new_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+	{
+		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		source_stage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		destination_stage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+	}
+	else
+	{
+		printf("Unsupported layout transition: %d -> %d\n", old_layout, new_layout);
+		source_stage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+		destination_stage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	}
+	
+	vkCmdPipelineBarrier(command_buffer, source_stage, destination_stage,
+						 0, 0, NULL, 0, NULL, 1, &barrier);
+	
+	// End recording
+	vkEndCommandBuffer(command_buffer);
+	
+	// Submit and wait
+	VkSubmitInfo submit_info = {};
+	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submit_info.commandBufferCount = 1;
+	submit_info.pCommandBuffers = &command_buffer;
+	
+	vkQueueSubmit(g_vulkan_state.graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
+	vkQueueWaitIdle(g_vulkan_state.graphics_queue);
+	
+	// Cleanup
+	vkFreeCommandBuffers(g_vulkan_state.device, g_vulkan_state.command_pool, 1, &command_buffer);
+}
+
+// Copy buffer to image
+static void copy_buffer_to_image(VkBuffer buffer, VkImage image, uint32 width, uint32 height)
+{
+	// Allocate a temporary command buffer
+	VkCommandBufferAllocateInfo alloc_info = {};
+	alloc_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	alloc_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	alloc_info.commandPool = g_vulkan_state.command_pool;
+	alloc_info.commandBufferCount = 1;
+	
+	VkCommandBuffer command_buffer;
+	vkAllocateCommandBuffers(g_vulkan_state.device, &alloc_info, &command_buffer);
+	
+	// Begin recording
+	VkCommandBufferBeginInfo begin_info = {};
+	begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	
+	vkBeginCommandBuffer(command_buffer, &begin_info);
+	
+	// Copy region
+	VkBufferImageCopy region = {};
+	region.bufferOffset = 0;
+	region.bufferRowLength = 0;
+	region.bufferImageHeight = 0;
+	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.imageSubresource.mipLevel = 0;
+	region.imageSubresource.baseArrayLayer = 0;
+	region.imageSubresource.layerCount = 1;
+	region.imageOffset = {0, 0, 0};
+	region.imageExtent = {width, height, 1};
+	
+	vkCmdCopyBufferToImage(command_buffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+	
+	// End recording
+	vkEndCommandBuffer(command_buffer);
+	
+	// Submit and wait
+	VkSubmitInfo submit_info = {};
+	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submit_info.commandBufferCount = 1;
+	submit_info.pCommandBuffers = &command_buffer;
+	
+	vkQueueSubmit(g_vulkan_state.graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
+	vkQueueWaitIdle(g_vulkan_state.graphics_queue);
+	
+	// Cleanup
+	vkFreeCommandBuffers(g_vulkan_state.device, g_vulkan_state.command_pool, 1, &command_buffer);
+}
+#endif // VULKAN_AVAILABLE
+
 /******************************************************************/
 /*                                                                */
 /*                                                                */
@@ -259,9 +569,20 @@ void shutdown_vulkan( void )
 				// Destroy Vulkan texture resources
 				if( p_texture->pVulkanTexture && g_vulkan_state.device )
 				{
-					VkImage* image = (VkImage*)p_texture->pVulkanTexture;
-					vkDestroyImage(g_vulkan_state.device, *image, NULL);
-					delete image;
+					ImageInfo* image_info = (ImageInfo*)p_texture->pVulkanTexture;
+					if( image_info->view != VK_NULL_HANDLE )
+					{
+						vkDestroyImageView(g_vulkan_state.device, image_info->view, NULL);
+					}
+					if( image_info->image != VK_NULL_HANDLE )
+					{
+						vkDestroyImage(g_vulkan_state.device, image_info->image, NULL);
+					}
+					if( image_info->memory != VK_NULL_HANDLE )
+					{
+						vkFreeMemory(g_vulkan_state.device, image_info->memory, NULL);
+					}
+					delete image_info;
 				}
 #endif
 				delete p_texture;
@@ -706,19 +1027,23 @@ void render_scene( sScene *p_scene, uint32 flags, uint32 viewport )
 		}
 		
 #ifdef VULKAN_AVAILABLE
-		// For each mesh that should be rendered:
-		// 1. Bind vertex and index buffers
-		// 2. Bind material/textures via descriptor sets
-		// 3. Update push constants with transform matrices
-		// 4. Draw indexed
-		// In a full implementation:
-		// - vkCmdBindVertexBuffers
-		// - vkCmdBindIndexBuffer
-		// - vkCmdBindDescriptorSets
-		// - vkCmdPushConstants
-		// - vkCmdDrawIndexed
+		// For each mesh that should be rendered, we would bind buffers and draw
+		// Note: This requires render pass to be active, which needs swapchain setup
+		// For now, we just verify the buffers exist and count them
+		
 		if( p_mesh->pVulkanVertexBuffer && p_mesh->pVulkanIndexBuffer )
 		{
+			BufferInfo* vertex_buffer = (BufferInfo*)p_mesh->pVulkanVertexBuffer;
+			BufferInfo* index_buffer = (BufferInfo*)p_mesh->pVulkanIndexBuffer;
+			
+			// In a full implementation with render pass active:
+			// VkBuffer vertex_buffers[] = {vertex_buffer->buffer};
+			// VkDeviceSize offsets[] = {0};
+			// vkCmdBindVertexBuffers(command_buffer, 0, 1, vertex_buffers, offsets);
+			// vkCmdBindIndexBuffer(command_buffer, index_buffer->buffer, 0, VK_INDEX_TYPE_UINT16);
+			// vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout, 0, 1, &descriptor_set, 0, NULL);
+			// vkCmdDrawIndexed(command_buffer, p_mesh->m_num_indices, 1, 0, 0, 0);
+			
 			rendered_mesh_count++;
 		}
 #endif
@@ -847,10 +1172,9 @@ sTexture* create_texture( uint32 checksum, uint16 width, uint16 height, uint8 fo
 #ifdef VULKAN_AVAILABLE
 		if( g_vulkan_state.device )
 		{
-			// 1. Create Vulkan image with specified format
+			// 1. Map texture format to Vulkan format
 			VkFormat vk_format = VK_FORMAT_R8G8B8A8_UNORM; // Default format
 			
-			// Map texture format to Vulkan format
 			switch( format )
 			{
 				case sTexture::TEXTURE_FORMAT_DXT1:
@@ -874,21 +1198,82 @@ sTexture* create_texture( uint32 checksum, uint16 width, uint16 height, uint8 fo
 					break;
 			}
 			
-			// For minimal implementation, just store the format info
-			// A full implementation would:
-			// - Create VkImage with VkImageCreateInfo
-			// - Allocate VkDeviceMemory with vkAllocateMemory
-			// - Bind memory to image with vkBindImageMemory
-			// - Create staging buffer and copy data
-			// - Transition image layout
-			// - Create VkImageView for shader access
+			// 2. Create staging buffer
+			VkBuffer staging_buffer;
+			VkDeviceMemory staging_buffer_memory;
+			VkDeviceSize image_size = p_texture->byte_size;
 			
-			VkImage* image = new VkImage();
-			*image = VK_NULL_HANDLE; // Placeholder
-			p_texture->pVulkanTexture = image;
-			
-			printf("Texture created (checksum: 0x%08X, format: %d, size: %dx%d, Vulkan format: %d)\n",
-				   checksum, format, width, height, vk_format);
+			if( !create_buffer(image_size,
+							   VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+							   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+							   &staging_buffer, &staging_buffer_memory) )
+			{
+				printf("Failed to create texture staging buffer\n");
+				p_texture->pVulkanTexture = NULL;
+			}
+			else
+			{
+				// 3. Map memory and copy texture data
+				void* data;
+				vkMapMemory(g_vulkan_state.device, staging_buffer_memory, 0, image_size, 0, &data);
+				memcpy(data, pData, (size_t)image_size);
+				vkUnmapMemory(g_vulkan_state.device, staging_buffer_memory);
+				
+				// 4. Create image
+				ImageInfo* image_info = new ImageInfo();
+				if( !create_image(width, height, vk_format, VK_IMAGE_TILING_OPTIMAL,
+								  VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+								  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+								  &image_info->image, &image_info->memory) )
+				{
+					printf("Failed to create texture image\n");
+					vkDestroyBuffer(g_vulkan_state.device, staging_buffer, NULL);
+					vkFreeMemory(g_vulkan_state.device, staging_buffer_memory, NULL);
+					delete image_info;
+					p_texture->pVulkanTexture = NULL;
+				}
+				else
+				{
+					// 5. Transition image layout for transfer
+					transition_image_layout(image_info->image, vk_format,
+											VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+					
+					// 6. Copy buffer to image
+					copy_buffer_to_image(staging_buffer, image_info->image, width, height);
+					
+					// 7. Transition image layout for shader reading
+					transition_image_layout(image_info->image, vk_format,
+											VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+					
+					// 8. Create image view
+					VkImageViewCreateInfo view_info = {};
+					view_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+					view_info.image = image_info->image;
+					view_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+					view_info.format = vk_format;
+					view_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+					view_info.subresourceRange.baseMipLevel = 0;
+					view_info.subresourceRange.levelCount = 1;
+					view_info.subresourceRange.baseArrayLayer = 0;
+					view_info.subresourceRange.layerCount = 1;
+					
+					VkResult result = vkCreateImageView(g_vulkan_state.device, &view_info, NULL, &image_info->view);
+					if (result != VK_SUCCESS)
+					{
+						printf("Failed to create image view: %d\n", result);
+						image_info->view = VK_NULL_HANDLE;
+					}
+					
+					// Cleanup staging buffer
+					vkDestroyBuffer(g_vulkan_state.device, staging_buffer, NULL);
+					vkFreeMemory(g_vulkan_state.device, staging_buffer_memory, NULL);
+					
+					p_texture->pVulkanTexture = image_info;
+					
+					printf("Texture created and uploaded (checksum: 0x%08X, format: %d, size: %dx%d, Vulkan format: %d)\n",
+						   checksum, format, width, height, vk_format);
+				}
+			}
 		}
 #else
 		// Stub implementation
@@ -916,16 +1301,20 @@ void destroy_texture( sTexture *p_texture )
 	// 1-3. Destroy Vulkan resources
 	if( p_texture->pVulkanTexture && g_vulkan_state.device )
 	{
-		VkImage* image = (VkImage*)p_texture->pVulkanTexture;
-		if( *image != VK_NULL_HANDLE )
+		ImageInfo* image_info = (ImageInfo*)p_texture->pVulkanTexture;
+		if( image_info->view != VK_NULL_HANDLE )
 		{
-			// In a full implementation:
-			// - Destroy VkImageView
-			// - Destroy VkImage
-			// - Free VkDeviceMemory
-			vkDestroyImage(g_vulkan_state.device, *image, NULL);
+			vkDestroyImageView(g_vulkan_state.device, image_info->view, NULL);
 		}
-		delete image;
+		if( image_info->image != VK_NULL_HANDLE )
+		{
+			vkDestroyImage(g_vulkan_state.device, image_info->image, NULL);
+		}
+		if( image_info->memory != VK_NULL_HANDLE )
+		{
+			vkFreeMemory(g_vulkan_state.device, image_info->memory, NULL);
+		}
+		delete image_info;
 	}
 #endif
 	
@@ -1144,10 +1533,14 @@ void destroy_mesh( sMesh *p_mesh )
 	// 1. Destroy Vulkan vertex buffer
 	if( p_mesh->pVulkanVertexBuffer && g_vulkan_state.device )
 	{
-		VkBuffer* vertex_buffer = (VkBuffer*)p_mesh->pVulkanVertexBuffer;
-		if( *vertex_buffer != VK_NULL_HANDLE )
+		BufferInfo* vertex_buffer = (BufferInfo*)p_mesh->pVulkanVertexBuffer;
+		if( vertex_buffer->buffer != VK_NULL_HANDLE )
 		{
-			vkDestroyBuffer(g_vulkan_state.device, *vertex_buffer, NULL);
+			vkDestroyBuffer(g_vulkan_state.device, vertex_buffer->buffer, NULL);
+		}
+		if( vertex_buffer->memory != VK_NULL_HANDLE )
+		{
+			vkFreeMemory(g_vulkan_state.device, vertex_buffer->memory, NULL);
 		}
 		delete vertex_buffer;
 	}
@@ -1155,15 +1548,17 @@ void destroy_mesh( sMesh *p_mesh )
 	// 2. Destroy Vulkan index buffer
 	if( p_mesh->pVulkanIndexBuffer && g_vulkan_state.device )
 	{
-		VkBuffer* index_buffer = (VkBuffer*)p_mesh->pVulkanIndexBuffer;
-		if( *index_buffer != VK_NULL_HANDLE )
+		BufferInfo* index_buffer = (BufferInfo*)p_mesh->pVulkanIndexBuffer;
+		if( index_buffer->buffer != VK_NULL_HANDLE )
 		{
-			vkDestroyBuffer(g_vulkan_state.device, *index_buffer, NULL);
+			vkDestroyBuffer(g_vulkan_state.device, index_buffer->buffer, NULL);
+		}
+		if( index_buffer->memory != VK_NULL_HANDLE )
+		{
+			vkFreeMemory(g_vulkan_state.device, index_buffer->memory, NULL);
 		}
 		delete index_buffer;
 	}
-	
-	// 3. Free device memory would be done here in full implementation
 #endif
 	
 	if( p_mesh->mp_positions )
@@ -1207,36 +1602,104 @@ void upload_mesh_data( sMesh *p_mesh )
 		return;
 	}
 	
-	// 1-3. Create staging buffer and device-local vertex buffer
+	// 1-3. Create and upload vertex buffer
 	VkDeviceSize vertex_buffer_size = p_mesh->m_num_vertices * 3 * sizeof(float); // positions only for simplicity
 	
 	if( vertex_buffer_size > 0 )
 	{
-		// For minimal implementation, we'll just allocate the buffer handle
-		// A full implementation would:
-		// - Create staging buffer with VK_BUFFER_USAGE_TRANSFER_SRC_BIT
-		// - Map memory and copy vertex data
-		// - Create device-local buffer with VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
-		// - Copy from staging to device buffer using command buffer
-		// - Destroy staging buffer
+		// Create staging buffer
+		VkBuffer staging_buffer;
+		VkDeviceMemory staging_buffer_memory;
 		
-		VkBuffer* vertex_buffer = new VkBuffer();
-		*vertex_buffer = VK_NULL_HANDLE; // Placeholder
-		p_mesh->pVulkanVertexBuffer = vertex_buffer;
+		if( !create_buffer(vertex_buffer_size, 
+						   VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+						   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+						   &staging_buffer, &staging_buffer_memory) )
+		{
+			printf("Failed to create vertex staging buffer\n");
+			return;
+		}
 		
-		printf("Mesh vertex buffer prepared (size: %lu bytes)\n", (unsigned long)vertex_buffer_size);
+		// Map memory and copy vertex data
+		void* data;
+		vkMapMemory(g_vulkan_state.device, staging_buffer_memory, 0, vertex_buffer_size, 0, &data);
+		memcpy(data, p_mesh->mp_positions, (size_t)vertex_buffer_size);
+		vkUnmapMemory(g_vulkan_state.device, staging_buffer_memory);
+		
+		// Create device-local vertex buffer
+		BufferInfo* vertex_buffer_info = new BufferInfo();
+		if( !create_buffer(vertex_buffer_size,
+						   VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+						   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+						   &vertex_buffer_info->buffer, &vertex_buffer_info->memory) )
+		{
+			printf("Failed to create device vertex buffer\n");
+			vkDestroyBuffer(g_vulkan_state.device, staging_buffer, NULL);
+			vkFreeMemory(g_vulkan_state.device, staging_buffer_memory, NULL);
+			delete vertex_buffer_info;
+			return;
+		}
+		
+		// Copy from staging to device buffer
+		copy_buffer(staging_buffer, vertex_buffer_info->buffer, vertex_buffer_size);
+		
+		// Cleanup staging buffer
+		vkDestroyBuffer(g_vulkan_state.device, staging_buffer, NULL);
+		vkFreeMemory(g_vulkan_state.device, staging_buffer_memory, NULL);
+		
+		p_mesh->pVulkanVertexBuffer = vertex_buffer_info;
+		
+		printf("Mesh vertex buffer uploaded (size: %lu bytes)\n", (unsigned long)vertex_buffer_size);
 	}
 	
-	// 4-5. Create index buffer similarly
+	// 4-5. Create and upload index buffer
 	if( p_mesh->mp_indices && p_mesh->m_num_indices > 0 )
 	{
 		VkDeviceSize index_buffer_size = p_mesh->m_num_indices * sizeof(uint16);
 		
-		VkBuffer* index_buffer = new VkBuffer();
-		*index_buffer = VK_NULL_HANDLE; // Placeholder
-		p_mesh->pVulkanIndexBuffer = index_buffer;
+		// Create staging buffer
+		VkBuffer staging_buffer;
+		VkDeviceMemory staging_buffer_memory;
 		
-		printf("Mesh index buffer prepared (size: %lu bytes)\n", (unsigned long)index_buffer_size);
+		if( !create_buffer(index_buffer_size,
+						   VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+						   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+						   &staging_buffer, &staging_buffer_memory) )
+		{
+			printf("Failed to create index staging buffer\n");
+			return;
+		}
+		
+		// Map memory and copy index data
+		void* data;
+		vkMapMemory(g_vulkan_state.device, staging_buffer_memory, 0, index_buffer_size, 0, &data);
+		memcpy(data, p_mesh->mp_indices, (size_t)index_buffer_size);
+		vkUnmapMemory(g_vulkan_state.device, staging_buffer_memory);
+		
+		// Create device-local index buffer
+		BufferInfo* index_buffer_info = new BufferInfo();
+		if( !create_buffer(index_buffer_size,
+						   VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+						   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+						   &index_buffer_info->buffer, &index_buffer_info->memory) )
+		{
+			printf("Failed to create device index buffer\n");
+			vkDestroyBuffer(g_vulkan_state.device, staging_buffer, NULL);
+			vkFreeMemory(g_vulkan_state.device, staging_buffer_memory, NULL);
+			delete index_buffer_info;
+			return;
+		}
+		
+		// Copy from staging to device buffer
+		copy_buffer(staging_buffer, index_buffer_info->buffer, index_buffer_size);
+		
+		// Cleanup staging buffer
+		vkDestroyBuffer(g_vulkan_state.device, staging_buffer, NULL);
+		vkFreeMemory(g_vulkan_state.device, staging_buffer_memory, NULL);
+		
+		p_mesh->pVulkanIndexBuffer = index_buffer_info;
+		
+		printf("Mesh index buffer uploaded (size: %lu bytes)\n", (unsigned long)index_buffer_size);
 	}
 #else
 	// Stub implementation - just mark as uploaded

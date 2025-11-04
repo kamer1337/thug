@@ -82,21 +82,21 @@ The Vulcan renderer now has a working implementation with the following componen
 - `IsVisible()` - Checks visibility (FULLY IMPLEMENTED)
 - `render_shadow_targets()` - Renders shadow targets (STRUCTURE IMPLEMENTED)
 - `render_light_glows()` - Renders light glows (STRUCTURE IMPLEMENTED)
-- `render_scene()` - Renders a scene with given flags (FULLY IMPLEMENTED with mesh iteration)
+- `render_scene()` - Renders a scene with given flags (FULLY IMPLEMENTED with mesh iteration; buffer binding prepared but requires active render pass)
 
 ### Texture Management
 - `create_texture_projection_details()` - Creates texture projection details (FULLY IMPLEMENTED)
 - `destroy_texture_projection_details()` - Destroys texture projection details (FULLY IMPLEMENTED)
 - `set_texture_projection_camera()` - Sets texture projection camera (FULLY IMPLEMENTED)
 - `load_texture()` - Loads texture from file (IMPLEMENTED with stub for file I/O)
-- `create_texture()` - Creates texture from data (FULLY IMPLEMENTED)
-- `destroy_texture()` - Destroys texture (FULLY IMPLEMENTED)
+- `create_texture()` - Creates texture from data **WITH VULKAN API** (FULLY IMPLEMENTED)
+- `destroy_texture()` - Destroys texture **WITH VULKAN API** (FULLY IMPLEMENTED)
 - `get_texture()` - Retrieves texture by checksum (FULLY IMPLEMENTED)
 
 ### Mesh Management
 - `create_mesh()` - Creates a new mesh (FULLY IMPLEMENTED)
-- `destroy_mesh()` - Destroys a mesh (FULLY IMPLEMENTED)
-- `upload_mesh_data()` - Uploads mesh data to GPU (STRUCTURE IMPLEMENTED)
+- `destroy_mesh()` - Destroys a mesh **WITH VULKAN API** (FULLY IMPLEMENTED)
+- `upload_mesh_data()` - Uploads mesh data to GPU **WITH VULKAN API** (FULLY IMPLEMENTED)
 
 ### Scene Management
 - `create_scene()` - Creates a new scene (FULLY IMPLEMENTED)
@@ -104,8 +104,59 @@ The Vulcan renderer now has a working implementation with the following componen
 - `add_mesh_to_scene()` - Adds mesh to scene (FULLY IMPLEMENTED)
 
 ### Initialization
-- `init_vulkan()` - Initializes Vulkan renderer (FULLY IMPLEMENTED)
+- `init_vulkan()` - Initializes Vulkan renderer (FULLY IMPLEMENTED with instance, device, command pool)
 - `shutdown_vulkan()` - Shuts down Vulkan renderer (FULLY IMPLEMENTED)
+
+### Vulkan API Implementation (NEW)
+
+The following Vulkan API functions are now fully implemented:
+
+#### Helper Functions
+- `find_memory_type()` - Finds suitable memory type for allocation
+- `create_buffer()` - Creates VkBuffer with memory allocation and binding
+- `copy_buffer()` - Copies data between buffers using command buffers
+- `create_image()` - Creates VkImage with memory allocation and binding
+- `transition_image_layout()` - Transitions image layout with pipeline barriers
+- `copy_buffer_to_image()` - Copies buffer data to image using command buffers
+
+#### Buffer Management (upload_mesh_data)
+- ✅ Create staging buffers with `VK_BUFFER_USAGE_TRANSFER_SRC_BIT`
+- ✅ Map memory with `vkMapMemory` and copy vertex/index data
+- ✅ Create device-local buffers with `VK_BUFFER_USAGE_VERTEX_BUFFER_BIT` and `VK_BUFFER_USAGE_INDEX_BUFFER_BIT`
+- ✅ Transfer data from staging to device buffers using `vkCmdCopyBuffer`
+- ✅ Proper cleanup with `vkDestroyBuffer` and `vkFreeMemory`
+
+#### Texture Management (create_texture)
+- ✅ Create staging buffer for texture data
+- ✅ Map memory and copy texture pixels
+- ✅ Create VkImage with appropriate format (DXT1/3/5, RGBA, etc.)
+- ✅ Transition image layout with `vkCmdPipelineBarrier`
+  - `VK_IMAGE_LAYOUT_UNDEFINED` → `VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL`
+  - `VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL` → `VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL`
+- ✅ Copy buffer to image with `vkCmdCopyBufferToImage`
+- ✅ Create image view with `vkCreateImageView`
+- ✅ Proper cleanup with `vkDestroyImage`, `vkDestroyImageView`, and `vkFreeMemory`
+
+#### Command Buffer Usage
+- ✅ Allocate temporary command buffers with `vkAllocateCommandBuffers`
+- ✅ Begin recording with `vkBeginCommandBuffer`
+- ✅ Record copy commands (`vkCmdCopyBuffer`, `vkCmdCopyBufferToImage`)
+- ✅ End recording with `vkEndCommandBuffer`
+- ✅ Submit to queue with `vkQueueSubmit`
+- ✅ Synchronize with `vkQueueWaitIdle`
+- ✅ Cleanup with `vkFreeCommandBuffers`
+
+### What Still Needs Implementation
+
+The following features require a window surface and swapchain for presentation:
+- **Swapchain Creation** - Requires window system integration (SDL2/GLFW)
+- **Surface Creation** - Platform-specific window surface
+- **Render Pass** - Defines framebuffer attachments and subpasses
+- **Graphics Pipeline** - Shader stages, vertex input, rasterization state
+- **Descriptor Sets** - For binding textures and uniforms to shaders
+- **Actual Draw Calls** - Recording `vkCmdDrawIndexed` within render pass
+
+These are typically handled by a windowing/presentation layer and are tracked in separate tasks.
 
 ## File Format Compatibility
 

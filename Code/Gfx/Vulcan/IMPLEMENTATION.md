@@ -24,19 +24,160 @@ This document summarizes the complete implementation of the Vulcan renderer for 
    - Function declarations for all renderer operations
    - Hash table declarations
 
-2. **Code/Gfx/Vulcan/NX/render.cpp** (750 lines, +661 additions)
+2. **Code/Gfx/Vulcan/NX/render.cpp** (1600+ lines, now includes Vulkan API implementation)
    - Full implementation of all rendering functions
    - Texture management system
    - Mesh management system
    - Scene management system
    - Camera and frustum culling
    - Blend mode mapping
+   - **NEW: Vulkan API implementation for buffer and texture management**
 
-3. **Code/Gfx/Vulcan/README.md** (229 lines, +182 additions)
+3. **Code/Gfx/Vulcan/README.md** (updated)
    - Comprehensive documentation
    - Implementation status for all functions
    - File format compatibility details
    - Technical implementation details
+   - **NEW: Vulkan API implementation status**
+
+4. **Code/Gfx/Vulcan/test_api_implementation.cpp** (NEW)
+   - Test file demonstrating Vulkan API implementation
+   - Verification of all Vulkan structures and functions used
+
+## Vulkan API Implementation (Latest Update)
+
+### Helper Functions Added
+Six new helper functions implement core Vulkan operations:
+
+1. **find_memory_type()** - Finds suitable memory type index for allocations
+   - Checks memory properties against required flags
+   - Returns appropriate memory type for host-visible or device-local memory
+
+2. **create_buffer()** - Creates VkBuffer with memory allocation
+   - Creates buffer with specified size and usage flags
+   - Allocates and binds device memory
+   - Returns both buffer and memory handles
+
+3. **copy_buffer()** - Transfers data between buffers
+   - Allocates temporary command buffer
+   - Records copy command
+   - Submits to graphics queue and waits
+
+4. **create_image()** - Creates VkImage with memory allocation
+   - Creates 2D image with specified format and usage
+   - Allocates and binds device memory
+   - Returns both image and memory handles
+
+5. **transition_image_layout()** - Transitions image layout
+   - Uses pipeline barriers for layout transitions
+   - Handles UNDEFINED → TRANSFER_DST_OPTIMAL
+   - Handles TRANSFER_DST_OPTIMAL → SHADER_READ_ONLY_OPTIMAL
+
+6. **copy_buffer_to_image()** - Uploads texture data
+   - Copies from staging buffer to device image
+   - Uses vkCmdCopyBufferToImage command
+
+### Function Updates with Vulkan API
+
+#### upload_mesh_data() - Now FULLY IMPLEMENTED
+- Creates staging buffer with VK_BUFFER_USAGE_TRANSFER_SRC_BIT
+- Maps memory with vkMapMemory and copies vertex data
+- Unmaps memory with vkUnmapMemory
+- Creates device-local vertex buffer with VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+- Copies data using copy_buffer() helper
+- Repeats process for index buffer with VK_BUFFER_USAGE_INDEX_BUFFER_BIT
+- Stores BufferInfo struct (buffer + memory) for cleanup
+
+#### create_texture() - Now FULLY IMPLEMENTED
+- Maps texture format to Vulkan format (DXT1/3/5, RGBA, etc.)
+- Creates staging buffer for texture data
+- Maps memory and copies texture pixels
+- Creates device-local image with VK_IMAGE_USAGE_SAMPLED_BIT
+- Transitions layout to TRANSFER_DST_OPTIMAL
+- Copies buffer to image
+- Transitions layout to SHADER_READ_ONLY_OPTIMAL
+- Creates image view with vkCreateImageView
+- Stores ImageInfo struct (image + memory + view) for cleanup
+
+#### destroy_mesh() - Now FULLY IMPLEMENTED
+- Casts void* to BufferInfo*
+- Destroys vertex buffer with vkDestroyBuffer
+- Frees vertex buffer memory with vkFreeMemory
+- Repeats for index buffer
+
+#### destroy_texture() - Now FULLY IMPLEMENTED
+- Casts void* to ImageInfo*
+- Destroys image view with vkDestroyImageView
+- Destroys image with vkDestroyImage
+- Frees image memory with vkFreeMemory
+
+#### shutdown_vulkan() - Updated
+- Properly cleans up all textures using ImageInfo struct
+- Destroys image views, images, and frees memory
+
+### Vulkan API Calls Used
+
+The implementation now uses the following Vulkan API functions:
+
+**Memory Management:**
+- vkGetBufferMemoryRequirements
+- vkGetImageMemoryRequirements
+- vkAllocateMemory
+- vkFreeMemory
+- vkBindBufferMemory
+- vkBindImageMemory
+- vkMapMemory
+- vkUnmapMemory
+
+**Buffer Operations:**
+- vkCreateBuffer
+- vkDestroyBuffer
+- vkCmdCopyBuffer
+
+**Image Operations:**
+- vkCreateImage
+- vkDestroyImage
+- vkCreateImageView
+- vkDestroyImageView
+- vkCmdCopyBufferToImage
+- vkCmdPipelineBarrier
+
+**Command Buffer Operations:**
+- vkAllocateCommandBuffers
+- vkFreeCommandBuffers
+- vkBeginCommandBuffer
+- vkEndCommandBuffer
+- vkQueueSubmit
+- vkQueueWaitIdle
+
+### Data Structure Changes
+
+#### BufferInfo (internal struct)
+```cpp
+struct BufferInfo {
+    VkBuffer buffer;
+    VkDeviceMemory memory;
+};
+```
+Used to track both buffer handle and its memory allocation together.
+
+#### ImageInfo (internal struct)
+```cpp
+struct ImageInfo {
+    VkImage image;
+    VkDeviceMemory memory;
+    VkImageView view;
+};
+```
+Used to track image handle, memory, and view together for proper cleanup.
+
+### Testing
+
+A new test file `test_api_implementation.cpp` verifies:
+- All Vulkan structures are correctly used
+- All Vulkan API calls are present
+- Implementation matches Vulkan specification
+- Proper cleanup and resource management
 
 ## Data Structures Implemented
 

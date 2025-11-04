@@ -3,7 +3,7 @@ Skeleton tree widget for displaying bone hierarchy.
 """
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTreeWidget, QTreeWidgetItem, QLabel, QGroupBox
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 from typing import Optional
 
 from core.skeleton import Skeleton, Bone
@@ -104,6 +104,3 @@ class SkeletonTree(QWidget):
         bone_name = item.data(0, Qt.UserRole)
         if bone_name:
             self.bone_selected.emit(bone_name)
-
-
-from PyQt5.QtCore import Qt

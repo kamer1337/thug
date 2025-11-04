@@ -60,7 +60,13 @@ python3 test_suite.py
 # Run examples
 echo ""
 echo "Running examples..."
-python3 examples.py > /dev/null 2>&1
+if python3 examples.py > /tmp/examples_output.txt 2>&1; then
+    echo "  ✓ Examples completed successfully"
+else
+    echo "  ✗ Examples failed!"
+    cat /tmp/examples_output.txt
+    exit 1
+fi
 
 echo ""
 echo "=========================================="

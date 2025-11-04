@@ -1,0 +1,11 @@
+# Python requirements for THUG Model Viewer
+
+# Core dependencies
+PyQt5>=5.15.0
+PyOpenGL>=3.1.5
+numpy>=1.19.0
+
+# Optional dependencies for enhanced features
+# Uncomment these if needed:
+# pillow>=8.0.0  # For texture support
+# scipy>=1.5.0   # For advanced math operations

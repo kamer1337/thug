@@ -189,6 +189,34 @@ namespace NxVulcan
 	bool		init_vulkan( void );
 	void		shutdown_vulkan( void );
 	
+	// Swapchain management
+	bool		create_swapchain( void *window_handle, uint32 width, uint32 height );
+	void		destroy_swapchain( void );
+	bool		recreate_swapchain( uint32 width, uint32 height );
+	bool		acquire_next_image( uint32 *image_index );
+	bool		present_image( uint32 image_index );
+	
+	// Render pass and pipeline
+	bool		create_render_pass( void );
+	void		destroy_render_pass( void );
+	bool		create_graphics_pipeline( void );
+	void		destroy_graphics_pipeline( void );
+	
+	// Command buffer management
+	bool		allocate_command_buffers( void );
+	void		free_command_buffers( void );
+	bool		begin_command_buffer( uint32 buffer_index );
+	bool		end_command_buffer( uint32 buffer_index );
+	bool		begin_render_pass( uint32 buffer_index, uint32 framebuffer_index );
+	void		end_render_pass( uint32 buffer_index );
+	
+	// Drawing commands
+	void		bind_pipeline( uint32 buffer_index );
+	void		bind_vertex_buffer( uint32 buffer_index, void *vertex_buffer );
+	void		bind_index_buffer( uint32 buffer_index, void *index_buffer );
+	void		draw_indexed( uint32 buffer_index, uint32 index_count );
+	bool		submit_command_buffer( uint32 buffer_index );
+	
 	// Texture management
 	sTexture*	load_texture( const char *p_filename );
 	sTexture*	load_texture_pc_format( const char *p_filename );

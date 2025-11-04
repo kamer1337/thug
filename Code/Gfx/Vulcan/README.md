@@ -82,7 +82,7 @@ The Vulcan renderer now has a working implementation with the following componen
 - `IsVisible()` - Checks visibility (FULLY IMPLEMENTED)
 - `render_shadow_targets()` - Renders shadow targets (STRUCTURE IMPLEMENTED)
 - `render_light_glows()` - Renders light glows (STRUCTURE IMPLEMENTED)
-- `render_scene()` - Renders a scene with given flags (FULLY IMPLEMENTED with mesh iteration and buffer binding)
+- `render_scene()` - Renders a scene with given flags (FULLY IMPLEMENTED with mesh iteration; buffer binding prepared but requires active render pass)
 
 ### Texture Management
 - `create_texture_projection_details()` - Creates texture projection details (FULLY IMPLEMENTED)

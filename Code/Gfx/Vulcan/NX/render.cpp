@@ -70,6 +70,25 @@ static struct VulkanState
 
 #ifdef VULKAN_AVAILABLE
 /******************************************************************/
+/* Vulkan Data Structures                                         */
+/******************************************************************/
+
+// Structure to hold buffer and memory together for cleanup
+struct BufferInfo
+{
+	VkBuffer buffer;
+	VkDeviceMemory memory;
+};
+
+// Structure to hold image, memory, and view together for cleanup
+struct ImageInfo
+{
+	VkImage image;
+	VkDeviceMemory memory;
+	VkImageView view;
+};
+
+/******************************************************************/
 /* Vulkan Helper Functions                                        */
 /******************************************************************/
 
@@ -85,7 +104,8 @@ static uint32 find_memory_type(uint32 type_filter, VkMemoryPropertyFlags propert
 		}
 	}
 	
-	printf("Failed to find suitable memory type\n");
+	printf("Failed to find suitable memory type (filter: 0x%08X, properties: 0x%08X)\n", 
+		   type_filter, properties);
 	return 0;
 }
 
@@ -283,7 +303,7 @@ static void transition_image_layout(VkImage image, VkFormat format,
 	}
 	else
 	{
-		printf("Unsupported layout transition\n");
+		printf("Unsupported layout transition: %d -> %d\n", old_layout, new_layout);
 		source_stage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 		destination_stage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 	}
@@ -549,14 +569,6 @@ void shutdown_vulkan( void )
 				// Destroy Vulkan texture resources
 				if( p_texture->pVulkanTexture && g_vulkan_state.device )
 				{
-					// Structure to hold image and memory together (must match create_texture)
-					struct ImageInfo
-					{
-						VkImage image;
-						VkDeviceMemory memory;
-						VkImageView view;
-					};
-					
 					ImageInfo* image_info = (ImageInfo*)p_texture->pVulkanTexture;
 					if( image_info->view != VK_NULL_HANDLE )
 					{
@@ -1018,11 +1030,6 @@ void render_scene( sScene *p_scene, uint32 flags, uint32 viewport )
 		// For each mesh that should be rendered, we would bind buffers and draw
 		// Note: This requires render pass to be active, which needs swapchain setup
 		// For now, we just verify the buffers exist and count them
-		struct BufferInfo
-		{
-			VkBuffer buffer;
-			VkDeviceMemory memory;
-		};
 		
 		if( p_mesh->pVulkanVertexBuffer && p_mesh->pVulkanIndexBuffer )
 		{
@@ -1165,14 +1172,6 @@ sTexture* create_texture( uint32 checksum, uint16 width, uint16 height, uint8 fo
 #ifdef VULKAN_AVAILABLE
 		if( g_vulkan_state.device )
 		{
-			// Structure to hold image and memory together
-			struct ImageInfo
-			{
-				VkImage image;
-				VkDeviceMemory memory;
-				VkImageView view;
-			};
-			
 			// 1. Map texture format to Vulkan format
 			VkFormat vk_format = VK_FORMAT_R8G8B8A8_UNORM; // Default format
 			
@@ -1302,14 +1301,6 @@ void destroy_texture( sTexture *p_texture )
 	// 1-3. Destroy Vulkan resources
 	if( p_texture->pVulkanTexture && g_vulkan_state.device )
 	{
-		// Structure to hold image and memory together (must match create_texture)
-		struct ImageInfo
-		{
-			VkImage image;
-			VkDeviceMemory memory;
-			VkImageView view;
-		};
-		
 		ImageInfo* image_info = (ImageInfo*)p_texture->pVulkanTexture;
 		if( image_info->view != VK_NULL_HANDLE )
 		{
@@ -1539,13 +1530,6 @@ void destroy_mesh( sMesh *p_mesh )
 	}
 	
 #ifdef VULKAN_AVAILABLE
-	// Structure to hold buffer and memory together (must match upload_mesh_data)
-	struct BufferInfo
-	{
-		VkBuffer buffer;
-		VkDeviceMemory memory;
-	};
-	
 	// 1. Destroy Vulkan vertex buffer
 	if( p_mesh->pVulkanVertexBuffer && g_vulkan_state.device )
 	{
@@ -1617,13 +1601,6 @@ void upload_mesh_data( sMesh *p_mesh )
 	{
 		return;
 	}
-	
-	// Structure to hold buffer and memory together
-	struct BufferInfo
-	{
-		VkBuffer buffer;
-		VkDeviceMemory memory;
-	};
 	
 	// 1-3. Create and upload vertex buffer
 	VkDeviceSize vertex_buffer_size = p_mesh->m_num_vertices * 3 * sizeof(float); // positions only for simplicity

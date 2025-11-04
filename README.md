@@ -268,6 +268,12 @@ The Vulkan renderer is fully documented with multiple resources:
 - `Code/Gfx/Vulcan/IMPLEMENTATION.md` - Implementation status details
 - `docs/VULKAN_RENDERER.md` - Complete summary
 
+### Tools
+
+Standalone tools for working with THUG assets:
+- **[tools/README.md](tools/README.md)** - Overview of all available tools
+- **[tools/model_viewer/](tools/model_viewer/)** - ⭐ 3D Model, Skeleton & Animation Viewer/Editor
+
 ## Resources
 
 - [Tony Hawk's Underground on Wikipedia](https://en.wikipedia.org/wiki/Tony_Hawk%27s_Underground)

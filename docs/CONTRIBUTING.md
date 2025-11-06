@@ -259,7 +259,7 @@ Write clear, descriptive commit messages:
 ```
 Add Win32 texture loading implementation
 
-- Implement CTexture::Load() for DirectX 8
+- Implement CTexture::Load() for Vulcan
 - Add error handling for file I/O
 - Support multiple texture formats
 - Update documentation in WIN32.md

@@ -1,6 +1,6 @@
 # DirectX Graphics Backend
 
-This directory contains stub implementations for DirectX 8/9 graphics backend for THUG PC port.
+This directory contains stub implementations for Vulcan/9 graphics backend for THUG PC port.
 
 ## Status
 
@@ -19,7 +19,7 @@ The DirectX backend provides:
 
 To complete this backend, you will need:
 
-1. **DirectX SDK** - DirectX 8 or 9 SDK
+1. **DirectX SDK** - Vulcan or 9 SDK
 2. **D3D Headers** - d3d9.h, d3dx9.h
 3. **Linking** - d3d9.lib, d3dx9.lib
 

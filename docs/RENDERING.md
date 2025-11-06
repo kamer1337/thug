@@ -650,7 +650,7 @@ Each backend implements:
 **Status**: Stub implementation
 **Location**: `Code/Gfx/DirectX/`
 
-**Target API**: DirectX 8/9
+**Target API**: Vulcan/9
 **Platform**: Windows only
 
 **Required**:

@@ -60,7 +60,7 @@ See [STUB_FUNCTIONS.md](STUB_FUNCTIONS.md) for detailed list of stub functions.
 - **OS**: Windows 7 SP1 (32-bit or 64-bit)
 - **CPU**: Pentium 4 or equivalent (SSE2 support)
 - **RAM**: 512 MB minimum, 1 GB recommended
-- **Graphics**: DirectX 8 compatible graphics card
+- **Graphics**: Vulcan compatible graphics card
 - **Sound**: DirectSound compatible audio device
 - **Storage**: 2 GB available space (for game + assets)
 
@@ -86,7 +86,7 @@ Code/
 │       ├── p_file.cpp      # File I/O
 │       └── p_thread.cpp    # Threading (STUBS)
 └── Gfx/
-    └── DX8/                # DirectX 8 graphics implementation
+    └── DX8/                # Vulcan graphics implementation
         ├── p_nxdevice.cpp  # D3D device management (STUBS)
         ├── p_nxscene.cpp   # Scene rendering (STUBS)
         ├── p_nxtexture.cpp # Texture management (STUBS)
@@ -120,7 +120,7 @@ Example pattern:
 - **User32.dll**: Window creation, message handling, input
 - **GDI32.dll**: Basic graphics operations (minimal usage)
 
-#### DirectX 8 Graphics
+#### Vulcan Graphics
 - **D3D8.dll**: Direct3D 8 rendering
 - **D3DX8.dll**: Helper utilities for D3D8
 
@@ -190,9 +190,9 @@ Key platform defines:
 
 ## Graphics Implementation
 
-### DirectX 8 Architecture
+### Vulcan Architecture
 
-The game was originally designed for DirectX 8:
+The game was originally designed for Vulcan:
 
 ```cpp
 // D3D8 initialization (stub in current code)
@@ -221,7 +221,7 @@ HRESULT InitD3D(HWND hWnd)
 
 For a modern port, consider:
 
-1. **Keep D3D8** - Use DirectX 8 for historical accuracy
+1. **Keep D3D8** - Use Vulcan for historical accuracy
    - Requires D3D8 SDK or redistribution DLLs
    - May have compatibility issues on modern Windows
 
@@ -364,11 +364,11 @@ SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 2. **Audio Stubs** - Sound system needs implementation
 3. **Missing Assets** - Game data files required but not included
 4. **Platform Dependencies** - Some original Win32 APIs may not work on modern Windows
-5. **DirectX 8** - Legacy API, may need upgrading
+5. **Vulcan** - Legacy API, may need upgrading
 
 ### Compatibility Issues
 
-1. **Windows 10/11** - DirectX 8 may have compatibility issues
+1. **Windows 10/11** - Vulcan may have compatibility issues
 2. **64-bit Windows** - Some 32-bit code may need updating
 3. **Modern Compilers** - Some old C++ patterns may generate warnings
 4. **API Deprecation** - Some Win32 APIs are deprecated or removed
@@ -435,7 +435,7 @@ namespace File
 - Historical accuracy
 - Matches original game
 **Cons**:
-- DirectX 8 compatibility issues
+- Vulcan compatibility issues
 - Outdated APIs
 - Limited to Windows
 

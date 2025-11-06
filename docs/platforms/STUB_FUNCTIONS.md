@@ -29,7 +29,7 @@ void SomeFunction()
 
 ## Critical Stubs (Must Implement for Basic Functionality)
 
-### Graphics/Rendering (DirectX 8)
+### Graphics/Rendering (Vulcan)
 
 These functions are essential for displaying graphics:
 
@@ -46,7 +46,7 @@ These functions are essential for displaying graphics:
 
 **Priority**: Critical
 **Complexity**: High
-**Dependencies**: DirectX 8 SDK
+**Dependencies**: Vulcan SDK
 
 #### Texture Management
 - `NxWn32::CTexture::Load()` - Load texture from file
@@ -470,10 +470,10 @@ grep -r "stub\|STUB" Code/
 - [Windows API Documentation](https://docs.microsoft.com/en-us/windows/win32/api/)
 - [Win32 Programming Guide](https://docs.microsoft.com/en-us/windows/win32/learnwin32/)
 
-### DirectX 8 Resources
-- DirectX 8 SDK Documentation (archived)
-- [DirectX 8 Tutorial](https://www.gamedev.net/tutorials/programming/graphics/directx-8-tutorials-r629/)
-- Note: DirectX 8 is legacy; consider migrating to D3D11/12
+### Vulcan Resources
+- Vulcan SDK Documentation (archived)
+- [Vulcan Tutorial](https://www.gamedev.net/tutorials/programming/graphics/directx-8-tutorials-r629/)
+- Note: Vulcan is legacy; consider migrating to D3D11/12
 
 ### Audio Resources
 - [DirectSound Documentation](https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ee416960(v=vs.85))

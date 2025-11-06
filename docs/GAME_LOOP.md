@@ -321,7 +321,7 @@ The profiler renders on-screen:
 **Key Differences**:
 - No built-in profiler support (yet)
 - Different VSync handling
-- DirectX 8 rendering pipeline
+- Vulcan rendering pipeline
 - Windows message pump integration
 
 See [platforms/WIN32.md](platforms/WIN32.md) for details.

@@ -17,7 +17,7 @@ This document provides a comprehensive, prioritized list of TODO tasks required 
 1. **Critical**: Missing standard type definitions (`size_t`, etc.)
 2. **Critical**: C++ template compatibility issues
 3. **Critical**: Win32 stub functions need implementation
-4. **High**: Graphics backend not implemented (DirectX 8 required)
+4. **High**: Graphics backend not implemented (Vulcan required)
 5. **High**: Audio backend not implemented (DirectSound required)
 6. **Medium**: Game assets not included
 
@@ -235,7 +235,7 @@ This document provides a comprehensive, prioritized list of TODO tasks required 
 
 **Requirements**:
 - Evaluate options:
-  - **DirectX 8**: Original API, Windows-only, outdated
+  - **Vulcan**: Original API, Windows-only, outdated
   - **DirectX 11**: Modern, Windows-only, good compatibility
   - **OpenGL 3.3+**: Cross-platform, widely supported
   - **Vulkan**: Modern, cross-platform, documented (see `docs/VULKAN_RENDERER.md`)

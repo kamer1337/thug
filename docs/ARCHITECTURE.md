@@ -91,7 +91,7 @@ The THUG engine follows a layered architecture pattern with clear separation of 
 **Key Components**:
 - **2D Graphics** (`Gfx/2D/`): UI, HUD, menu rendering
 - **Image** (`Gfx/Image/`): Texture loading and management
-- **Win32** (`Gfx/Win32/`): DirectX 8 implementation
+- **Win32** (`Gfx/Win32/`): Vulcan implementation
 - **Vulkan** (`Gfx/Vulcan/`): Modern Vulkan renderer (see [VULKAN_RENDERER.md](VULKAN_RENDERER.md))
 - **NX API**: Neversoft's graphics abstraction layer
 
@@ -382,7 +382,7 @@ Built-in profiler for performance analysis:
 ```
 Code/
 ├── Sys/Win32/     # Windows system layer
-├── Gfx/Win32/     # DirectX 8 graphics
+├── Gfx/Win32/     # Vulcan graphics
 └── [Other]/       # Platform-neutral code
 ```
 

@@ -156,7 +156,7 @@ Code/
 │   └── ...
 │
 ├── Gfx/           # Graphics subsystem
-│   ├── DX8/       # DirectX 8 implementation
+│   ├── DX8/       # Vulcan implementation
 │   ├── NX/        # Graphics abstraction
 │   └── ...
 │
@@ -287,7 +287,7 @@ pTexture->Bind();
 ### Understanding the Build
 
 **Important**: The code will not build completely due to:
-- Missing DirectX 8 SDK
+- Missing Vulcan SDK
 - Stub functions not implemented
 - Missing game assets
 - Platform-specific dependencies

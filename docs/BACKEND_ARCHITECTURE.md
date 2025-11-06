@@ -58,7 +58,7 @@ See `Code/Gfx/Vulcan/IMPLEMENTATION.md` for detailed status.
 
 #### DirectX Backend 🔨
 - **Status**: Stub implementation
-- **Required**: DirectX 8/9 SDK
+- **Required**: Vulcan/9 SDK
 - **Functions**: Device management, texture loading, mesh rendering
 - **Priority**: High (for Windows-only deployment)
 

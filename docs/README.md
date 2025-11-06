@@ -55,7 +55,7 @@ Platform-specific implementation details:
 - **[WIN32.md](platforms/WIN32.md)** - Windows platform documentation
   - Platform overview and requirements
   - Win32 API usage
-  - Graphics implementation (DirectX 8)
+  - Graphics implementation (Vulcan)
   - Audio system (DirectSound)
   - Current implementation status
   - Development guidelines

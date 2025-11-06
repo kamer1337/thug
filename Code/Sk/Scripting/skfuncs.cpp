@@ -1569,20 +1569,17 @@ bool ScriptResetDefaultStats( Script::CStruct *pParams, Script::CScript *pScript
 // @parm int | skater | the skater to randomize
 bool ScriptRandomizeAppearance( Script::CStruct *pParams, Script::CScript *pScript )
 {  
-	Dbg_Message( "STUB:  RandomizeAppearance" );
-
-	/*
-
 	Obj::CSkaterProfile* pSkaterProfile;
 	pSkaterProfile = Mdl::Skate::Instance()->GetCurrentProfile(pParams);
-	Gfx::CModelAppearance* pSkaterAppearance = pSkaterProfile->GetAppearance();
-	Dbg_Assert( pSkaterAppearance );
-	pSkaterAppearance->Randomize();
-	 */
-
-	// Randomize: Randomizes parts, height, weight
-	// Possibly to be moved into script...
-	// Needs to take disqualifications into account
+	if (pSkaterProfile)
+	{
+		Gfx::CModelAppearance* pSkaterAppearance = pSkaterProfile->GetAppearance();
+		if (pSkaterAppearance)
+		{
+			// Resolve any randomized desc ids in the appearance
+			pSkaterAppearance->resolve_randomized_desc_ids();
+		}
+	}
 
 	return true;
 }

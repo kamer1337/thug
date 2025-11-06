@@ -12,7 +12,6 @@ cmake_install.cmake
 install_manifest.txt
 *.cmake
 !CMakeLists.txt
-
 # Compiled Object files
 *.slo
 *.lo
@@ -20,35 +19,29 @@ install_manifest.txt
 *.obj
 *.ko
 *.elf
-
 # Precompiled Headers
 *.gch
 *.pch
-
 # Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
-
 # Compiled Static libraries
 *.lai
 *.la
 *.a
 *.lib
-
 # Executables
 *.exe
 *.out
 *.app
 thug
 thug.exe
-
 # Debug files
 *.dSYM/
 *.su
 *.idb
 *.pdb
-
 # Visual Studio
 .vs/
 *.sln
@@ -63,38 +56,31 @@ thug.exe
 *.sdf
 *.VC.db
 *.VC.opendb
-
 # Visual Studio Code
 .vscode/
 *.code-workspace
-
 # Platform-specific build artifacts
 *.map
 *.dis
-
 # IDE
 .idea/
 *.swp
 *.swo
 *~
 .DS_Store
-
 # Temporary files
 *.tmp
 *.temp
 *.log
-
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.pyc
-
 # Package managers
 *.zip
 *.tar.gz
 *.tgz
-
 # Game Assets (Do not commit copyrighted game assets)
 # Keep directory structure with .gitkeep, but ignore actual asset files
 Data/**/*.mdl
@@ -110,30 +96,19 @@ Data/**/*.ogg
 Data/**/*.mp3
 Data/**/*.pre
 Data/**/*.wad
-
 # BUT keep documentation and structure
 !Data/README.md
 !Data/ASSET_MANIFEST.md
 !Data/**/.gitkeep
-
 # PRE Archive Files (Do not commit copyrighted game archives)
 # Keep directory structure with .gitkeep, but ignore actual .pre files
 pre/*.pre
-
-# BUT keep documentation and structure
 !pre/README.md
 !pre/.gitkeep
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
 .Python
 env/
 venv/
 ENV/
-build/
 develop-eggs/
 dist/
 downloads/

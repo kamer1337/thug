@@ -2,6 +2,8 @@
 
 This document extracts actionable tasks from [ROADMAP.md](ROADMAP.md) and organizes them into discrete items suitable for individual pull requests. Each task is designed to be self-contained and can be worked on independently.
 
+> **⭐ Looking to make the game executable?** See **[EXECUTABLE_COMPLETION.md](EXECUTABLE_COMPLETION.md)** for a focused, prioritized list of TODO tasks specifically aimed at making the executable compile and run.
+
 ## How to Use This Document
 
 1. **Browse tasks** organized by category and priority

@@ -71,6 +71,8 @@ See **[docs/PC_PORT_PROGRESS.md](docs/PC_PORT_PROGRESS.md)** for detailed progre
 3. **Graphics Backend**: Needs DirectX/OpenGL/Vulkan implementation
 4. **Audio Backend**: Needs OpenAL/FMOD/SDL_mixer implementation
 
+**See [EXECUTABLE_COMPLETION.md](EXECUTABLE_COMPLETION.md) for a comprehensive list of TODO tasks to make the executable functional.**
+
 ## Data Structure and Assets
 
 This repository includes a proper PC-compatible asset directory structure but does **not** include actual game assets due to copyright.
@@ -242,6 +244,7 @@ For more information about the project:
 ### Main Documentation
 - **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
 - **[TASKS.md](TASKS.md)** - ⭐ Discrete tasks ready for pull requests!
+- **[EXECUTABLE_COMPLETION.md](EXECUTABLE_COMPLETION.md)** - ⭐ TODO tasks to make the executable compile and run
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase
 - **[LEGAL.md](LEGAL.md)** - Legal information, disclaimers, and copyright notices

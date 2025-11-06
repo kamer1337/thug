@@ -787,11 +787,11 @@ This document provides a comprehensive, prioritized list of TODO tasks required 
 To get a **minimally functional executable**, complete tasks in this order:
 
 ### Immediate (Required for Compilation):
-1. ✅ **TASK-EXEC-001**: Fix type definitions (size_t errors)
-2. ✅ **TASK-EXEC-002**: Fix C++ template syntax
-3. ✅ **TASK-EXEC-003**: Fix variadic macro syntax
-4. ✅ **TASK-EXEC-004**: Fix 64-bit pointer casting
-5. ✅ **TASK-EXEC-005**: Fix platform detection macros
+1. 🔲 **TASK-EXEC-001**: Fix type definitions (size_t errors)
+2. 🔲 **TASK-EXEC-002**: Fix C++ template syntax
+3. 🔲 **TASK-EXEC-003**: Fix variadic macro syntax
+4. 🔲 **TASK-EXEC-004**: Fix 64-bit pointer casting
+5. 🔲 **TASK-EXEC-005**: Fix platform detection macros
 
 ### Critical (Required for Executable to Start):
 6. 🔲 **TASK-EXEC-006**: Implement main entry point

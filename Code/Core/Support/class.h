@@ -22,6 +22,8 @@
 #ifndef __CORE_SUPPORT_CLASS_H
 #define __CORE_SUPPORT_CLASS_H
 
+#include <cstddef>
+
 #ifndef __CORE_DEFINES_H
     #include <core/defines.h>
 #endif

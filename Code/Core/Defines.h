@@ -26,6 +26,7 @@
 **								   Includes									**
 *****************************************************************************/
 
+#include <cstddef>
 
 #ifdef __PLAT_WN32__
 //#include <strstream>

@@ -45,6 +45,8 @@ void PCMAudio_Init( void )
 	OpenAL::Audio_Init();
 #elif defined(USE_FMOD_AUDIO)
 	FMOD::Audio_Init();
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	DirectSound::Audio_Init();
 #else
 	// No audio backend selected - stub implementation
 #endif
@@ -59,6 +61,8 @@ void PCMAudio_Deinit( void )
 	OpenAL::Audio_Deinit();
 #elif defined(USE_FMOD_AUDIO)
 	FMOD::Audio_Deinit();
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	DirectSound::Audio_Deinit();
 #else
 	// No audio backend selected - stub implementation
 #endif
@@ -73,6 +77,8 @@ void PCMAudio_Update( void )
 	OpenAL::Audio_Update();
 #elif defined(USE_FMOD_AUDIO)
 	FMOD::Audio_Update();
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	DirectSound::Audio_Update();
 #else
 	// No audio backend selected - stub implementation
 #endif
@@ -87,6 +93,8 @@ bool PCMAudio_TrackExists( const char* nameOfFile, int trackNumber )
 	return OpenAL::Audio_TrackExists(nameOfFile, trackNumber);
 #elif defined(USE_FMOD_AUDIO)
 	return FMOD::Audio_TrackExists(nameOfFile, trackNumber);
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	return DirectSound::Audio_TrackExists(nameOfFile, trackNumber);
 #else
 	// No audio backend selected - stub implementation
 	return false;
@@ -102,6 +110,8 @@ bool PCMAudio_LoadMusicHeader( const char* nameOfFile )
 	return OpenAL::Audio_LoadMusicHeader(nameOfFile);
 #elif defined(USE_FMOD_AUDIO)
 	return FMOD::Audio_LoadMusicHeader(nameOfFile);
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	return DirectSound::Audio_LoadMusicHeader(nameOfFile);
 #else
 	// No audio backend selected - stub implementation
 	return false;
@@ -117,6 +127,8 @@ bool PCMAudio_PreLoadMusicStream( uint32 checksum )
 	return OpenAL::Audio_PreLoadMusicStream(checksum);
 #elif defined(USE_FMOD_AUDIO)
 	return FMOD::Audio_PreLoadMusicStream(checksum);
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	return DirectSound::Audio_PreLoadMusicStream(checksum);
 #else
 	// No audio backend selected - stub implementation
 	return false;
@@ -132,6 +144,8 @@ bool PCMAudio_StartStreaming( void )
 	return OpenAL::Audio_StartStreaming();
 #elif defined(USE_FMOD_AUDIO)
 	return FMOD::Audio_StartStreaming();
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	return DirectSound::Audio_StartStreaming();
 #else
 	// No audio backend selected - stub implementation
 	return true; // Return true to avoid blocking game
@@ -147,6 +161,8 @@ bool PCMAudio_StopStreaming( bool wait_for_last_write )
 	return OpenAL::Audio_StopStreaming(wait_for_last_write);
 #elif defined(USE_FMOD_AUDIO)
 	return FMOD::Audio_StopStreaming(wait_for_last_write);
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	return DirectSound::Audio_StopStreaming(wait_for_last_write);
 #else
 	// No audio backend selected - stub implementation
 	return true;
@@ -162,6 +178,8 @@ bool PCMAudio_PauseStream( bool pause )
 	return OpenAL::Audio_PauseStream(pause);
 #elif defined(USE_FMOD_AUDIO)
 	return FMOD::Audio_PauseStream(pause);
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	return DirectSound::Audio_PauseStream(pause);
 #else
 	// No audio backend selected - stub implementation
 	return true;
@@ -177,6 +195,8 @@ bool PCMAudio_SetVolume( float volume )
 	return OpenAL::Audio_SetVolume(volume);
 #elif defined(USE_FMOD_AUDIO)
 	return FMOD::Audio_SetVolume(volume);
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	return DirectSound::Audio_SetVolume(volume);
 #else
 	// No audio backend selected - stub implementation
 	return true;
@@ -192,6 +212,8 @@ float PCMAudio_GetVolume( void )
 	return OpenAL::Audio_GetVolume();
 #elif defined(USE_FMOD_AUDIO)
 	return FMOD::Audio_GetVolume();
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	return DirectSound::Audio_GetVolume();
 #else
 	// No audio backend selected - stub implementation
 	return 1.0f;
@@ -207,6 +229,8 @@ void PCMAudio_SetMusicVolume( float volume )
 	OpenAL::Audio_SetMusicVolume(volume);
 #elif defined(USE_FMOD_AUDIO)
 	FMOD::Audio_SetMusicVolume(volume);
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	DirectSound::Audio_SetMusicVolume(volume);
 #else
 	// No audio backend selected - stub implementation
 #endif
@@ -221,6 +245,8 @@ float PCMAudio_GetMusicVolume( void )
 	return OpenAL::Audio_GetMusicVolume();
 #elif defined(USE_FMOD_AUDIO)
 	return FMOD::Audio_GetMusicVolume();
+#elif defined(USE_DIRECTSOUND_AUDIO)
+	return DirectSound::Audio_GetMusicVolume();
 #else
 	// No audio backend selected - stub implementation
 	return 1.0f;
@@ -228,3 +254,21 @@ float PCMAudio_GetMusicVolume( void )
 }
 
 } // namespace Pcm
+
+/*****************************************************************************
+**						   Global Functions (For Xbox compatibility)			**
+*****************************************************************************/
+
+// Global DirectSoundDoWork function for Xbox platform compatibility
+// This is called from platform-specific code that needs to keep audio processing
+// during intensive operations (e.g., park editor rebuilding)
+extern "C" void DirectSoundDoWork( void )
+{
+#if defined(USE_DIRECTSOUND_AUDIO)
+	Pcm::DirectSound::DirectSoundDoWork();
+#else
+	// When not using DirectSound, just call the regular update
+	Pcm::PCMAudio_Update();
+#endif
+}
+

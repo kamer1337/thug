@@ -36,6 +36,8 @@
 #include <gel/music/OpenAL/p_audio.h>
 #elif defined(USE_FMOD_AUDIO)
 #include <gel/music/FMOD/p_audio.h>
+#elif defined(USE_DIRECTSOUND_AUDIO)
+#include <gel/music/DirectSound/p_audio.h>
 #endif
 
 /*****************************************************************************
@@ -65,5 +67,12 @@ void	PCMAudio_SetMusicVolume( float volume );
 float	PCMAudio_GetMusicVolume( void );
 
 } // namespace Pcm
+
+/*****************************************************************************
+**						   Global Functions (For Xbox compatibility)			**
+*****************************************************************************/
+
+// Global DirectSoundDoWork function for Xbox platform compatibility
+extern "C" void DirectSoundDoWork( void );
 
 #endif	// __GEL_MUSIC_P_MUSIC_H

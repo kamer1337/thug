@@ -6613,13 +6613,11 @@ bool ScriptSetBackgroundColor(Script::CStruct *pParams, Script::CScript *pScript
 	pParams->GetInteger("b",&Blue);
 	pParams->GetInteger("alpha",&Alpha);
     
-/*	
-	gfx_man->sBackgroundColor.r 	= Red;
-	gfx_man->sBackgroundColor.g = Green;
-	gfx_man->sBackgroundColor.b 	= Blue;
-	gfx_man->sBackgroundColor.a = Alpha;   
-*/
-	printf ("STUBBED ScriptSetBackgroundColor\n");	
+	// Note: Background color setting is currently not supported in the graphics engine.
+	// The sBackgroundColor static member has been removed from the Manager class.
+	// This function accepts the parameters for compatibility but does not apply them.
+	// To implement: Add background color support to the active graphics backend.
+	
 	return true;
 }
 
@@ -10231,7 +10229,9 @@ bool ScriptSetArenaSize(Script::CStruct *pParams, Script::CScript *pScript)
 // @script | SetParticleSysVisibility | no longer supported.
 bool ScriptSetParticleSysVisibility( Script::CStruct *pParams, Script::CScript *pScript )
 {
-	printf ("STUBBED: ScriptSetParticleSysVisibility\n");
+	// This function is obsolete and no longer supported.
+	// Particle system visibility is now handled through other mechanisms.
+	// Kept for script compatibility but has no effect.
 	return true;
 }
 
@@ -10504,7 +10504,10 @@ bool ScriptAllowPause(Script::CStruct *pParams, Script::CScript *pScript)
 		on = false;
 	}		
 
-	printf ("WARNING: ScriptAllowPause is STUBBED\n");	
+	// Note: Pause control mechanism is not fully implemented in the current codebase.
+	// The game has Pause() methods but no global "allow/disallow pause" flag system.
+	// This function accepts the parameter for script compatibility but does not enforce it.
+	// To implement: Add a pause-allowed flag to the Skate module and check it in pause handlers.
 	
 	return true;
 }

@@ -223,30 +223,6 @@ Debug/Debug.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Core/CMakeFiles/thug_core.dir/build.make Code/Core/CMakeFiles/thug_core.dir/Debug/Debug.cpp.s
 .PHONY : Debug/Debug.cpp.s
 
-Debug/Wn32/P_debug.o: Debug/Wn32/P_debug.cpp.o
-.PHONY : Debug/Wn32/P_debug.o
-
-# target to build an object file
-Debug/Wn32/P_debug.cpp.o:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Core/CMakeFiles/thug_core.dir/build.make Code/Core/CMakeFiles/thug_core.dir/Debug/Wn32/P_debug.cpp.o
-.PHONY : Debug/Wn32/P_debug.cpp.o
-
-Debug/Wn32/P_debug.i: Debug/Wn32/P_debug.cpp.i
-.PHONY : Debug/Wn32/P_debug.i
-
-# target to preprocess a source file
-Debug/Wn32/P_debug.cpp.i:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Core/CMakeFiles/thug_core.dir/build.make Code/Core/CMakeFiles/thug_core.dir/Debug/Wn32/P_debug.cpp.i
-.PHONY : Debug/Wn32/P_debug.cpp.i
-
-Debug/Wn32/P_debug.s: Debug/Wn32/P_debug.cpp.s
-.PHONY : Debug/Wn32/P_debug.s
-
-# target to generate assembly for a file
-Debug/Wn32/P_debug.cpp.s:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Core/CMakeFiles/thug_core.dir/build.make Code/Core/CMakeFiles/thug_core.dir/Debug/Wn32/P_debug.cpp.s
-.PHONY : Debug/Wn32/P_debug.cpp.s
-
 Debug/log.o: Debug/log.cpp.o
 .PHONY : Debug/log.o
 
@@ -722,9 +698,6 @@ help:
 	@echo "... Debug/Debug.o"
 	@echo "... Debug/Debug.i"
 	@echo "... Debug/Debug.s"
-	@echo "... Debug/Wn32/P_debug.o"
-	@echo "... Debug/Wn32/P_debug.i"
-	@echo "... Debug/Wn32/P_debug.s"
 	@echo "... Debug/log.o"
 	@echo "... Debug/log.i"
 	@echo "... Debug/log.s"

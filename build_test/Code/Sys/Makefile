@@ -175,30 +175,6 @@ thug_sys/fast:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/build
 .PHONY : thug_sys/fast
 
-Config/Win32/p_config.o: Config/Win32/p_config.cpp.o
-.PHONY : Config/Win32/p_config.o
-
-# target to build an object file
-Config/Win32/p_config.cpp.o:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Config/Win32/p_config.cpp.o
-.PHONY : Config/Win32/p_config.cpp.o
-
-Config/Win32/p_config.i: Config/Win32/p_config.cpp.i
-.PHONY : Config/Win32/p_config.i
-
-# target to preprocess a source file
-Config/Win32/p_config.cpp.i:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Config/Win32/p_config.cpp.i
-.PHONY : Config/Win32/p_config.cpp.i
-
-Config/Win32/p_config.s: Config/Win32/p_config.cpp.s
-.PHONY : Config/Win32/p_config.s
-
-# target to generate assembly for a file
-Config/Win32/p_config.cpp.s:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Config/Win32/p_config.cpp.s
-.PHONY : Config/Win32/p_config.cpp.s
-
 Config/config.o: Config/config.cpp.o
 .PHONY : Config/config.o
 
@@ -583,30 +559,6 @@ Profiler.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Profiler.cpp.s
 .PHONY : Profiler.cpp.s
 
-Replay/Win32/p_replay.o: Replay/Win32/p_replay.cpp.o
-.PHONY : Replay/Win32/p_replay.o
-
-# target to build an object file
-Replay/Win32/p_replay.cpp.o:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Replay/Win32/p_replay.cpp.o
-.PHONY : Replay/Win32/p_replay.cpp.o
-
-Replay/Win32/p_replay.i: Replay/Win32/p_replay.cpp.i
-.PHONY : Replay/Win32/p_replay.i
-
-# target to preprocess a source file
-Replay/Win32/p_replay.cpp.i:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Replay/Win32/p_replay.cpp.i
-.PHONY : Replay/Win32/p_replay.cpp.i
-
-Replay/Win32/p_replay.s: Replay/Win32/p_replay.cpp.s
-.PHONY : Replay/Win32/p_replay.s
-
-# target to generate assembly for a file
-Replay/Win32/p_replay.cpp.s:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Replay/Win32/p_replay.cpp.s
-.PHONY : Replay/Win32/p_replay.cpp.s
-
 Replay/replay.o: Replay/replay.cpp.o
 .PHONY : Replay/replay.o
 
@@ -630,54 +582,6 @@ Replay/replay.s: Replay/replay.cpp.s
 Replay/replay.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Replay/replay.cpp.s
 .PHONY : Replay/replay.cpp.s
-
-SIO/Win32/p_keyboard.o: SIO/Win32/p_keyboard.cpp.o
-.PHONY : SIO/Win32/p_keyboard.o
-
-# target to build an object file
-SIO/Win32/p_keyboard.cpp.o:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/SIO/Win32/p_keyboard.cpp.o
-.PHONY : SIO/Win32/p_keyboard.cpp.o
-
-SIO/Win32/p_keyboard.i: SIO/Win32/p_keyboard.cpp.i
-.PHONY : SIO/Win32/p_keyboard.i
-
-# target to preprocess a source file
-SIO/Win32/p_keyboard.cpp.i:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/SIO/Win32/p_keyboard.cpp.i
-.PHONY : SIO/Win32/p_keyboard.cpp.i
-
-SIO/Win32/p_keyboard.s: SIO/Win32/p_keyboard.cpp.s
-.PHONY : SIO/Win32/p_keyboard.s
-
-# target to generate assembly for a file
-SIO/Win32/p_keyboard.cpp.s:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/SIO/Win32/p_keyboard.cpp.s
-.PHONY : SIO/Win32/p_keyboard.cpp.s
-
-SIO/Win32/p_siodev.o: SIO/Win32/p_siodev.cpp.o
-.PHONY : SIO/Win32/p_siodev.o
-
-# target to build an object file
-SIO/Win32/p_siodev.cpp.o:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/SIO/Win32/p_siodev.cpp.o
-.PHONY : SIO/Win32/p_siodev.cpp.o
-
-SIO/Win32/p_siodev.i: SIO/Win32/p_siodev.cpp.i
-.PHONY : SIO/Win32/p_siodev.i
-
-# target to preprocess a source file
-SIO/Win32/p_siodev.cpp.i:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/SIO/Win32/p_siodev.cpp.i
-.PHONY : SIO/Win32/p_siodev.cpp.i
-
-SIO/Win32/p_siodev.s: SIO/Win32/p_siodev.cpp.s
-.PHONY : SIO/Win32/p_siodev.s
-
-# target to generate assembly for a file
-SIO/Win32/p_siodev.cpp.s:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/SIO/Win32/p_siodev.cpp.s
-.PHONY : SIO/Win32/p_siodev.cpp.s
 
 SIO/siodev.o: SIO/siodev.cpp.o
 .PHONY : SIO/siodev.o
@@ -726,30 +630,6 @@ SIO/sioman.s: SIO/sioman.cpp.s
 SIO/sioman.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/SIO/sioman.cpp.s
 .PHONY : SIO/sioman.cpp.s
-
-Win32/p_timer.o: Win32/p_timer.cpp.o
-.PHONY : Win32/p_timer.o
-
-# target to build an object file
-Win32/p_timer.cpp.o:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Win32/p_timer.cpp.o
-.PHONY : Win32/p_timer.cpp.o
-
-Win32/p_timer.i: Win32/p_timer.cpp.i
-.PHONY : Win32/p_timer.i
-
-# target to preprocess a source file
-Win32/p_timer.cpp.i:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Win32/p_timer.cpp.i
-.PHONY : Win32/p_timer.cpp.i
-
-Win32/p_timer.s: Win32/p_timer.cpp.s
-.PHONY : Win32/p_timer.s
-
-# target to generate assembly for a file
-Win32/p_timer.cpp.s:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Sys/CMakeFiles/thug_sys.dir/build.make Code/Sys/CMakeFiles/thug_sys.dir/Win32/p_timer.cpp.s
-.PHONY : Win32/p_timer.cpp.s
 
 demo.o: demo.cpp.o
 .PHONY : demo.o
@@ -836,9 +716,6 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... thug_sys"
-	@echo "... Config/Win32/p_config.o"
-	@echo "... Config/Win32/p_config.i"
-	@echo "... Config/Win32/p_config.s"
 	@echo "... Config/config.o"
 	@echo "... Config/config.i"
 	@echo "... Config/config.s"
@@ -887,27 +764,15 @@ help:
 	@echo "... Profiler.o"
 	@echo "... Profiler.i"
 	@echo "... Profiler.s"
-	@echo "... Replay/Win32/p_replay.o"
-	@echo "... Replay/Win32/p_replay.i"
-	@echo "... Replay/Win32/p_replay.s"
 	@echo "... Replay/replay.o"
 	@echo "... Replay/replay.i"
 	@echo "... Replay/replay.s"
-	@echo "... SIO/Win32/p_keyboard.o"
-	@echo "... SIO/Win32/p_keyboard.i"
-	@echo "... SIO/Win32/p_keyboard.s"
-	@echo "... SIO/Win32/p_siodev.o"
-	@echo "... SIO/Win32/p_siodev.i"
-	@echo "... SIO/Win32/p_siodev.s"
 	@echo "... SIO/siodev.o"
 	@echo "... SIO/siodev.i"
 	@echo "... SIO/siodev.s"
 	@echo "... SIO/sioman.o"
 	@echo "... SIO/sioman.i"
 	@echo "... SIO/sioman.s"
-	@echo "... Win32/p_timer.o"
-	@echo "... Win32/p_timer.i"
-	@echo "... Win32/p_timer.s"
 	@echo "... demo.o"
 	@echo "... demo.i"
 	@echo "... demo.s"

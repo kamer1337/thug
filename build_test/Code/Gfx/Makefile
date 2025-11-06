@@ -1471,6 +1471,30 @@ Vulcan/test_api_implementation.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gfx/CMakeFiles/thug_gfx.dir/build.make Code/Gfx/CMakeFiles/thug_gfx.dir/Vulcan/test_api_implementation.cpp.s
 .PHONY : Vulcan/test_api_implementation.cpp.s
 
+Vulcan/test_vulkan_integration.o: Vulcan/test_vulkan_integration.cpp.o
+.PHONY : Vulcan/test_vulkan_integration.o
+
+# target to build an object file
+Vulcan/test_vulkan_integration.cpp.o:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gfx/CMakeFiles/thug_gfx.dir/build.make Code/Gfx/CMakeFiles/thug_gfx.dir/Vulcan/test_vulkan_integration.cpp.o
+.PHONY : Vulcan/test_vulkan_integration.cpp.o
+
+Vulcan/test_vulkan_integration.i: Vulcan/test_vulkan_integration.cpp.i
+.PHONY : Vulcan/test_vulkan_integration.i
+
+# target to preprocess a source file
+Vulcan/test_vulkan_integration.cpp.i:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gfx/CMakeFiles/thug_gfx.dir/build.make Code/Gfx/CMakeFiles/thug_gfx.dir/Vulcan/test_vulkan_integration.cpp.i
+.PHONY : Vulcan/test_vulkan_integration.cpp.i
+
+Vulcan/test_vulkan_integration.s: Vulcan/test_vulkan_integration.cpp.s
+.PHONY : Vulcan/test_vulkan_integration.s
+
+# target to generate assembly for a file
+Vulcan/test_vulkan_integration.cpp.s:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gfx/CMakeFiles/thug_gfx.dir/build.make Code/Gfx/CMakeFiles/thug_gfx.dir/Vulcan/test_vulkan_integration.cpp.s
+.PHONY : Vulcan/test_vulkan_integration.cpp.s
+
 Vulcan/test_vulkan_rendering.o: Vulcan/test_vulkan_rendering.cpp.o
 .PHONY : Vulcan/test_vulkan_rendering.o
 
@@ -2078,6 +2102,9 @@ help:
 	@echo "... Vulcan/test_api_implementation.o"
 	@echo "... Vulcan/test_api_implementation.i"
 	@echo "... Vulcan/test_api_implementation.s"
+	@echo "... Vulcan/test_vulkan_integration.o"
+	@echo "... Vulcan/test_vulkan_integration.i"
+	@echo "... Vulcan/test_vulkan_integration.s"
 	@echo "... Vulcan/test_vulkan_rendering.o"
 	@echo "... Vulcan/test_vulkan_rendering.i"
 	@echo "... Vulcan/test_vulkan_rendering.s"

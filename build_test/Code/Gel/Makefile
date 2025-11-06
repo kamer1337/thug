@@ -271,6 +271,54 @@ AssMan/asset.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/asset.cpp.s
 .PHONY : AssMan/asset.cpp.s
 
+AssMan/binaryasset.o: AssMan/binaryasset.cpp.o
+.PHONY : AssMan/binaryasset.o
+
+# target to build an object file
+AssMan/binaryasset.cpp.o:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/binaryasset.cpp.o
+.PHONY : AssMan/binaryasset.cpp.o
+
+AssMan/binaryasset.i: AssMan/binaryasset.cpp.i
+.PHONY : AssMan/binaryasset.i
+
+# target to preprocess a source file
+AssMan/binaryasset.cpp.i:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/binaryasset.cpp.i
+.PHONY : AssMan/binaryasset.cpp.i
+
+AssMan/binaryasset.s: AssMan/binaryasset.cpp.s
+.PHONY : AssMan/binaryasset.s
+
+# target to generate assembly for a file
+AssMan/binaryasset.cpp.s:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/binaryasset.cpp.s
+.PHONY : AssMan/binaryasset.cpp.s
+
+AssMan/collisionasset.o: AssMan/collisionasset.cpp.o
+.PHONY : AssMan/collisionasset.o
+
+# target to build an object file
+AssMan/collisionasset.cpp.o:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/collisionasset.cpp.o
+.PHONY : AssMan/collisionasset.cpp.o
+
+AssMan/collisionasset.i: AssMan/collisionasset.cpp.i
+.PHONY : AssMan/collisionasset.i
+
+# target to preprocess a source file
+AssMan/collisionasset.cpp.i:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/collisionasset.cpp.i
+.PHONY : AssMan/collisionasset.cpp.i
+
+AssMan/collisionasset.s: AssMan/collisionasset.cpp.s
+.PHONY : AssMan/collisionasset.s
+
+# target to generate assembly for a file
+AssMan/collisionasset.cpp.s:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/collisionasset.cpp.s
+.PHONY : AssMan/collisionasset.cpp.s
+
 AssMan/cutsceneasset.o: AssMan/cutsceneasset.cpp.o
 .PHONY : AssMan/cutsceneasset.o
 
@@ -319,6 +367,30 @@ AssMan/refasset.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/refasset.cpp.s
 .PHONY : AssMan/refasset.cpp.s
 
+AssMan/sceneasset.o: AssMan/sceneasset.cpp.o
+.PHONY : AssMan/sceneasset.o
+
+# target to build an object file
+AssMan/sceneasset.cpp.o:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/sceneasset.cpp.o
+.PHONY : AssMan/sceneasset.cpp.o
+
+AssMan/sceneasset.i: AssMan/sceneasset.cpp.i
+.PHONY : AssMan/sceneasset.i
+
+# target to preprocess a source file
+AssMan/sceneasset.cpp.i:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/sceneasset.cpp.i
+.PHONY : AssMan/sceneasset.cpp.i
+
+AssMan/sceneasset.s: AssMan/sceneasset.cpp.s
+.PHONY : AssMan/sceneasset.s
+
+# target to generate assembly for a file
+AssMan/sceneasset.cpp.s:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/sceneasset.cpp.s
+.PHONY : AssMan/sceneasset.cpp.s
+
 AssMan/skeletonasset.o: AssMan/skeletonasset.cpp.o
 .PHONY : AssMan/skeletonasset.o
 
@@ -366,6 +438,30 @@ AssMan/skinasset.s: AssMan/skinasset.cpp.s
 AssMan/skinasset.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/skinasset.cpp.s
 .PHONY : AssMan/skinasset.cpp.s
+
+AssMan/textureasset.o: AssMan/textureasset.cpp.o
+.PHONY : AssMan/textureasset.o
+
+# target to build an object file
+AssMan/textureasset.cpp.o:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/textureasset.cpp.o
+.PHONY : AssMan/textureasset.cpp.o
+
+AssMan/textureasset.i: AssMan/textureasset.cpp.i
+.PHONY : AssMan/textureasset.i
+
+# target to preprocess a source file
+AssMan/textureasset.cpp.i:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/textureasset.cpp.i
+.PHONY : AssMan/textureasset.cpp.i
+
+AssMan/textureasset.s: AssMan/textureasset.cpp.s
+.PHONY : AssMan/textureasset.s
+
+# target to generate assembly for a file
+AssMan/textureasset.cpp.s:
+	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/AssMan/textureasset.cpp.s
+.PHONY : AssMan/textureasset.cpp.s
 
 Collision/BatchTriColl.o: Collision/BatchTriColl.cpp.o
 .PHONY : Collision/BatchTriColl.o
@@ -1975,30 +2071,6 @@ Movies/Movies.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/Movies/Movies.cpp.s
 .PHONY : Movies/Movies.cpp.s
 
-Movies/Win32/p_movies.o: Movies/Win32/p_movies.cpp.o
-.PHONY : Movies/Win32/p_movies.o
-
-# target to build an object file
-Movies/Win32/p_movies.cpp.o:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/Movies/Win32/p_movies.cpp.o
-.PHONY : Movies/Win32/p_movies.cpp.o
-
-Movies/Win32/p_movies.i: Movies/Win32/p_movies.cpp.i
-.PHONY : Movies/Win32/p_movies.i
-
-# target to preprocess a source file
-Movies/Win32/p_movies.cpp.i:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/Movies/Win32/p_movies.cpp.i
-.PHONY : Movies/Win32/p_movies.cpp.i
-
-Movies/Win32/p_movies.s: Movies/Win32/p_movies.cpp.s
-.PHONY : Movies/Win32/p_movies.s
-
-# target to generate assembly for a file
-Movies/Win32/p_movies.cpp.s:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/Movies/Win32/p_movies.cpp.s
-.PHONY : Movies/Win32/p_movies.cpp.s
-
 Music/FMOD/p_audio.o: Music/FMOD/p_audio.cpp.o
 .PHONY : Music/FMOD/p_audio.o
 
@@ -2070,30 +2142,6 @@ Music/SDL2/p_audio.s: Music/SDL2/p_audio.cpp.s
 Music/SDL2/p_audio.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/Music/SDL2/p_audio.cpp.s
 .PHONY : Music/SDL2/p_audio.cpp.s
-
-Music/Win32/p_music.o: Music/Win32/p_music.cpp.o
-.PHONY : Music/Win32/p_music.o
-
-# target to build an object file
-Music/Win32/p_music.cpp.o:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/Music/Win32/p_music.cpp.o
-.PHONY : Music/Win32/p_music.cpp.o
-
-Music/Win32/p_music.i: Music/Win32/p_music.cpp.i
-.PHONY : Music/Win32/p_music.i
-
-# target to preprocess a source file
-Music/Win32/p_music.cpp.i:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/Music/Win32/p_music.cpp.i
-.PHONY : Music/Win32/p_music.cpp.i
-
-Music/Win32/p_music.s: Music/Win32/p_music.cpp.s
-.PHONY : Music/Win32/p_music.s
-
-# target to generate assembly for a file
-Music/Win32/p_music.cpp.s:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/Music/Win32/p_music.cpp.s
-.PHONY : Music/Win32/p_music.cpp.s
 
 Music/music.o: Music/music.cpp.o
 .PHONY : Music/music.o
@@ -3007,30 +3055,6 @@ Scripting/win32functions.cpp.s:
 	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/Scripting/win32functions.cpp.s
 .PHONY : Scripting/win32functions.cpp.s
 
-SoundFX/Win32/p_sfx.o: SoundFX/Win32/p_sfx.cpp.o
-.PHONY : SoundFX/Win32/p_sfx.o
-
-# target to build an object file
-SoundFX/Win32/p_sfx.cpp.o:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/SoundFX/Win32/p_sfx.cpp.o
-.PHONY : SoundFX/Win32/p_sfx.cpp.o
-
-SoundFX/Win32/p_sfx.i: SoundFX/Win32/p_sfx.cpp.i
-.PHONY : SoundFX/Win32/p_sfx.i
-
-# target to preprocess a source file
-SoundFX/Win32/p_sfx.cpp.i:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/SoundFX/Win32/p_sfx.cpp.i
-.PHONY : SoundFX/Win32/p_sfx.cpp.i
-
-SoundFX/Win32/p_sfx.s: SoundFX/Win32/p_sfx.cpp.s
-.PHONY : SoundFX/Win32/p_sfx.s
-
-# target to generate assembly for a file
-SoundFX/Win32/p_sfx.cpp.s:
-	cd /home/runner/work/thug/thug/build_test && $(MAKE) $(MAKESILENT) -f Code/Gel/CMakeFiles/thug_gel.dir/build.make Code/Gel/CMakeFiles/thug_gel.dir/SoundFX/Win32/p_sfx.cpp.s
-.PHONY : SoundFX/Win32/p_sfx.cpp.s
-
 SoundFX/soundfx.o: SoundFX/soundfx.cpp.o
 .PHONY : SoundFX/soundfx.o
 
@@ -3080,18 +3104,30 @@ help:
 	@echo "... AssMan/asset.o"
 	@echo "... AssMan/asset.i"
 	@echo "... AssMan/asset.s"
+	@echo "... AssMan/binaryasset.o"
+	@echo "... AssMan/binaryasset.i"
+	@echo "... AssMan/binaryasset.s"
+	@echo "... AssMan/collisionasset.o"
+	@echo "... AssMan/collisionasset.i"
+	@echo "... AssMan/collisionasset.s"
 	@echo "... AssMan/cutsceneasset.o"
 	@echo "... AssMan/cutsceneasset.i"
 	@echo "... AssMan/cutsceneasset.s"
 	@echo "... AssMan/refasset.o"
 	@echo "... AssMan/refasset.i"
 	@echo "... AssMan/refasset.s"
+	@echo "... AssMan/sceneasset.o"
+	@echo "... AssMan/sceneasset.i"
+	@echo "... AssMan/sceneasset.s"
 	@echo "... AssMan/skeletonasset.o"
 	@echo "... AssMan/skeletonasset.i"
 	@echo "... AssMan/skeletonasset.s"
 	@echo "... AssMan/skinasset.o"
 	@echo "... AssMan/skinasset.i"
 	@echo "... AssMan/skinasset.s"
+	@echo "... AssMan/textureasset.o"
+	@echo "... AssMan/textureasset.i"
+	@echo "... AssMan/textureasset.s"
 	@echo "... Collision/BatchTriColl.o"
 	@echo "... Collision/BatchTriColl.i"
 	@echo "... Collision/BatchTriColl.s"
@@ -3293,9 +3329,6 @@ help:
 	@echo "... Movies/Movies.o"
 	@echo "... Movies/Movies.i"
 	@echo "... Movies/Movies.s"
-	@echo "... Movies/Win32/p_movies.o"
-	@echo "... Movies/Win32/p_movies.i"
-	@echo "... Movies/Win32/p_movies.s"
 	@echo "... Music/FMOD/p_audio.o"
 	@echo "... Music/FMOD/p_audio.i"
 	@echo "... Music/FMOD/p_audio.s"
@@ -3305,9 +3338,6 @@ help:
 	@echo "... Music/SDL2/p_audio.o"
 	@echo "... Music/SDL2/p_audio.i"
 	@echo "... Music/SDL2/p_audio.s"
-	@echo "... Music/Win32/p_music.o"
-	@echo "... Music/Win32/p_music.i"
-	@echo "... Music/Win32/p_music.s"
 	@echo "... Music/music.o"
 	@echo "... Music/music.i"
 	@echo "... Music/music.s"
@@ -3422,9 +3452,6 @@ help:
 	@echo "... Scripting/win32functions.o"
 	@echo "... Scripting/win32functions.i"
 	@echo "... Scripting/win32functions.s"
-	@echo "... SoundFX/Win32/p_sfx.o"
-	@echo "... SoundFX/Win32/p_sfx.i"
-	@echo "... SoundFX/Win32/p_sfx.s"
 	@echo "... SoundFX/soundfx.o"
 	@echo "... SoundFX/soundfx.i"
 	@echo "... SoundFX/soundfx.s"

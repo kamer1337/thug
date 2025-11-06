@@ -23,6 +23,8 @@
 **							  	  Includes									**
 *****************************************************************************/
 
+#include <cstddef>
+
 #ifndef __CORE_DEFINES_H
 #include <core/defines.h>
 #endif

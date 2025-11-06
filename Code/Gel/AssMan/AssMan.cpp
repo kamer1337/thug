@@ -43,6 +43,10 @@
 #include <gel/assman/skinasset.h>
 #include <gel/assman/refasset.h>
 #include <gel/assman/nodearrayasset.h>
+#include <gel/assman/sceneasset.h>
+#include <gel/assman/textureasset.h>
+#include <gel/assman/collisionasset.h>
+#include <gel/assman/binaryasset.h>
 
 #include <gel/scripting/checksum.h>
 #include <gel/scripting/script.h>							
@@ -276,9 +280,21 @@ void* CAssMan::LoadAsset(const char *p_assetName, bool async_load, bool use_pip,
 			break;
 			
 		case ASSET_SCENE:
+			p_asset = new CSceneAsset;
+			break;
+			
 		case ASSET_TEXTURES:
+			p_asset = new CTextureAsset;
+			break;
+			
 		case ASSET_COLLISION:
+			p_asset = new CCollisionAsset;
+			break;
+			
 		case ASSET_BINARY:
+			p_asset = new CBinaryAsset;
+			break;
+			
 		default:
 			Dbg_MsgAssert(0,("Asset %s is of unsupported type %d",p_assetName,asset_type));   		
 	}

@@ -25,6 +25,7 @@
 #include <core/defines.h>
 #include <core/string/cstring.h>
 #include <sys/mem/memman.h>
+#include <cstring>
 
 
 

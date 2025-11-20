@@ -25,6 +25,8 @@
 #			include "thread/ngps/t_thread.h"
 #		elif defined( __PLAT_NGC__ )
 #			include "thread/ngc/t_thread.h"
+#		elif defined( __PLAT_WN32__ ) || defined( __PLAT_LINUX__ ) || defined( __PLAT_MACOS__ )
+#			include "thread/wn32/t_thread.h"
 #		else
 #			error Unsupported Platform
 #		endif

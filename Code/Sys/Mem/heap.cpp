@@ -212,7 +212,7 @@ inline Mem::Allocator::BlockHeader*	Heap::next_addr( Allocator::BlockHeader* pHe
 	
 	Dbg_AssertType( pHeader, BlockHeader );
 
-	return (BlockHeader*)( (uint)pHeader + BlockHeader::sSize + pHeader->mSize );
+	return (BlockHeader*)( (uintptr_t)pHeader + BlockHeader::sSize + pHeader->mSize );
 }
 
 
@@ -358,7 +358,7 @@ void	Heap::free ( BlockHeader* pFreeBlock )
 	// p_after starts at the head of the free list
 	// and traverses it until p_after is the block after this 
 	// block
-	while ( p_after && ( (uint)p_after < (uint)pFreeBlock ))
+	while ( p_after && ( (uintptr_t)p_after < (uintptr_t)pFreeBlock ))
 	{		
 		p_2before = p_before;
 		p_before = p_after;
@@ -553,12 +553,12 @@ void*	Heap::allocate( size_t size, bool assert_on_fail )
 #ifdef __EFFICIENT__
 	int align = 1 << GetAlign();
 	int offset_bytes;
-	size = (uint)nAlignUpBy( size, 2 );	// all allocations aligned by 4 bytes
+	size = (uint)(uintptr_t)nAlignUpBy( size, 2 );	// all allocations aligned by 4 bytes
 #else
 #ifdef __PLAT_NGC__
-	size = (uint)nAlignUpBy( size, 5 );	// all allocations aligned by 16 bytes
+	size = (uint)(uintptr_t)nAlignUpBy( size, 5 );	// all allocations aligned by 16 bytes
 #else
-	size = (uint)nAlignUpBy( size, 4 );	// all allocations aligned by 16 bytes
+	size = (uint)(uintptr_t)nAlignUpBy( size, 4 );	// all allocations aligned by 16 bytes
 #endif
 #endif
 	while ( p_header ) 	// find smallest free block large enough to fulfill request
@@ -801,12 +801,12 @@ void* Heap::reallocate_down( size_t newSize, void *pOld )
 	BlockHeader* p_old_block = BlockHeader::sRead( pOld ); 
 	
 #ifdef __EFFICIENT__
-	newSize = (uint)nAlignUpBy( newSize, 2 );	// all allocations aligned by 4 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 2 );	// all allocations aligned by 4 bytes
 #else
 #ifdef __PLAT_NGC__
-	newSize = (uint)nAlignUpBy( newSize, 5 );	// all allocations aligned by 32 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 5 );	// all allocations aligned by 32 bytes
 #else
-	newSize = (uint)nAlignUpBy( newSize, 4 );	// all allocations aligned by 16 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 4 );	// all allocations aligned by 16 bytes
 #endif
 #endif		// __EFFICIENT__
 	
@@ -913,12 +913,12 @@ void *Heap::reallocate_up( size_t newSize, void *pOld )
 	BlockHeader* p_old_block = BlockHeader::sRead( pOld ); 
 	
 #ifdef __EFFICIENT__
-	newSize = (uint)nAlignUpBy( newSize, 2 );	// all allocations aligned by 4 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 2 );	// all allocations aligned by 4 bytes
 #else
 #ifdef __PLAT_NGC__
-	newSize = (uint)nAlignUpBy( newSize, 5 );	// all allocations aligned by 32 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 5 );	// all allocations aligned by 32 bytes
 #else
-	newSize = (uint)nAlignUpBy( newSize, 4 );	// all allocations aligned by 16 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 4 );	// all allocations aligned by 16 bytes
 #endif
 #endif		// __EFFICIENT__
 	

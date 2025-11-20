@@ -192,8 +192,8 @@ Manager::Manager( void )
 	m_num_heaps = 2;
 
 #	if !defined( __PLAT_NGC__ ) || ( defined( __PLAT_NGC__ ) && !defined( __NOPT_FINAL__ ) )
-	uint codesize = ((uint)(_code_end) - (uint)(_code_start))/1024;
-	uint datasize = ((uint)(_data_end) - (uint)(_code_end))/1024;
+	uint codesize = ((uintptr_t)(_code_end) - (uint)(_code_start))/1024;
+	uint datasize = ((uintptr_t)(_data_end) - (uint)(_code_end))/1024;
 	printf ( "code [%p - %p] (%dK) + data [%p - %p] (%dK) = %dK \n",
 			 _code_start, _code_end, codesize, 
 			 _code_end, _data_end, datasize,
@@ -732,9 +732,11 @@ void Manager::RemoveHeap(Mem::Heap *pHeap)
 		printf ("Deleting a heap %s with %d used blocks still on it\n",pHeap->mp_name,pHeap->mUsedBlocks.m_count);
 		#ifndef __PLAT_NGC__
 		printf ("\n\nDumping Heap\n");
-		MemView_DumpHeap(pHeap);
+		// MemView_DumpHeap is platform-specific and not available on all platforms
+		// MemView_DumpHeap(pHeap);
 		printf ("\n\nAnalyzing Heap\n");
-		MemView_AnalyzeHeap(pHeap);
+		// MemView_AnalyzeHeap is platform-specific and not available on all platforms
+		// MemView_AnalyzeHeap(pHeap);
 		Dbg_MsgAssert(0, ("Deleting heap <%s> with %d used blocks still on it\n",pHeap->mp_name,pHeap->mUsedBlocks.m_count));
 		
 		#endif		// __PLAT_NGC__

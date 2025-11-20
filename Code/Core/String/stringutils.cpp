@@ -24,8 +24,8 @@
 
 #include <core/defines.h>
 #include <sys/config/config.h>
-#include <cstring>
-#include <cstdio>
+#include <string.h>
+#include <stdio.h>
 /*****************************************************************************
 **								DBG Information								**
 *****************************************************************************/

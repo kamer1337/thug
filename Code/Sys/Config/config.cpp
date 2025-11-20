@@ -1,5 +1,7 @@
 // Config Manager stuff. KSH 20 Mar 2002
 #include <sys/config/config.h>
+#include <string.h>
+#include <stdio.h>
 
 namespace Config
 {

@@ -28,6 +28,11 @@
 **							  	  Includes									**
 *****************************************************************************/
 
+// Standard library headers (must come before game headers to avoid conflicts)
+#include <cstring>  // For memcpy, strlen, strcpy, strcmp
+#include <cstdio>   // For sprintf, printf, SEEK_SET, SEEK_CUR, SEEK_END
+#include <cstdint>  // For uintptr_t
+
 #ifdef	__PLAT_NGPS__
 #include <eekernel.h>
 #endif		//	__PLAT_NGPS__
@@ -885,7 +890,7 @@ void PreMgr::loadPre(const char *pFilename, bool async, bool dont_assert, bool u
 			Mem::PopMemProfile();
 
 			// Set the callback
-			p_fileHandle->SetCallback(async_callback, (unsigned int) this, (unsigned int) pFile);
+			p_fileHandle->SetCallback(async_callback, static_cast<unsigned int>(reinterpret_cast<uintptr_t>(this)), static_cast<unsigned int>(reinterpret_cast<uintptr_t>(pFile)));
 
 			// read the file in
 			p_fileHandle->Read( pFile, 1, file_size );
@@ -1045,9 +1050,9 @@ void	PreMgr::async_callback(CAsyncFileHandle *p_file_handle, EAsyncFunctionType 
 {
 	if (function == File::FUNC_READ)
 	{
-		PreMgr *p_mgr = (PreMgr *) arg0;
+		PreMgr *p_mgr = reinterpret_cast<PreMgr*>(static_cast<uintptr_t>(arg0));
 
-		p_mgr->postLoadPre(p_file_handle, (uint8 *) arg1, result);
+		p_mgr->postLoadPre(p_file_handle, reinterpret_cast<uint8*>(static_cast<uintptr_t>(arg1)), result);
 	}
 }
 

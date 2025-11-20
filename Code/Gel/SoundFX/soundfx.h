@@ -35,7 +35,7 @@
 #elif defined( __PLAT_NGC__ )
 #include <gel/soundfx/ngc/p_sfx.h>
 #elif defined( __PLAT_WN32__ )
-#include <gel/soundfx/win32/p_sfx.h>
+#include <gel/soundfx/Win32/p_sfx.h>
 #endif
 
 /*****************************************************************************
@@ -138,13 +138,6 @@ struct ObjectSoundInfo
 	void GetDebugInfo(Script::CStruct *p_info);
 };
 
-
-#ifdef __PLAT_WN32__
-struct PlatformWaveInfo
-{
-	// Stub to compile under win32
-};
-#endif
 
 namespace Sfx
 {

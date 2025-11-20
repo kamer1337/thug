@@ -492,7 +492,7 @@ void HashTable<_V>::PrintContents()
 
 
 template<class _V> //inline
-HashItem<_V>::HashItem<_V>()
+HashItem<_V>::HashItem()
 {
 	Init();
 }

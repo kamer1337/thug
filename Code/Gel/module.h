@@ -33,7 +33,8 @@
 namespace Mdl
 {
 
-
+// Forward declaration
+class Manager;
 
 /*****************************************************************************
 **							Class Definitions								**

@@ -17,6 +17,8 @@
 #include <gel/scripting/script.h>
 
 #include <sys/mem/memman.h>
+#include <cstring>  // For memcpy
+#include <cstdint>  // For uintptr_t
 
 #ifdef __PLAT_NGC__
 #include <gel/music/music.h>
@@ -80,7 +82,7 @@ void filesync_async_callback(File::CAsyncFileHandle*, File::EAsyncFunctionType f
 	// Dbg_Message("Got callback from %x", arg0);
 	if (function == File::FUNC_READ)
 	{
-		CFileLibrary* p_data = (CFileLibrary*)arg0;
+		CFileLibrary* p_data = reinterpret_cast<CFileLibrary*>(static_cast<uintptr_t>(arg0));
 		bool assertOnFail = (bool)arg1;
 
 		p_data->PostLoad( assertOnFail, result );
@@ -328,12 +330,12 @@ bool CFileLibrary::Load( const char* p_fileName, bool assertOnFail, bool async_l
 		Dbg_MsgAssert( Mem::Manager::sHandle().CutsceneBottomUpHeap(), ( "No cutscene heap?" ) ); 
 		Mem::Manager::sHandle().PushContext(Mem::Manager::sHandle().CutsceneBottomUpHeap());
 		mp_baseBuffer = (uint8*) Mem::Malloc( file_size + 64 );
-		mp_fileBuffer = (uint8*)(((uint32)mp_baseBuffer+63)&~63);
+		mp_fileBuffer = reinterpret_cast<uint8*>((reinterpret_cast<uintptr_t>(mp_baseBuffer)+63)&~63);
 		mp_fileBuffer = mp_baseBuffer;		// Garrett: De-aligning pointer since async filesystem should take care of it.		
 		Mem::Manager::sHandle().PopContext();
 
 		// Set the callback
-		mp_fileHandle->SetCallback( filesync_async_callback, (unsigned int)this, (unsigned int)assertOnFail );
+		mp_fileHandle->SetCallback( filesync_async_callback, static_cast<unsigned int>(reinterpret_cast<uintptr_t>(this)), (unsigned int)assertOnFail );
 
 		// read the file in
 		mp_fileHandle->Read( mp_fileBuffer, 1, file_size );

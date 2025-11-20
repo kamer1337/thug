@@ -27,6 +27,7 @@
 *****************************************************************************/
 
 #include <cstddef>
+#include <cstdint>  // For uintptr_t used in pointer alignment macros
 
 #ifdef __PLAT_WN32__
 //#include <strstream>
@@ -325,12 +326,12 @@ typedef	sint64				nID64;
 
 // The alignment macros align elements for fastest access
 
-#define nAligned(P) 		( !( (uint) (P) & (~PTR_ALIGNMASK) ) )
-#define nAlignDown(P) 		(void*)( (uint) (P) & PTR_ALIGNMASK )
-#define nAlignUp(P)			(void*)( ( (uint) (P) + ( 1 << __CPU_WORD_BALIGN__ ) - 1 ) & PTR_ALIGNMASK )
-#define nAlignedBy(P,A) 	( !( (uint) (P) & ( ~(vUINT_MAX << (A) ) ) ) )
-#define nAlignDownBy(P,A) 	(void*)( (uint) (P) & (vUINT_MAX << (A) ) )
-#define nAlignUpBy(P,A)		(void*)( ( (uint) (P) + ( 1 << (A) ) - 1 ) & ( vUINT_MAX <<( A ) ) )
+#define nAligned(P) 		( !( (uintptr_t) (P) & (~PTR_ALIGNMASK) ) )
+#define nAlignDown(P) 		(void*)( (uintptr_t) (P) & PTR_ALIGNMASK )
+#define nAlignUp(P)			(void*)( ( (uintptr_t) (P) + ( 1 << __CPU_WORD_BALIGN__ ) - 1 ) & PTR_ALIGNMASK )
+#define nAlignedBy(P,A) 	( !( (uintptr_t) (P) & ( ~(vUINT_MAX << (A) ) ) ) )
+#define nAlignDownBy(P,A) 	(void*)( (uintptr_t) (P) & (vUINT_MAX << (A) ) )
+#define nAlignUpBy(P,A)		(void*)( ( (uintptr_t) (P) + ( 1 << (A) ) - 1 ) & ( vUINT_MAX <<( A ) ) )
 #define nStorage(X)			nAlignUp ( (X) + 1 )
 
 /****************************************************************************/

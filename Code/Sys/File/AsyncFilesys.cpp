@@ -8,6 +8,7 @@
 
 #include <sys/file/AsyncFilesys.h>
 #include <gel/mainloop.h>
+#include <stdio.h>  // For SEEK_SET, SEEK_CUR, SEEK_END
 
 namespace File
 {

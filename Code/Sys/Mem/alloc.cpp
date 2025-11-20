@@ -23,6 +23,7 @@
 **							  	  Includes									**
 *****************************************************************************/
 
+#include <cstdint>  // For uintptr_t
 #include <core/defines.h>
 #include <core/support.h>
 #include "memman.h"
@@ -67,9 +68,9 @@ uint		Allocator::s_align_stack_index = 0;
 const uint	Allocator::BlockHeader::sSize = sizeof(BlockHeader); 
 #else
 #ifdef __PLAT_NGC__
-const uint	Allocator::BlockHeader::sSize = (uint)nAlignUpBy( sizeof(BlockHeader), 5 ); 
+const uint	Allocator::BlockHeader::sSize = (uint)(uintptr_t)nAlignUpBy( sizeof(BlockHeader), 5 ); 
 #else
-const uint	Allocator::BlockHeader::sSize = (uint)nAlignUpBy( sizeof(BlockHeader), 4 ); 
+const uint	Allocator::BlockHeader::sSize = (uint)(uintptr_t)nAlignUpBy( sizeof(BlockHeader), 4 ); 
 #endif		// __PLAT_NGC__
 #endif
 
@@ -168,9 +169,9 @@ void	Allocator::s_set_id( void* pAddr )
 {
 	
 
-	BlockHeader* p_bheader = (BlockHeader*)( ((uint)pAddr) - BlockHeader::sSize );
+	BlockHeader* p_bheader = (BlockHeader*)( ((uintptr_t)pAddr) - BlockHeader::sSize );
 #ifdef __EFFICIENT__
-	p_bheader = (BlockHeader*)(((uint)p_bheader) - p_bheader->mPadBytes);
+	p_bheader = (BlockHeader*)(((uintptr_t)p_bheader) - p_bheader->mPadBytes);
 #endif		// __EFFICIENT__
 	Dbg_AssertType( p_bheader, BlockHeader );
 	Dbg_AssertType( p_bheader->mpAlloc, Allocator );
@@ -185,9 +186,9 @@ void	Allocator::s_set_id( void* pAddr )
 
 Allocator::BlockHeader* Allocator::BlockHeader::sRead( void* pAddr )
 {
-	BlockHeader* p_ret = (BlockHeader*)(((uint)pAddr) - BlockHeader::sSize);
+	BlockHeader* p_ret = (BlockHeader*)(((uintptr_t)pAddr) - BlockHeader::sSize);
 #ifdef __EFFICIENT__
-	p_ret = (BlockHeader*)(((uint)p_ret) - p_ret->mPadBytes);
+	p_ret = (BlockHeader*)(((uintptr_t)p_ret) - p_ret->mPadBytes);
 #endif		// __EFFICIENT__
 	
 	Dbg_AssertType( p_ret, BlockHeader );
@@ -244,9 +245,9 @@ uint	Allocator::sGetId( void* pAddr )
 		return 0;
 	}
 
-	BlockHeader* p_bheader = (BlockHeader*)( ((uint)pAddr) - BlockHeader::sSize );
+	BlockHeader* p_bheader = (BlockHeader*)( ((uintptr_t)pAddr) - BlockHeader::sSize );
 #ifdef __EFFICIENT__
-	p_bheader = (BlockHeader*)(((uint)p_bheader) - p_bheader->mPadBytes);
+	p_bheader = (BlockHeader*)(((uintptr_t)p_bheader) - p_bheader->mPadBytes);
 #endif		// __EFFICIENT__
 
 	return p_bheader->mId;
@@ -308,7 +309,7 @@ void 	Allocator::dump_used_list( void )
 	while ( p_header )
 	{
 		Dbg_AssertType( p_header, BlockHeader );
-		Dbg_Message ( "%p  %x   (%p)", (void*)((uint)p_header + BlockHeader::sSize ), 
+		Dbg_Message ( "%p  %x   (%p)", (void*)((uintptr_t)p_header + BlockHeader::sSize ), 
 										p_header->mSize, p_header->mp_next_used );
 		p_header = p_header->mp_next_used;
 	}
@@ -333,7 +334,7 @@ void 	Allocator::dump_free_list( void )
 	while ( p_header )
 	{
 		Dbg_AssertType( p_header, BlockHeader );
-		Dbg_Message ( "%p  %x   (%p)", (void*)((uint)p_header + BlockHeader::sSize ), 
+		Dbg_Message ( "%p  %x   (%p)", (void*)((uintptr_t)p_header + BlockHeader::sSize ), 
 										p_header->mSize, p_header->mpNext );
 		p_header = p_header->mpNext;
 	}
@@ -357,9 +358,9 @@ void * Allocator::find_block(void *p)
 	while ( p_header )
 	{
 		
-		void * p_start = (void*)((uint)p_header + BlockHeader::sSize);
+		void * p_start = (void*)((uintptr_t)p_header + BlockHeader::sSize);
 		int size = p_header->mSize;
-		void * p_end = (void*)((int)p_start + size);
+		void * p_end = (void*)((uintptr_t)p_start + size);
 
 		if (p >= p_start && p <p_end)
 		{

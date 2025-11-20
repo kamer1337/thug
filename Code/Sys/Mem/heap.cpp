@@ -68,7 +68,7 @@ static void check_address( void * p, int size )
 {
 	for ( int lp = 0; lp < 8; lp++ )
 	{
-		if ( gAddress[lp] == ((uint32)p) ) {
+		if ( gAddress[lp] == ((uintptr_t)p) ) {
 			Dbg_Message( "We found the address we're looking for: 0x%08x (%d)\n", (uint32)p, size );
 		}
 	}
@@ -212,7 +212,7 @@ inline Mem::Allocator::BlockHeader*	Heap::next_addr( Allocator::BlockHeader* pHe
 	
 	Dbg_AssertType( pHeader, BlockHeader );
 
-	return (BlockHeader*)( (uint)pHeader + BlockHeader::sSize + pHeader->mSize );
+	return (BlockHeader*)( (uintptr_t)pHeader + BlockHeader::sSize + pHeader->mSize );
 }
 
 
@@ -227,9 +227,9 @@ static const uint64 vTRASH_FREE_BLOCK 	 =   0xbbbbbbbbbbbbbbbbLL;	// white
 inline void	Trash_AllocateBlock( Mem::Allocator::BlockHeader* pBlock )
 {	
 #ifdef __EFFICIENT__
-	memset( (void*)((uint)pBlock + Mem::Allocator::BlockHeader::sSize ), vTRASH_ALLOCATED_BLOCK & 0xff, pBlock->mSize );
+	memset( (void*)((uintptr_t)pBlock + Mem::Allocator::BlockHeader::sSize ), vTRASH_ALLOCATED_BLOCK & 0xff, pBlock->mSize );
 #else
-	uint64* ptr = (uint64*)((uint)pBlock + Mem::Allocator::BlockHeader::sSize );
+	uint64* ptr = (uint64*)((uintptr_t)pBlock + Mem::Allocator::BlockHeader::sSize );
 
 	for ( uint i = 0; i < pBlock->mSize; i += 8 )
 	{
@@ -246,9 +246,9 @@ inline void	Trash_AllocateBlock( Mem::Allocator::BlockHeader* pBlock )
 inline void	Trash_FreeBlock( Mem::Allocator::BlockHeader* pBlock )
 {
 #ifdef __EFFICIENT__
-	memset( (void*)((uint)pBlock + Mem::Allocator::BlockHeader::sSize ), vTRASH_FREE_BLOCK & 0xff, pBlock->mSize );
+	memset( (void*)((uintptr_t)pBlock + Mem::Allocator::BlockHeader::sSize ), vTRASH_FREE_BLOCK & 0xff, pBlock->mSize );
 #else
-	uint64* ptr = (uint64*)((uint)pBlock + Mem::Allocator::BlockHeader::sSize ); 	
+	uint64* ptr = (uint64*)((uintptr_t)pBlock + Mem::Allocator::BlockHeader::sSize ); 	
 
 	for ( uint i = 0; i < pBlock->mSize; i += 8 )
 	{
@@ -260,9 +260,9 @@ inline void	Trash_FreeBlock( Mem::Allocator::BlockHeader* pBlock )
 inline void	Trash_FreeBlockHeader( Mem::Allocator::BlockHeader* pBlock )
 {
 #ifdef __EFFICIENT__
-	memset( (void*)((uint)pBlock), vTRASH_FREE_BLOCK & 0xff, Mem::Allocator::BlockHeader::sSize );
+	memset( (void*)((uintptr_t)pBlock), vTRASH_FREE_BLOCK & 0xff, Mem::Allocator::BlockHeader::sSize );
 #else
-	uint64* ptr = (uint64*)((uint)pBlock); 	
+	uint64* ptr = (uint64*)((uintptr_t)pBlock); 	
 
 	for ( uint i = 0; i < Mem::Allocator::BlockHeader::sSize; i += 8 )
 	{
@@ -297,7 +297,7 @@ void	Heap::free ( BlockHeader* pFreeBlock )
 	#ifdef	__NOPT_ASSERT__
 	#ifdef	__PLAT_NGPS__
 	// find what feeded a particular block
-	if ( ((uint)pFreeBlock + BlockHeader::sSize) == REPORT_ON)
+	if ( ((uintptr_t)pFreeBlock + BlockHeader::sSize) == REPORT_ON)
 	{
 		printf ("Freeing 0x%x",REPORT_ON);
 		DumpUnwindStack(20,NULL);
@@ -358,7 +358,7 @@ void	Heap::free ( BlockHeader* pFreeBlock )
 	// p_after starts at the head of the free list
 	// and traverses it until p_after is the block after this 
 	// block
-	while ( p_after && ( (uint)p_after < (uint)pFreeBlock ))
+	while ( p_after && ( (uintptr_t)p_after < (uintptr_t)pFreeBlock ))
 	{		
 		p_2before = p_before;
 		p_before = p_after;
@@ -426,7 +426,7 @@ void	Heap::free ( BlockHeader* pFreeBlock )
 														// reclaim free space in region
 
 	if ( ( m_dir == vBOTTOM_UP ) && ( !p_after ) && 
-		 ( mp_top == (void*)((uint)pFreeBlock + pFreeBlock->mSize + BlockHeader::sSize )))
+		 ( mp_top == (void*)((uintptr_t)pFreeBlock + pFreeBlock->mSize + BlockHeader::sSize )))
 	{
 		if( p_before )
 		{
@@ -439,7 +439,7 @@ void	Heap::free ( BlockHeader* pFreeBlock )
 
 
 
-		mp_top = (void*)((uint)mp_top - ( pFreeBlock->mSize + BlockHeader::sSize) * m_dir );
+		mp_top = (void*)((uintptr_t)mp_top - ( pFreeBlock->mSize + BlockHeader::sSize) * m_dir );
 		pFreeBlock->~BlockHeader();
 		mFreeBlocks--;
 		mFreeMem -= pFreeBlock->mSize;
@@ -449,11 +449,11 @@ void	Heap::free ( BlockHeader* pFreeBlock )
 		#endif
 	}
 	else if (( m_dir == vTOP_DOWN ) && ( !p_before ) &&
-			 ( mp_top == (void*)((uint)pFreeBlock )))
+			 ( mp_top == (void*)((uintptr_t)pFreeBlock )))
 	{		 
 	
 	
-		mp_top = (void*)((uint)mp_top - ( pFreeBlock->mSize + BlockHeader::sSize) * m_dir );
+		mp_top = (void*)((uintptr_t)mp_top - ( pFreeBlock->mSize + BlockHeader::sSize) * m_dir );
 		mp_context->mp_free_list = pFreeBlock->mpNext;
 		pFreeBlock->~BlockHeader();
 		
@@ -553,12 +553,12 @@ void*	Heap::allocate( size_t size, bool assert_on_fail )
 #ifdef __EFFICIENT__
 	int align = 1 << GetAlign();
 	int offset_bytes;
-	size = (uint)nAlignUpBy( size, 2 );	// all allocations aligned by 4 bytes
+	size = (uint)(uintptr_t)nAlignUpBy( size, 2 );	// all allocations aligned by 4 bytes
 #else
 #ifdef __PLAT_NGC__
-	size = (uint)nAlignUpBy( size, 5 );	// all allocations aligned by 16 bytes
+	size = (uint)(uintptr_t)nAlignUpBy( size, 5 );	// all allocations aligned by 16 bytes
 #else
-	size = (uint)nAlignUpBy( size, 4 );	// all allocations aligned by 16 bytes
+	size = (uint)(uintptr_t)nAlignUpBy( size, 4 );	// all allocations aligned by 16 bytes
 #endif
 #endif
 	while ( p_header ) 	// find smallest free block large enough to fulfill request
@@ -606,10 +606,10 @@ void*	Heap::allocate( size_t size, bool assert_on_fail )
 		mUsedMem += p_freeblock->mSize;
 
 #ifdef __EFFICIENT__
-		BlockHeader*	p_leftover 	= (BlockHeader*)((uint)p_freeblock + BlockHeader::sSize + size + offset_bytes );
+		BlockHeader*	p_leftover 	= (BlockHeader*)((uintptr_t)p_freeblock + BlockHeader::sSize + size + offset_bytes );
 		int				new_size 	= p_freeblock->mSize - size - BlockHeader::sSize - offset_bytes;
 #else
-		BlockHeader*	p_leftover 	= (BlockHeader*)((uint)p_freeblock + BlockHeader::sSize + size );
+		BlockHeader*	p_leftover 	= (BlockHeader*)((uintptr_t)p_freeblock + BlockHeader::sSize + size );
 		int				new_size 	= p_freeblock->mSize - size - BlockHeader::sSize;
 #endif		// __EFFICIENT__
 		
@@ -701,7 +701,7 @@ void*	Heap::allocate( size_t size, bool assert_on_fail )
 		#ifdef	__NOPT_ASSERT__
 		#ifdef	__PLAT_NGPS__
 		// find what allocated a particular block
-		if ( ((uint)p_freeblock + BlockHeader::sSize) == REPORT_ON)
+		if ( ((uintptr_t)p_freeblock + BlockHeader::sSize) == REPORT_ON)
 		{
 			printf ("allocating 0x%x",REPORT_ON);
 			DumpUnwindStack(20,NULL);
@@ -710,21 +710,21 @@ void*	Heap::allocate( size_t size, bool assert_on_fail )
 		#endif
 
 #ifdef __EFFICIENT__
-		check_address( (void*)((uint)p_freeblock + BlockHeader::sSize + offset_bytes), size );
+		check_address( (void*)((uintptr_t)p_freeblock + BlockHeader::sSize + offset_bytes), size );
 
 		// Fill padding bytes with bytes offset value.
 		p_freeblock->mPadBytes = offset_bytes;
-		uint8 * p8 = (uint8*)((uint)p_freeblock + BlockHeader::sSize);
+		uint8 * p8 = (uint8*)((uintptr_t)p_freeblock + BlockHeader::sSize);
 		for ( int lp = 0; lp < offset_bytes; lp++ )
 		{
 			*p8++ = offset_bytes;
 		}
 
-		return (void*)((uint)p_freeblock + BlockHeader::sSize + offset_bytes);
+		return (void*)((uintptr_t)p_freeblock + BlockHeader::sSize + offset_bytes);
 #else
-		check_address( (void*)((uint)p_freeblock + BlockHeader::sSize), size );
+		check_address( (void*)((uintptr_t)p_freeblock + BlockHeader::sSize), size );
 
-		return (void*)((uint)p_freeblock + BlockHeader::sSize);
+		return (void*)((uintptr_t)p_freeblock + BlockHeader::sSize);
 #endif		// __EFFICIENT__
 	}
 
@@ -801,12 +801,12 @@ void* Heap::reallocate_down( size_t newSize, void *pOld )
 	BlockHeader* p_old_block = BlockHeader::sRead( pOld ); 
 	
 #ifdef __EFFICIENT__
-	newSize = (uint)nAlignUpBy( newSize, 2 );	// all allocations aligned by 4 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 2 );	// all allocations aligned by 4 bytes
 #else
 #ifdef __PLAT_NGC__
-	newSize = (uint)nAlignUpBy( newSize, 5 );	// all allocations aligned by 32 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 5 );	// all allocations aligned by 32 bytes
 #else
-	newSize = (uint)nAlignUpBy( newSize, 4 );	// all allocations aligned by 16 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 4 );	// all allocations aligned by 16 bytes
 #endif
 #endif		// __EFFICIENT__
 	
@@ -822,7 +822,7 @@ void* Heap::reallocate_down( size_t newSize, void *pOld )
 	
 	// Got the new block, so now check that it is directly below the old.	
 	BlockHeader* p_new_block=BlockHeader::sRead( p_new );
-	Dbg_MsgAssert( (BlockHeader*)(((uint)p_new)+p_new_block->mSize) == p_old_block,("reallocate_down failed! New block is not directly below the old."));
+	Dbg_MsgAssert( (BlockHeader*)(((uintptr_t)p_new)+p_new_block->mSize) == p_old_block,("reallocate_down failed! New block is not directly below the old."));
 	
 	// Got this far, so the new block is right below the old.
 	// Now we have to remove the old block header so as to bobble the two blocks together.
@@ -891,9 +891,9 @@ void* Heap::reallocate_down( size_t newSize, void *pOld )
 
 	
 #ifdef __EFFICIENT__
-	return (void*)((uint)p_new_block + BlockHeader::sSize + p_new_block->mPadBytes);
+	return (void*)((uintptr_t)p_new_block + BlockHeader::sSize + p_new_block->mPadBytes);
 #else
-	return (void*)((uint)p_new_block + BlockHeader::sSize);
+	return (void*)((uintptr_t)p_new_block + BlockHeader::sSize);
 #endif		// __EFFICIENT__
 }
 
@@ -913,12 +913,12 @@ void *Heap::reallocate_up( size_t newSize, void *pOld )
 	BlockHeader* p_old_block = BlockHeader::sRead( pOld ); 
 	
 #ifdef __EFFICIENT__
-	newSize = (uint)nAlignUpBy( newSize, 2 );	// all allocations aligned by 4 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 2 );	// all allocations aligned by 4 bytes
 #else
 #ifdef __PLAT_NGC__
-	newSize = (uint)nAlignUpBy( newSize, 5 );	// all allocations aligned by 32 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 5 );	// all allocations aligned by 32 bytes
 #else
-	newSize = (uint)nAlignUpBy( newSize, 4 );	// all allocations aligned by 16 bytes
+	newSize = (uint)(uintptr_t)nAlignUpBy( newSize, 4 );	// all allocations aligned by 16 bytes
 #endif
 #endif		// __EFFICIENT__
 	
@@ -938,7 +938,7 @@ void *Heap::reallocate_up( size_t newSize, void *pOld )
 	
 	// Got the new block, so now check that it is directly above the old.	
 	BlockHeader* p_new_block=BlockHeader::sRead( p_new );
-	if ( (BlockHeader*)(((uint)pOld)+p_old_block->mSize) != p_new_block)
+	if ( (BlockHeader*)(((uintptr_t)pOld)+p_old_block->mSize) != p_new_block)
 	{
 		// It isn't!
 		free(p_new_block);
@@ -1063,7 +1063,7 @@ void *Heap::reallocate_shrink( size_t newSize, void *pOld )
 	}	
 	
 	// Calculate a pointer to the new block.
-	BlockHeader *p_new_block=(BlockHeader*)((uint32)pOld+p_old_block->mSize-size_diff);
+	BlockHeader *p_new_block=(BlockHeader*)((uintptr_t)pOld+p_old_block->mSize-size_diff);
 
 	#ifdef	__PLAT_NGPS__
 	Dbg_MsgAssert(((int)p_new_block&0xf) == 0,("p_new_block odd (%p), pOld = %p, p_old_block = %p, p_old_block->mSize = %d, size_diff = %d",

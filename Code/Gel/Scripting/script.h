@@ -151,7 +151,7 @@ class CScript : public Mem::CPoolable<CScript>
 	// CScripts are linked into a list.
 	CScript *mp_next;
 	CScript *mp_previous;
-	friend CScript *GetNextScript(CScript *p_script=NULL);
+	friend CScript *GetNextScript(CScript *p_script);
 	
 	// If this CScript got setup using a SStructScript (via the SetScript member function below)
 	// then this will be a pointer to a copy of the script, and mp_pc will point somewhere into it.

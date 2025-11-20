@@ -3,6 +3,11 @@
 #include <string.h>
 #include <stdio.h>
 
+// Platform compatibility: stricmp is called strcasecmp on POSIX systems
+#if defined(__PLAT_LINUX__) || defined(__PLAT_MACOS__)
+#define stricmp strcasecmp
+#endif
+
 namespace Config
 {
 ELanguage gLanguage=LANGUAGE_UNDEFINED;

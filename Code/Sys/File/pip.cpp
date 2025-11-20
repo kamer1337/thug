@@ -22,6 +22,15 @@
 
 // 11Dec02 JCB - Andre wanted me to use tolower() instead of strncmpi()
 #include <ctype.h>
+#include <cstring>  // For strlen, strcpy, strcmp
+#include <cstdio>   // For sprintf
+#include <cstdint>  // For uintptr_t
+#include <strings.h> // For strcasecmp (POSIX)
+
+// Platform compatibility: stricmp is Windows-specific, use strcasecmp on Unix
+#ifndef _WIN32
+#define stricmp strcasecmp
+#endif
 
 #include <sys/file/pip.h>
 #include <sys/file/pre.h>
@@ -147,7 +156,7 @@ static SPreContained *sSkipToNextPreContained(SPreContained *p_preContained, EQu
 
 //	printf ("p_preContained = %p\n, total_data = %d, name = (%p) %s",p_preContained,total_data_size,p_preContained->mpName,p_preContained->mpName);
 	
-	uint32 p_next=(uint32)p_preContained->mpName;
+	uintptr_t p_next=reinterpret_cast<uintptr_t>(p_preContained->mpName);
 	p_next+=p_preContained->mNameSize;
 	if (quadWordAlignedData)
 	{
@@ -155,7 +164,7 @@ static SPreContained *sSkipToNextPreContained(SPreContained *p_preContained, EQu
 	}
 	p_next+=total_data_size;
 
-	return (SPreContained*)p_next;
+	return reinterpret_cast<SPreContained*>(p_next);
 }
 
 static SPreHeader *sSkipOverPreName(const char *p_pre_name)
@@ -302,7 +311,7 @@ void LoadPre(const char *p_preFileName)
 		// They should be, because the namesize member should never be bigger than 65535 ...
 		Dbg_MsgAssert(p_contained->mUsage==0,("The file %s in %s has mUsage=%d ??",p_contained->mpName,p_preFileName,p_contained->mUsage));
 
-		new_pre_buffer_size+=(uint32)p_contained->mpName-(uint32)p_contained;
+		new_pre_buffer_size+=reinterpret_cast<uintptr_t>(p_contained->mpName)-reinterpret_cast<uintptr_t>(p_contained);
 		new_pre_buffer_size+=p_contained->mNameSize;
 
 		new_pre_buffer_size=(new_pre_buffer_size+15)&~15;
@@ -412,7 +421,7 @@ void LoadPre(const char *p_preFileName)
 
 		uint8 *p_source=(uint8*)(p_source_contained->mpName+p_source_contained->mNameSize);
 		uint8 *p_dest=(uint8*)(p_dest_contained->mpName+p_dest_contained->mNameSize);
-		p_dest=(uint8*)( ((uint32)p_dest+15)&~15 );
+		p_dest=reinterpret_cast<uint8*>((reinterpret_cast<uintptr_t>(p_dest)+15)&~15);
 
 		if (p_source_contained->mCompressedSize)
 		{
@@ -450,7 +459,7 @@ void LoadPre(const char *p_preFileName)
 	}
 
 	// I don't think I ever need to reference mSize again, but might as well make it correct.
-	p_dest_header->mSize=(uint32)p_dest_contained-(uint32)p_dest_header;
+	p_dest_header->mSize=reinterpret_cast<uintptr_t>(p_dest_contained)-reinterpret_cast<uintptr_t>(p_dest_header);
 
 	//printf("Wasted space = %d\n",new_pre_buffer_size-((uint32)p_dest_contained-(uint32)p_new_file_data));
 
@@ -573,9 +582,9 @@ void* Load(const char* p_fileName)
 
 		Dbg_MsgAssert(p_contained_file->mCompressedSize==0,("The file '%s' is stored compressed in %s !",p_fileName,sGetPreName(p_contained_file)));
 
-		uint32 p_data=(uint32)p_contained_file->mpName+p_contained_file->mNameSize;
+		uintptr_t p_data=reinterpret_cast<uintptr_t>(p_contained_file->mpName)+p_contained_file->mNameSize;
 		p_data=(p_data+15)&~15;
-		return (void*)p_data;
+		return reinterpret_cast<void*>(p_data);
 	}
 
 	// Next, see if it is one of the unpreed files that is already loaded.

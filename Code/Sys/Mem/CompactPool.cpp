@@ -1,5 +1,7 @@
 #include <core/defines.h>
 #include <sys/mem/CompactPool.h>
+#include <cstring>  // For strcpy
+#include <cstdint>  // For uintptr_t
 
 
 #ifdef __DEBUG_COMPACTPOOL__
@@ -127,12 +129,13 @@ void * CCompactPool::Allocate()
 		//printf("CCompactPool::Allocate(), now %d used items out of %d\n", m_currentUsedItems, m_totalItems);
 		
 		void *pItem = mp_freeList;
-		mp_freeList = (uint32 *) *mp_freeList;
+		mp_freeList = reinterpret_cast<uint32*>(*mp_freeList);
 		#ifdef	__NOPT_ASSERT__
-		if ((int)pItem == REPORT_ON)
+		if (reinterpret_cast<uintptr_t>(pItem) == REPORT_ON)
 		{
 			printf ("++++ CCompactPool::Allocate %p\n",pItem);
-			DumpUnwindStack(20,0);
+			// DumpUnwindStack is platform-specific and not available
+			// DumpUnwindStack(20,0);
 		}
 		#endif
 		return pItem;
@@ -148,10 +151,11 @@ void * CCompactPool::Allocate()
 void CCompactPool::Free(void *pFreeItem)
 {
 	#ifdef	__NOPT_ASSERT__
-	if ((int)pFreeItem == REPORT_ON)
+	if (reinterpret_cast<uintptr_t>(pFreeItem) == REPORT_ON)
 	{
 		printf ("--- CCompactPool::Free %p\n",pFreeItem);
-		DumpUnwindStack(20,0);
+		// DumpUnwindStack is platform-specific and not available
+		// DumpUnwindStack(20,0);
 	}
 	#endif
 #ifdef __REALLY_DEBUG_COMPACTPOOL__

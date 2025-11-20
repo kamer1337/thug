@@ -34,7 +34,8 @@
 #include <gel/soundfx/xbox/p_sfx.h>
 #elif defined( __PLAT_NGC__ )
 #include <gel/soundfx/ngc/p_sfx.h>
-#elif defined( __PLAT_WN32__ )
+#elif defined( __PLAT_WN32__ ) || defined( __PLAT_LINUX__ ) || defined( __PLAT_MACOS__ )
+// Use Win32 stub for PC platforms (Windows, Linux, macOS)
 #include <gel/soundfx/Win32/p_sfx.h>
 #endif
 

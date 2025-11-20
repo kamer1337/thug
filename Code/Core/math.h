@@ -31,7 +31,8 @@
 // The following overlaoded functions will make sure that if you accidently call a double version of
 // a trig function with a float argument, then it will simply call the float version
 // (double precision is very very slow on the PS2)
-#ifndef __PLAT_XBOX__
+// Not needed on modern platforms (Linux, macOS, Windows) that have proper C++ math libraries
+#if !defined(__PLAT_XBOX__) && !defined(__PLAT_LINUX__) && !defined(__PLAT_MACOS__) && !defined(__PLAT_WN32__)
 inline  float  acos( float x ) {return acosf( x );}          
 inline  float  asin( float x ) {return asinf( x );}          
 inline  float  atan( float x ) {return atanf( x );}          
@@ -40,7 +41,7 @@ inline  float   cos( float x ) {return cosf( x );}
 inline  float   sin( float x ) {return sinf( x );}           
 inline  float   tan( float x ) {return tanf( x );}           
 inline  float   fabs( float x ) {return fabsf( x );}           
-#endif // ifndef __PLAT_XBOX__
+#endif
 
 
 

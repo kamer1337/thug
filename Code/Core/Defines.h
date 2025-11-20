@@ -82,13 +82,13 @@ using namespace std;
 #ifdef __NOPT_FINAL__
 	#define printf(A...)
 #else
-	int OurPrintf(const char *fmt, ...);
+	extern "C" int OurPrintf(const char *fmt, ...);
 	#define printf OurPrintf
 #endif
 #else
-	int OurPrintf(const char *fmt, ...);
+	extern "C" int OurPrintf(const char *fmt, ...);
 	#define printf OurPrintf
-#endif	
+#endif
 
 //#else
 //	inline void NullPrintf(const char *fmt, ...){}

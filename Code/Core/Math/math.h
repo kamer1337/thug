@@ -25,6 +25,8 @@
 **								   Includes									**
 *****************************************************************************/
 
+#include <cmath>
+
 #ifdef __PLAT_XBOX__
 #include <math.h>		// Required for fabsf().
 #include <core/math/xbox/sse.h>

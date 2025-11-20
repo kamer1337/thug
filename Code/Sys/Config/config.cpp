@@ -1,5 +1,12 @@
 // Config Manager stuff. KSH 20 Mar 2002
 #include <sys/config/config.h>
+#include <string.h>
+#include <stdio.h>
+
+// Platform compatibility: stricmp is called strcasecmp on POSIX systems
+#if defined(__PLAT_LINUX__) || defined(__PLAT_MACOS__)
+#define stricmp strcasecmp
+#endif
 
 namespace Config
 {

@@ -240,17 +240,102 @@ endif()
 
 # Link audio backend libraries (when implementations are complete)
 if(AUDIO_BACKEND STREQUAL "SDL2")
-    # find_package(SDL2 REQUIRED)
-    # find_package(SDL2_mixer REQUIRED)
-    # target_link_libraries(thug SDL2::SDL2 SDL2::SDL2_mixer)
-    message(STATUS "SDL2_mixer linking will be enabled when implementation is complete")
+    find_package(SDL2 QUIET)
+    if(SDL2_FOUND)
+        find_path(SDL2_MIXER_INCLUDE_DIR SDL2/SDL_mixer.h)
+        find_library(SDL2_MIXER_LIBRARY SDL2_mixer)
+        
+        if(SDL2_MIXER_INCLUDE_DIR AND SDL2_MIXER_LIBRARY)
+            target_include_directories(thug PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIR})
+            target_link_libraries(thug ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARY})
+            message(STATUS "SDL2_mixer: Found and linked")
+        else()
+            message(STATUS "SDL2_mixer: Not found - audio will use stub implementation")
+            message(STATUS "  Install: sudo apt install libsdl2-mixer-dev (Linux)")
+            message(STATUS "           brew install sdl2_mixer (macOS)")
+        endif()
+    else()
+        message(STATUS "SDL2: Not found - audio will use stub implementation")
+    endif()
+    
 elseif(AUDIO_BACKEND STREQUAL "OpenAL")
-    # find_package(OpenAL REQUIRED)
-    # target_link_libraries(thug ${OPENAL_LIBRARY})
-    message(STATUS "OpenAL linking will be enabled when implementation is complete")
+    find_package(OpenAL QUIET)
+    if(OPENAL_FOUND)
+        target_include_directories(thug PRIVATE ${OPENAL_INCLUDE_DIR})
+        target_link_libraries(thug ${OPENAL_LIBRARY})
+        message(STATUS "OpenAL: Found and linked - ${OPENAL_LIBRARY}")
+    else()
+        message(STATUS "OpenAL: Not found - audio will use stub implementation")
+        message(STATUS "  Install: sudo apt install libopenal-dev (Linux)")
+        message(STATUS "           brew install openal-soft (macOS)")
+    endif()
+    
 elseif(AUDIO_BACKEND STREQUAL "FMOD")
-    # Manual FMOD linking will be required
-    message(STATUS "FMOD linking will be enabled when implementation is complete")
+    # FMOD requires manual SDK download and installation
+    set(FMOD_ROOT "" CACHE PATH "Path to FMOD SDK root directory")
+    
+    if(FMOD_ROOT)
+        if(WIN32)
+            set(FMOD_LIB_PATH "${FMOD_ROOT}/api/core/lib/x64")
+            set(FMOD_INCLUDE_PATH "${FMOD_ROOT}/api/core/inc")
+        elseif(APPLE)
+            set(FMOD_LIB_PATH "${FMOD_ROOT}/api/core/lib")
+            set(FMOD_INCLUDE_PATH "${FMOD_ROOT}/api/core/inc")
+        else()
+            set(FMOD_LIB_PATH "${FMOD_ROOT}/api/core/lib/x86_64")
+            set(FMOD_INCLUDE_PATH "${FMOD_ROOT}/api/core/inc")
+        endif()
+        
+        find_library(FMOD_LIBRARY fmod PATHS ${FMOD_LIB_PATH})
+        
+        if(FMOD_LIBRARY AND EXISTS ${FMOD_INCLUDE_PATH})
+            target_include_directories(thug PRIVATE ${FMOD_INCLUDE_PATH})
+            target_link_libraries(thug ${FMOD_LIBRARY})
+            message(STATUS "FMOD: Found and linked - ${FMOD_LIBRARY}")
+        else()
+            message(STATUS "FMOD: Library not found in ${FMOD_ROOT}")
+        endif()
+    else()
+        message(STATUS "FMOD: SDK path not set (use -DFMOD_ROOT=/path/to/fmod)")
+        message(STATUS "  Download: https://www.fmod.com/download")
+        message(STATUS "  Note: FMOD requires a commercial license for released games")
+    endif()
+endif()
+
+# Video backend configuration
+option(USE_FFMPEG_VIDEO "Use FFmpeg for video playback" OFF)
+
+if(USE_FFMPEG_VIDEO)
+    # Find FFmpeg components
+    find_path(AVCODEC_INCLUDE_DIR libavcodec/avcodec.h)
+    find_library(AVCODEC_LIBRARY avcodec)
+    find_library(AVFORMAT_LIBRARY avformat)
+    find_library(AVUTIL_LIBRARY avutil)
+    find_library(SWSCALE_LIBRARY swscale)
+    find_library(SWRESAMPLE_LIBRARY swresample)
+    
+    if(AVCODEC_INCLUDE_DIR AND AVCODEC_LIBRARY AND AVFORMAT_LIBRARY AND AVUTIL_LIBRARY AND SWSCALE_LIBRARY)
+        add_definitions(-DUSE_FFMPEG_VIDEO)
+        target_include_directories(thug PRIVATE ${AVCODEC_INCLUDE_DIR})
+        target_link_libraries(thug 
+            ${AVCODEC_LIBRARY}
+            ${AVFORMAT_LIBRARY}
+            ${AVUTIL_LIBRARY}
+            ${SWSCALE_LIBRARY}
+            ${SWRESAMPLE_LIBRARY}
+        )
+        message(STATUS "FFmpeg: Found and linked for video playback")
+        message(STATUS "  libavcodec: ${AVCODEC_LIBRARY}")
+        message(STATUS "  libavformat: ${AVFORMAT_LIBRARY}")
+        message(STATUS "  libavutil: ${AVUTIL_LIBRARY}")
+        message(STATUS "  libswscale: ${SWSCALE_LIBRARY}")
+    else()
+        message(STATUS "FFmpeg: Not found - video playback will use stub implementation")
+        message(STATUS "  Install: sudo apt install ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libswresample-dev (Linux)")
+        message(STATUS "           brew install ffmpeg (macOS)")
+    endif()
+else()
+    message(STATUS "FFmpeg: Disabled (use -DUSE_FFMPEG_VIDEO=ON to enable)")
 endif()
 
 # Installation

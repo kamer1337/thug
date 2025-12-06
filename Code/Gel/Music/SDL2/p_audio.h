@@ -29,13 +29,21 @@
 #include <core/defines.h>
 #endif
 
-// For full implementation, uncomment:
-// #include <SDL2/SDL.h>
-// #include <SDL2/SDL_mixer.h>
+#ifdef USE_SDL2_AUDIO
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#endif
 
 /*****************************************************************************
 **								   Defines									**
 *****************************************************************************/
+
+#define SDL2_AUDIO_FREQUENCY 44100
+#define SDL2_AUDIO_FORMAT MIX_DEFAULT_FORMAT
+#define SDL2_AUDIO_CHANNELS 2
+#define SDL2_AUDIO_CHUNKSIZE 2048
+#define SDL2_MAX_SOUND_CHANNELS 32
+#define SDL2_MAX_STREAMS 8
 
 namespace Pcm
 {
@@ -60,6 +68,21 @@ bool	Audio_SetVolume( float volume );
 float	Audio_GetVolume( void );
 void	Audio_SetMusicVolume( float volume );
 float	Audio_GetMusicVolume( void );
+
+// Sound effects functions
+bool	LoadSoundEffect( uint32 checksum, const char* filename );
+void	UnloadSoundEffect( uint32 checksum );
+int		PlaySoundEffect( uint32 checksum, float volume = 1.0f, float pitch = 1.0f );
+void	StopSoundEffect( int channel );
+void	SetSoundEffectVolume( int channel, float volume );
+bool	IsSoundEffectPlaying( int channel );
+
+// 3D positional audio functions
+void	Set3DListenerPosition( float x, float y, float z );
+void	Set3DListenerOrientation( float forwardX, float forwardY, float forwardZ, 
+									   float upX, float upY, float upZ );
+void	Set3DSoundPosition( int channel, float x, float y, float z );
+void	Set3DSoundAttenuation( int channel, float minDist, float maxDist );
 
 } // namespace SDL2
 } // namespace Pcm

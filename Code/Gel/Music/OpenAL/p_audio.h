@@ -29,13 +29,17 @@
 #include <core/defines.h>
 #endif
 
-// For full implementation, uncomment:
-// #include <AL/al.h>
-// #include <AL/alc.h>
+#ifdef USE_OPENAL_AUDIO
+#include <AL/al.h>
+#include <AL/alc.h>
+#endif
 
 /*****************************************************************************
 **								   Defines									**
 *****************************************************************************/
+
+#define OPENAL_MAX_SOURCES 32
+#define OPENAL_MAX_BUFFERS 256
 
 namespace Pcm
 {
@@ -60,6 +64,27 @@ bool	Audio_SetVolume( float volume );
 float	Audio_GetVolume( void );
 void	Audio_SetMusicVolume( float volume );
 float	Audio_GetMusicVolume( void );
+
+// Sound effects functions
+bool	LoadSoundEffect( uint32 checksum, const char* filename, bool is3D = false );
+void	UnloadSoundEffect( uint32 checksum );
+int		PlaySoundEffect( uint32 checksum, float volume = 1.0f, float pitch = 1.0f );
+void	StopSoundEffect( int sourceID );
+void	SetSoundEffectVolume( int sourceID, float volume );
+void	SetSoundEffectPitch( int sourceID, float pitch );
+bool	IsSoundEffectPlaying( int sourceID );
+
+// 3D positional audio functions
+void	Set3DListenerPosition( float x, float y, float z );
+void	Set3DListenerVelocity( float vx, float vy, float vz );
+void	Set3DListenerOrientation( float forwardX, float forwardY, float forwardZ,
+									   float upX, float upY, float upZ );
+void	Set3DSoundPosition( int sourceID, float x, float y, float z );
+void	Set3DSoundVelocity( int sourceID, float vx, float vy, float vz );
+void	Set3DSoundAttenuation( int sourceID, float rolloffFactor, float referenceDistance, float maxDistance );
+void	Set3DSoundCone( int sourceID, float innerAngle, float outerAngle, float outerGain );
+void	SetDopplerFactor( float factor );
+void	SetSpeedOfSound( float speed );
 
 } // namespace OpenAL
 } // namespace Pcm

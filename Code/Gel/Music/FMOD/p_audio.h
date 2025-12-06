@@ -29,13 +29,17 @@
 #include <core/defines.h>
 #endif
 
-// For full implementation, uncomment:
-// #include <fmod.hpp>
-// #include <fmod_errors.h>
+#ifdef USE_FMOD_AUDIO
+#include <fmod.hpp>
+#include <fmod_errors.h>
+#endif
 
 /*****************************************************************************
 **								   Defines									**
 *****************************************************************************/
+
+#define FMOD_MAX_CHANNELS 64
+#define FMOD_MAX_SOUNDS 256
 
 namespace Pcm
 {
@@ -60,6 +64,29 @@ bool	Audio_SetVolume( float volume );
 float	Audio_GetVolume( void );
 void	Audio_SetMusicVolume( float volume );
 float	Audio_GetMusicVolume( void );
+
+// Sound effects functions
+bool	LoadSoundEffect( uint32 checksum, const char* filename, bool is3D = false, bool streaming = false );
+void	UnloadSoundEffect( uint32 checksum );
+int		PlaySoundEffect( uint32 checksum, float volume = 1.0f, float pitch = 1.0f );
+void	StopSoundEffect( int channelID );
+void	SetSoundEffectVolume( int channelID, float volume );
+void	SetSoundEffectPitch( int channelID, float pitch );
+bool	IsSoundEffectPlaying( int channelID );
+
+// 3D positional audio functions
+void	Set3DListenerPosition( float x, float y, float z );
+void	Set3DListenerVelocity( float vx, float vy, float vz );
+void	Set3DListenerOrientation( float forwardX, float forwardY, float forwardZ,
+									   float upX, float upY, float upZ );
+void	Set3DSoundPosition( int channelID, float x, float y, float z );
+void	Set3DSoundVelocity( int channelID, float vx, float vy, float vz );
+void	Set3DSoundMinMaxDistance( int channelID, float minDist, float maxDist );
+
+// DSP effects functions
+void	SetReverbProperties( float roomSize, float damping, float wetLevel );
+void	SetLowPassFilter( int channelID, float cutoffFrequency );
+void	SetHighPassFilter( int channelID, float cutoffFrequency );
 
 } // namespace FMOD
 } // namespace Pcm

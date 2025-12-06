@@ -41,8 +41,20 @@
         #include <OpenGL/gl.h>
         #include <OpenGL/glext.h>
     #else
+        // Linux/Unix
+        #define GL_GLEXT_PROTOTYPES
         #include <GL/gl.h>
         #include <GL/glext.h>
+        // Ensure we have required constants
+        #ifndef GL_BGRA_EXT
+        #define GL_BGRA_EXT 0x80E1
+        #endif
+        #ifndef GL_CLAMP_TO_EDGE
+        #define GL_CLAMP_TO_EDGE 0x812F
+        #endif
+        #ifndef GL_NO_ERROR
+        #define GL_NO_ERROR 0
+        #endif
     #endif
     
     // Define function pointers for OpenGL functions that may not be in core GL headers

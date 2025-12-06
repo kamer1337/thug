@@ -294,6 +294,8 @@ bool Audio_TrackExists( const char* nameOfFile, int trackNumber )
 }
 
 // Load music header (for streaming, would need actual file decoder)
+// Note: This function requires an audio decoder library (libsndfile, libvorbis, etc.)
+// to read and parse audio file headers. Current implementation is a stub.
 bool Audio_LoadMusicHeader( const char* nameOfFile )
 {
 #ifdef USE_OPENAL_AUDIO
@@ -303,6 +305,7 @@ bool Audio_LoadMusicHeader( const char* nameOfFile )
 	// This is a simplified version - real implementation would need
 	// a decoder library (libsndfile, libvorbis, etc.) to read audio data
 	printf("OpenAL: Music loading requires audio decoder library\n");
+	printf("  Install libsndfile (WAV/FLAC), libvorbis (OGG), or mpg123 (MP3)\n");
 	return false;
 #else
 	return false;

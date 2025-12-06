@@ -85,17 +85,19 @@ struct Listener3D
 static Listener3D s_listener;
 
 // Helper function to calculate 3D volume and panning
+// This implements a simple distance-based attenuation with stereo panning
 static void Calculate3DAudio(float sourceX, float sourceY, float sourceZ,
 							 float minDist, float maxDist,
 							 float& outVolume, float& outPanning)
 {
-	// Calculate distance from listener to source
+	// Calculate Euclidean distance from listener to source
 	float dx = sourceX - s_listener.x;
 	float dy = sourceY - s_listener.y;
 	float dz = sourceZ - s_listener.z;
 	float distance = sqrtf(dx*dx + dy*dy + dz*dz);
 	
-	// Calculate volume based on distance
+	// Calculate volume based on distance (linear falloff model)
+	// Volume is 1.0 (full) within minDist, 0.0 (silent) beyond maxDist
 	if (distance < minDist)
 	{
 		outVolume = 1.0f;
@@ -106,12 +108,12 @@ static void Calculate3DAudio(float sourceX, float sourceY, float sourceZ,
 	}
 	else
 	{
-		// Linear falloff
+		// Linear falloff between minDist and maxDist
 		outVolume = 1.0f - ((distance - minDist) / (maxDist - minDist));
 	}
 	
-	// Calculate panning based on left/right position relative to listener
-	// Using listener's right vector (cross product of forward and up)
+	// Calculate stereo panning based on left/right position relative to listener
+	// First, compute the listener's right vector (cross product of forward and up)
 	float rightX = s_listener.forwardY * s_listener.upZ - s_listener.forwardZ * s_listener.upY;
 	float rightZ = s_listener.forwardX * s_listener.upY - s_listener.forwardY * s_listener.upX;
 	
@@ -123,12 +125,12 @@ static void Calculate3DAudio(float sourceX, float sourceY, float sourceZ,
 		rightZ /= rightLen;
 	}
 	
-	// Dot product for panning
+	// Dot product of source direction with right vector gives left/right position
 	float dot = dx * rightX + dz * rightZ;
-	outPanning = dot / (distance + 0.001f); // Avoid division by zero
-	outPanning = (outPanning + 1.0f) * 0.5f; // Map from [-1,1] to [0,1]
+	outPanning = dot / (distance + 0.001f); // Normalize by distance, avoid div by zero
+	outPanning = (outPanning + 1.0f) * 0.5f; // Map from [-1,1] to [0,1] where 0=left, 1=right
 	
-	// Clamp values
+	// Clamp values to valid range
 	if (outVolume < 0.0f) outVolume = 0.0f;
 	if (outVolume > 1.0f) outVolume = 1.0f;
 	if (outPanning < 0.0f) outPanning = 0.0f;
@@ -466,7 +468,8 @@ bool LoadSoundEffect( uint32 checksum, const char* filename )
 	// Store sound effect
 	s_sound_effects[s_num_sound_effects].checksum = checksum;
 	s_sound_effects[s_num_sound_effects].chunk = chunk;
-	strncpy(s_sound_effects[s_num_sound_effects].filename, filename, 255);
+	strncpy(s_sound_effects[s_num_sound_effects].filename, filename, sizeof(s_sound_effects[s_num_sound_effects].filename) - 1);
+	s_sound_effects[s_num_sound_effects].filename[sizeof(s_sound_effects[s_num_sound_effects].filename) - 1] = '\0';
 	s_sound_effects[s_num_sound_effects].loaded = true;
 	s_num_sound_effects++;
 	

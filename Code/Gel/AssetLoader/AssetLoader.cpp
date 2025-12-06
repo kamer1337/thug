@@ -196,6 +196,7 @@ AssetData* CAssetLoader::CreateAssetData( const char* filename, EAssetType type,
 	AssetData* pAsset = new AssetData();
 	pAsset->checksum = CalculateChecksum(filename);
 	strncpy(pAsset->filename, filename, sizeof(pAsset->filename) - 1);
+	pAsset->filename[sizeof(pAsset->filename) - 1] = '\0';  // Ensure null termination
 	pAsset->type = type;
 	pAsset->status = ASSET_STATUS_UNLOADED;
 	pAsset->flags = flags;

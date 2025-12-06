@@ -82,7 +82,9 @@ void Example_PlaySoundEffects()
 	Pcm::SDL2::Audio_Init();
 	
 	// Load sound effects
-	uint32 jumpSoundID = 0x12345678; // Example checksum
+	// Note: In production code, use proper checksum calculation from filename
+	// These are placeholder values for demonstration purposes
+	uint32 jumpSoundID = 0x12345678;
 	uint32 landSoundID = 0x87654321;
 	
 	if (Pcm::SDL2::LoadSoundEffect(jumpSoundID, "Data/Audio/SFX/jump.wav"))

@@ -170,6 +170,10 @@ namespace Gfx
 namespace Backend
 {
 
+// Constants for buffer sizes and vertex layouts
+static const int VERTEX_STRIDE_FLOATS = 8;  // Position(3) + Normal(3) + UV(2)
+static const int SHADER_ERROR_LOG_SIZE = 512;
+
 OpenGLBackend::OpenGLBackend()
     : m_initialized(false)
     , m_viewportX(0)
@@ -362,7 +366,8 @@ void OpenGLBackend::SetRenderState(const RenderState& state)
     
     // Depth function: 0=less, 1=lequal, 2=equal, 3=greater, 4=always
     GLenum depthFuncs[] = { GL_LESS, GL_LEQUAL, GL_EQUAL, GL_GREATER, GL_ALWAYS };
-    if (state.depthFunc >= 0 && state.depthFunc < 5)
+    const int numDepthFuncs = sizeof(depthFuncs) / sizeof(depthFuncs[0]);
+    if (state.depthFunc >= 0 && state.depthFunc < numDepthFuncs)
         glDepthFunc(depthFuncs[state.depthFunc]);
 #endif
 }
@@ -385,10 +390,11 @@ void OpenGLBackend::SetBlendMode(const BlendMode& mode)
         GL_DST_COLOR,           // 8
         GL_ONE_MINUS_DST_COLOR  // 9
     };
+    const int numBlendFactors = sizeof(blendFactors) / sizeof(blendFactors[0]);
     
-    GLenum srcFactor = (mode.srcFactor >= 0 && mode.srcFactor < 10) ? 
+    GLenum srcFactor = (mode.srcFactor >= 0 && mode.srcFactor < numBlendFactors) ? 
                        blendFactors[mode.srcFactor] : GL_SRC_ALPHA;
-    GLenum dstFactor = (mode.dstFactor >= 0 && mode.dstFactor < 10) ? 
+    GLenum dstFactor = (mode.dstFactor >= 0 && mode.dstFactor < numBlendFactors) ? 
                        blendFactors[mode.dstFactor] : GL_ONE_MINUS_SRC_ALPHA;
     
     glBlendFunc(srcFactor, dstFactor);
@@ -548,7 +554,7 @@ Mesh* OpenGLBackend::CreateMesh(const void* vertices, int vertexCount, const voi
         glBindVertexArray(mesh->vao);
         
         glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float) * 8, vertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float) * VERTEX_STRIDE_FLOATS, vertices, GL_STATIC_DRAW);
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned short), indices, GL_STATIC_DRAW);
@@ -567,7 +573,7 @@ Mesh* OpenGLBackend::CreateMesh(const void* vertices, int vertexCount, const voi
     glBindVertexArray(mesh->vao);
     
     glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float) * 8, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float) * VERTEX_STRIDE_FLOATS, vertices, GL_STATIC_DRAW);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned short), indices, GL_STATIC_DRAW);
@@ -864,9 +870,9 @@ unsigned int OpenGLBackend::CompileShader(unsigned int type, const char* source)
         if (glGetShaderInfoLog)
         {
         #endif
-            char infoLog[512];
+            char infoLog[SHADER_ERROR_LOG_SIZE];
             GLsizei length;
-            glGetShaderInfoLog(shader, 512, &length, infoLog);
+            glGetShaderInfoLog(shader, sizeof(infoLog), &length, infoLog);
             printf("Shader compilation failed: %s\n", infoLog);
         #ifdef _WIN32
         }
@@ -875,7 +881,10 @@ unsigned int OpenGLBackend::CompileShader(unsigned int type, const char* source)
             printf("Shader compilation failed (no error details available)\n");
         }
         #endif
-        glDeleteShader(shader);
+        #ifdef _WIN32
+        if (glDeleteShader)
+        #endif
+            glDeleteShader(shader);
         return 0;
     }
     
@@ -907,9 +916,9 @@ unsigned int OpenGLBackend::LinkProgram(unsigned int vertexShader, unsigned int 
         if (glGetProgramInfoLog)
         {
         #endif
-            char infoLog[512];
+            char infoLog[SHADER_ERROR_LOG_SIZE];
             GLsizei length;
-            glGetProgramInfoLog(program, 512, &length, infoLog);
+            glGetProgramInfoLog(program, sizeof(infoLog), &length, infoLog);
             printf("Shader program linking failed: %s\n", infoLog);
         #ifdef _WIN32
         }
@@ -918,7 +927,10 @@ unsigned int OpenGLBackend::LinkProgram(unsigned int vertexShader, unsigned int 
             printf("Shader program linking failed (no error details available)\n");
         }
         #endif
-        glDeleteProgram(program);
+        #ifdef _WIN32
+        if (glDeleteProgram)
+        #endif
+            glDeleteProgram(program);
         return 0;
     }
     

@@ -813,8 +813,11 @@ bool ScriptStringEquals(Script::CStruct *pParams, Script::CScript *pScript)
 
 // @script bool | ArrayContains | Returns true if the array contains an
 // element equal to the variable. <nl>
+// Supported types: integers, floats, checksums (names), strings, and vectors. <nl>
 // Example:  ArrayContains array=some_int_array contains=4 <nl>
-// ArrayContains array=some_string_array contains="some_string"
+// ArrayContains array=some_string_array contains="some_string" <nl>
+// ArrayContains array=some_float_array contains=3.14 <nl>
+// ArrayContains array=some_vector_array contains=(1.0, 2.0, 3.0)
 // @parm array | array | The array to search
 // @parm | contains | The element to search for.  Must match array type
 bool ScriptArrayContains(Script::CStruct *pParams, Script::CScript *pScript)
@@ -853,6 +856,26 @@ bool ScriptArrayContains(Script::CStruct *pParams, Script::CScript *pScript)
 				// Changed to use stricmp instead of GenerateCRC because GenerateCRC sees \ and / as
 				// being the same character.
 				if (stricmp(pDesiredString, pArray->GetString( i )) == 0)
+					return true;
+				break;
+			}
+			case ESYMBOLTYPE_FLOAT:
+			{
+				float desiredFloat;
+				pParams->GetFloat( "contains", &desiredFloat, true );
+				if ( desiredFloat == pArray->GetFloat( i ) )
+					return true;
+				break;
+			}
+			case ESYMBOLTYPE_VECTOR:
+			{
+				Script::CVector* pDesiredVector;
+				pParams->GetVector( "contains", &pDesiredVector, true );
+				Script::CVector* pArrayVector = pArray->GetVector( i );
+				if ( pDesiredVector && pArrayVector && 
+				     pDesiredVector->mX == pArrayVector->mX &&
+				     pDesiredVector->mY == pArrayVector->mY &&
+				     pDesiredVector->mZ == pArrayVector->mZ )
 					return true;
 				break;
 			}

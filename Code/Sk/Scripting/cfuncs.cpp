@@ -863,7 +863,8 @@ bool ScriptArrayContains(Script::CStruct *pParams, Script::CScript *pScript)
 			{
 				float desiredFloat;
 				pParams->GetFloat( "contains", &desiredFloat, true );
-				if ( desiredFloat == pArray->GetFloat( i ) )
+				// Use epsilon comparison for floating-point values to avoid precision issues
+				if ( Mth::Abs(desiredFloat - pArray->GetFloat( i )) < Mth::EPSILON )
 					return true;
 				break;
 			}
@@ -872,10 +873,11 @@ bool ScriptArrayContains(Script::CStruct *pParams, Script::CScript *pScript)
 				Script::CVector* pDesiredVector;
 				pParams->GetVector( "contains", &pDesiredVector, true );
 				Script::CVector* pArrayVector = pArray->GetVector( i );
+				// Use epsilon comparison for each vector component to avoid precision issues
 				if ( pDesiredVector && pArrayVector && 
-				     pDesiredVector->mX == pArrayVector->mX &&
-				     pDesiredVector->mY == pArrayVector->mY &&
-				     pDesiredVector->mZ == pArrayVector->mZ )
+				     Mth::Abs(pDesiredVector->mX - pArrayVector->mX) < Mth::EPSILON &&
+				     Mth::Abs(pDesiredVector->mY - pArrayVector->mY) < Mth::EPSILON &&
+				     Mth::Abs(pDesiredVector->mZ - pArrayVector->mZ) < Mth::EPSILON )
 					return true;
 				break;
 			}

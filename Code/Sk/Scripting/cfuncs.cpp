@@ -7188,22 +7188,21 @@ bool ScriptPreferenceEquals(Script::CStruct *pParams, Script::CScript *pScript)
 /*                                                                */
 /******************************************************************/
 
-// @script | ResetCamera | 
+// @script | ResetCamera | Reset camera clip planes to default values
 bool ScriptResetCamera(Script::CStruct *pParams, Script::CScript *pScript)
 {
 	
-	// This is a bit of a patch,
-	// cycle over the two possible cameras, and reset them
+	// Cycle over the two possible cameras and reset them
 	for (int cam = 0; cam < 2; cam ++)
 	{
 		
 		Gfx::Camera *p_cam = Nx::CViewportManager::sGetCamera(cam);
 		if (p_cam)
 		{
-			printf ("TODO: ScriptResetCamera not implemented\n");
+			// Reset near and far clip planes to default values
+			p_cam->SetNearFarClipPlanes(Gfx::Camera::vDEFAULT_NEARZ, Gfx::Camera::vDEFAULT_FARZ);
 		}
 	}
-	//Gfx::Camera::SetNearFarClipPlanes(Near,Far);
 	return true;
 }
 

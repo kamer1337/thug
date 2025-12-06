@@ -252,7 +252,8 @@ For more information about the project:
 
 ### Main Documentation
 - **[ROADMAP.md](ROADMAP.md)** - Development roadmap and future plans
-- **[TASKS.md](TASKS.md)** - ⭐ Discrete tasks ready for pull requests!
+- **[TASKS_ACTIVE.md](TASKS_ACTIVE.md)** - ⭐ Active tasks ready for pull requests!
+- **[TASKS_ARCHIVE.md](TASKS_ARCHIVE.md)** - Completed tasks archive
 - **[EXECUTABLE_COMPLETION.md](EXECUTABLE_COMPLETION.md)** - ⭐ TODO tasks to make the executable compile and run
 - **[BUILDING.md](BUILDING.md)** - Detailed build instructions and technical details
 - **[CHANGES.md](CHANGES.md)** - History of modifications to the codebase

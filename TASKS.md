@@ -1,5 +1,11 @@
 # THUG Development Tasks
 
+> **📢 IMPORTANT UPDATE**: This file has been reorganized for easier navigation:
+> - **[TASKS_ACTIVE.md](TASKS_ACTIVE.md)** - Active tasks only (recommended for contributors)
+> - **[TASKS_ARCHIVE.md](TASKS_ARCHIVE.md)** - Completed tasks archive
+> 
+> This file is kept for historical reference and contains the complete list of all tasks.
+
 This document extracts actionable tasks from [ROADMAP.md](ROADMAP.md) and organizes them into discrete items suitable for individual pull requests. Each task is designed to be self-contained and can be worked on independently.
 
 > **⭐ Looking to make the game executable?** See **[EXECUTABLE_COMPLETION.md](EXECUTABLE_COMPLETION.md)** for a focused, prioritized list of TODO tasks specifically aimed at making the executable compile and run.

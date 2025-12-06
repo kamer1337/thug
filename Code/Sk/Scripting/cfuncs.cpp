@@ -813,8 +813,11 @@ bool ScriptStringEquals(Script::CStruct *pParams, Script::CScript *pScript)
 
 // @script bool | ArrayContains | Returns true if the array contains an
 // element equal to the variable. <nl>
+// Supported types: integers, floats, checksums (names), strings, and vectors. <nl>
 // Example:  ArrayContains array=some_int_array contains=4 <nl>
-// ArrayContains array=some_string_array contains="some_string"
+// ArrayContains array=some_string_array contains="some_string" <nl>
+// ArrayContains array=some_float_array contains=3.14 <nl>
+// ArrayContains array=some_vector_array contains=(1.0, 2.0, 3.0)
 // @parm array | array | The array to search
 // @parm | contains | The element to search for.  Must match array type
 bool ScriptArrayContains(Script::CStruct *pParams, Script::CScript *pScript)
@@ -853,6 +856,28 @@ bool ScriptArrayContains(Script::CStruct *pParams, Script::CScript *pScript)
 				// Changed to use stricmp instead of GenerateCRC because GenerateCRC sees \ and / as
 				// being the same character.
 				if (stricmp(pDesiredString, pArray->GetString( i )) == 0)
+					return true;
+				break;
+			}
+			case ESYMBOLTYPE_FLOAT:
+			{
+				float desiredFloat;
+				pParams->GetFloat( "contains", &desiredFloat, true );
+				// Use epsilon comparison for floating-point values to avoid precision issues
+				if ( Mth::Abs(desiredFloat - pArray->GetFloat( i )) < Mth::EPSILON )
+					return true;
+				break;
+			}
+			case ESYMBOLTYPE_VECTOR:
+			{
+				Script::CVector* pDesiredVector;
+				pParams->GetVector( "contains", &pDesiredVector, true );
+				Script::CVector* pArrayVector = pArray->GetVector( i );
+				// Use epsilon comparison for each vector component to avoid precision issues
+				if ( pDesiredVector && pArrayVector && 
+				     Mth::Abs(pDesiredVector->mX - pArrayVector->mX) < Mth::EPSILON &&
+				     Mth::Abs(pDesiredVector->mY - pArrayVector->mY) < Mth::EPSILON &&
+				     Mth::Abs(pDesiredVector->mZ - pArrayVector->mZ) < Mth::EPSILON )
 					return true;
 				break;
 			}
@@ -7188,22 +7213,21 @@ bool ScriptPreferenceEquals(Script::CStruct *pParams, Script::CScript *pScript)
 /*                                                                */
 /******************************************************************/
 
-// @script | ResetCamera | 
+// @script | ResetCamera | Reset camera clip planes to default values
 bool ScriptResetCamera(Script::CStruct *pParams, Script::CScript *pScript)
 {
 	
-	// This is a bit of a patch,
-	// cycle over the two possible cameras, and reset them
+	// Cycle over the two possible cameras and reset them
 	for (int cam = 0; cam < 2; cam ++)
 	{
 		
 		Gfx::Camera *p_cam = Nx::CViewportManager::sGetCamera(cam);
 		if (p_cam)
 		{
-			printf ("TODO: ScriptResetCamera not implemented\n");
+			// Reset near and far clip planes to default values
+			p_cam->SetNearFarClipPlanes(Gfx::Camera::vDEFAULT_NEARZ, Gfx::Camera::vDEFAULT_FARZ);
 		}
 	}
-	//Gfx::Camera::SetNearFarClipPlanes(Near,Far);
 	return true;
 }
 

@@ -281,8 +281,8 @@ CCollBSPNode * CCollBSPNode::clone(bool instance)
 #endif //	__NOPT_ASSERT__
 
 		// Now adjust the pointers by finding the differences
-		int node_address_diff = (intptr_t) p_new_bsp_array - (intptr_t) this;
-		int face_address_diff = (intptr_t) p_new_face_index_array - (intptr_t) p_orig_face_index_array;
+		ptrdiff_t node_address_diff = (intptr_t) p_new_bsp_array - (intptr_t) this;
+		ptrdiff_t face_address_diff = (intptr_t) p_new_face_index_array - (intptr_t) p_orig_face_index_array;
 		for (int i = 0; i < num_nodes; i++)
 		{
 			if (p_new_bsp_array[i].IsNode())

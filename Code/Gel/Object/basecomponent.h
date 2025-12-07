@@ -22,6 +22,9 @@ namespace Script
 namespace Obj
 {
 
+// Forward declaration
+class CCompositeObject;
+
 // CBaseComponent is a virtual base class for object components
 class CBaseComponent : public Spt::Class
 {

@@ -361,7 +361,9 @@ static const char* SHADER_SHADOW_FRAGMENT = R"(
 
 void main()
 {
-    // Depth is automatically written to depth buffer
+    // Fragment shader for depth-only rendering. OpenGL automatically writes 
+    // gl_FragCoord.z to the depth buffer when no explicit depth write is performed.
+    // This shader intentionally does nothing - the depth buffer is the only output needed.
 }
 )";
 
@@ -592,9 +594,14 @@ void main()
         vec3 samplePos = TBN * uSamples[i];
         samplePos = fragPos + samplePos * uRadius;
         
+        // Transform sample position to clip space
         vec4 offset = vec4(samplePos, 1.0);
         offset = uProjectionMatrix * offset;
+        
+        // Perspective divide to NDC space
         offset.xyz /= offset.w;
+        
+        // Transform from NDC [-1,1] to texture coordinates [0,1]
         offset.xyz = offset.xyz * 0.5 + 0.5;
         
         float sampleDepth = texture(uPositionMap, offset.xy).z;

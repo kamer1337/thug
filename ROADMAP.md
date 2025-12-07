@@ -359,7 +359,7 @@ docs/
 
 **OpenGL Implementation Status**: ✅ **IMPLEMENTED**
 - Complete OpenGL 3.3+ backend in `Code/Gfx/Backend/OpenGLBackend.cpp`
-- Comprehensive shader library with 8+ predefined shaders (Basic, Phong, PBR, Shadow, Post-processing)
+- Comprehensive shader library with 9 predefined shaders (Basic, Phong, PBR, Shadow x2, Post-processing x4)
 - Shader manager with compilation, caching, and error reporting
 - Modern renderer with deferred rendering, shadow mapping, and post-processing
 - PBR (Physically Based Rendering) support

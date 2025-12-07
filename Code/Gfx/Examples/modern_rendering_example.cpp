@@ -37,7 +37,7 @@ void ExampleBasicShaders()
     std::vector<std::string> shaderNames;
     shaderManager.GetShaderNames(shaderNames);
     
-    printf("Available shaders (%lu):\n", (unsigned long)shaderNames.size());
+    printf("Available shaders (%zu):\n", shaderNames.size());
     for (const auto& name : shaderNames)
     {
         ShaderProgram* program = shaderManager.GetShader(name.c_str());
@@ -187,7 +187,7 @@ void ExampleDeferredRendering()
     printf("  Added orange point light at (10, 5, 5)\n\n");
     
     // Simulate a render frame with deferred rendering
-    printf("Rendering frame:\n\n");
+    printf("Rendering frame:\n");
     
     // Geometry pass
     renderer.BeginGeometryPass();

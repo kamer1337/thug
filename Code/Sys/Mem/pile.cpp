@@ -68,11 +68,11 @@ namespace Mem
 void*	Pile::allocate( size_t size, bool assert_on_fail )
 {
 	
-		
+	
 #ifdef __PLAT_NGC__
-	size = (uint)nAlignUpBy( size, 5 );
+	size = (size_t)nAlignUpBy( size, 5 );
 #else
-	size = (uint)nAlignUpBy( size, 4 );
+	size = (size_t)nAlignUpBy( size, 4 );
 #endif
 	
 	BlockHeader* p_header = (BlockHeader*)mp_region->Allocate( this, size + BlockHeader::sSize, assert_on_fail );
@@ -93,7 +93,7 @@ void*	Pile::allocate( size_t size, bool assert_on_fail )
 
 	MemDbg_AllocateBlock ( p_header );	
 	
-	return (void*)((uint)p_header + BlockHeader::sSize);
+	return (void*)((uintptr_t)p_header + BlockHeader::sSize);
 
 }
 

@@ -15,6 +15,9 @@ option(USE_VULKAN_RENDERER "Use Vulkan renderer backend (recommended)" OFF)
 option(USE_DIRECTX_RENDERER "Use DirectX renderer backend (Windows only)" OFF)
 option(USE_OPENGL_RENDERER "Use OpenGL renderer backend" OFF)
 
+# Window Backend Options
+option(USE_SDL2_WINDOW "Use SDL2 for cross-platform window management" OFF)
+
 # Audio Backend Selection
 set(AUDIO_BACKEND "None" CACHE STRING "Audio backend to use (DirectSound/SDL2/OpenAL/FMOD/None)")
 set_property(CACHE AUDIO_BACKEND PROPERTY STRINGS DirectSound SDL2 OpenAL FMOD None)
@@ -131,6 +134,41 @@ if(GRAPHICS_BACKEND_COUNT EQUAL 0)
         message(STATUS "    -DUSE_DIRECTX_RENDERER=ON  (Windows only)")
     endif()
     message(STATUS "    -DUSE_OPENGL_RENDERER=ON   (cross-platform)")
+endif()
+
+# ============================================================================
+# Window Backend Configuration
+# ============================================================================
+
+if(USE_SDL2_WINDOW)
+    message(STATUS "Window Backend: SDL2 (cross-platform)")
+    add_definitions(-DUSE_SDL2_WINDOW)
+    
+    # Try to find SDL2
+    find_package(SDL2 QUIET)
+    if(SDL2_FOUND)
+        message(STATUS "  SDL2 found: ${SDL2_LIBRARIES}")
+    else()
+        message(STATUS "  SDL2 not found - attempting to locate manually")
+        find_path(SDL2_INCLUDE_DIR SDL2/SDL.h)
+        find_library(SDL2_LIBRARY SDL2)
+        
+        if(SDL2_INCLUDE_DIR AND SDL2_LIBRARY)
+            set(SDL2_FOUND TRUE)
+            set(SDL2_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
+            set(SDL2_LIBRARIES ${SDL2_LIBRARY})
+            message(STATUS "  SDL2 found: ${SDL2_LIBRARY}")
+        else()
+            message(STATUS "  SDL2 not found - window management will use stub implementation")
+            message(STATUS "  Install: sudo apt install libsdl2-dev (Linux)")
+            message(STATUS "           brew install sdl2 (macOS)")
+            message(STATUS "           Download from https://www.libsdl.org/ (Windows)")
+        endif()
+    endif()
+else()
+    message(STATUS "Window Backend: None selected (platform default)")
+    message(STATUS "  Available options:")
+    message(STATUS "    -DUSE_SDL2_WINDOW=ON  (recommended for cross-platform)")
 endif()
 
 # ============================================================================
@@ -302,6 +340,13 @@ elseif(AUDIO_BACKEND STREQUAL "FMOD")
     endif()
 endif()
 
+# Link SDL2 window backend libraries
+if(USE_SDL2_WINDOW AND SDL2_FOUND)
+    target_include_directories(thug PRIVATE ${SDL2_INCLUDE_DIRS})
+    target_link_libraries(thug ${SDL2_LIBRARIES})
+    message(STATUS "SDL2 Window: Linked - ${SDL2_LIBRARIES}")
+endif()
+
 # Video backend configuration
 option(USE_FFMPEG_VIDEO "Use FFmpeg for video playback" OFF)
 
@@ -342,6 +387,28 @@ endif()
 install(TARGETS thug DESTINATION bin)
 
 # ============================================================================
+# SDL2 Window Test Program (optional)
+# ============================================================================
+option(BUILD_SDL2_WINDOW_TEST "Build SDL2 window test program" OFF)
+
+if(BUILD_SDL2_WINDOW_TEST AND USE_SDL2_WINDOW)
+    add_executable(test_sdl2_window 
+        test_sdl2_window.cpp 
+        Code/Sys/SDL2/Window.cpp
+    )
+    target_include_directories(test_sdl2_window PRIVATE ${CMAKE_SOURCE_DIR}/Code)
+    
+    if(SDL2_FOUND)
+        target_include_directories(test_sdl2_window PRIVATE ${SDL2_INCLUDE_DIRS})
+        target_link_libraries(test_sdl2_window ${SDL2_LIBRARIES})
+    endif()
+    
+    target_compile_definitions(test_sdl2_window PRIVATE USE_SDL2_WINDOW __SDL2_WINDOW_STANDALONE__)
+    
+    message(STATUS "SDL2 Window test program: Enabled")
+endif()
+
+# ============================================================================
 # Build Summary
 # ============================================================================
 message(STATUS "")
@@ -366,6 +433,11 @@ if(NOT AUDIO_BACKEND STREQUAL "None")
     message(STATUS "Audio:           ${AUDIO_BACKEND}")
 else()
     message(STATUS "Audio:           Platform default (no backend selected)")
+endif()
+if(USE_SDL2_WINDOW)
+    message(STATUS "Window:          SDL2 (cross-platform)")
+else()
+    message(STATUS "Window:          Platform default (no backend selected)")
 endif()
 message(STATUS "=================================================================")
 message(STATUS "")

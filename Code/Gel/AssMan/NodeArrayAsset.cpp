@@ -14,6 +14,9 @@
 #include	<gel/scripting/script.h>
 #include	<sk/scripting/gs_file.h>
 
+#include <cstring>
+#include <cstdio>
+
 namespace Ass
 {
 

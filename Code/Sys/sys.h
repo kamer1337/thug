@@ -37,7 +37,15 @@
 #ifdef __PLAT_NGC__
 
 #else
+#ifdef __PLAT_LINUX__
+
+#else
+#ifdef __PLAT_MACOS__
+
+#else
 #error Unsupported Platform
+#endif
+#endif
 #endif
 #endif
 #endif

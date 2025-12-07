@@ -83,7 +83,7 @@ void Pool::dump_free_list( void )
 	while ( p_header )
 	{
 		Dbg_AssertType( p_header, BlockHeader );
-		Dbg_Message ( "%p  %d   (%p)", (void*)((uint)p_header + sizeof( BlockHeader )), 
+		Dbg_Message ( "%p  %d   (%p)", (void*)((uintptr_t)p_header + sizeof( BlockHeader )), 
 										p_header->mSize, p_header->mpNext );
 		p_header = p_header->mpNext;
 	}
@@ -111,7 +111,7 @@ void*	Pool::allocate( size_t size, bool assert_on_fail )
 
 		MemDbg_AllocateBlock ( p_header );	
 
-		return (void*)((uint)p_header + BlockHeader::sSize);
+		return (void*)((uintptr_t)p_header + BlockHeader::sSize);
 	}
 
 	if ( assert_on_fail )
@@ -169,7 +169,7 @@ Pool::Pool( Region* region, size_t size, uint count, Direction dir )
 	{
 		new ((void*)p_freeblock) BlockHeader( this, m_size );		
 		
-		BlockHeader* p_nextblock = (BlockHeader*)( (uint)p_freeblock + BlockHeader::sSize + m_size ); 
+		BlockHeader* p_nextblock = (BlockHeader*)( (uintptr_t)p_freeblock + BlockHeader::sSize + m_size ); 
 		p_freeblock->mpNext = p_nextblock;
 		p_freeblock = p_nextblock;
 	}

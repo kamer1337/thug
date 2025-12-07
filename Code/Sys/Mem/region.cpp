@@ -85,7 +85,7 @@ void	Region::init( void* pStart, void* pEnd )
 	mp_start	= pStart;
 	mp_end		= pEnd;
 
-	m_min_free  = (int)pEnd - (int)pStart;
+	m_min_free  = (intptr_t)pEnd - (intptr_t)pStart;
 
 	m_alloc[vBOTTOM_UP] = 
 	m_alloc[vTOP_DOWN] 	= NULL;
@@ -166,7 +166,7 @@ void*		Region::Allocate( Allocator* pAlloc, size_t size, bool assert_on_fail )
 	
 	// here we get a new p_top for the allocator in pAlloc
 	// then we just need to test it
-	void* p_top = (void*) (( (uint)pAlloc->mp_top ) + ( size * pAlloc->m_dir ) );
+	void* p_top = (void*) (( (uintptr_t)pAlloc->mp_top ) + ( size * pAlloc->m_dir ) );
 	
 	if( Allocator* p_alloc = m_alloc[index^1] )	  // If other allocator exists
 	{
@@ -271,7 +271,7 @@ AllocRegion::AllocRegion( size_t size )
 	
 	mp_start = new char[size];
 	
-	init( mp_start, (void*)( (uint)mp_start + size ));
+	init( mp_start, (void*)( (uintptr_t)mp_start + size ));
 }
 
 /******************************************************************/
@@ -295,10 +295,10 @@ int Region::MemAvailable( void )
 {
 	
 		
-	int bot = (int)((m_alloc[0]) ? m_alloc[0]->mp_top : mp_start);
-	int top = (int)((m_alloc[1]) ? m_alloc[1]->mp_top : mp_end);
+	intptr_t bot = (intptr_t)((m_alloc[0]) ? m_alloc[0]->mp_top : mp_start);
+	intptr_t top = (intptr_t)((m_alloc[1]) ? m_alloc[1]->mp_top : mp_end);
 
-	return ((int)top - (int)bot);
+	return ((int)(top - bot));
 }
 
 /******************************************************************/

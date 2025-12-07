@@ -19,6 +19,10 @@ namespace Script
 
 namespace Ass
 {
+
+// Forward declaration
+class CRefAsset;
+
 class 	CAsset : public Spt::Class
 {
 	friend class CAssMan;
@@ -48,8 +52,8 @@ protected:
 		virtual uint32    		GetGroup();
 		
 		virtual EAssetType	  	GetType();         				// type is hard wired into asset class 
-		virtual void     		SetData(void *p_data);          // return a pointer to the asset….
-		virtual void *    		GetData();             			// return a pointer to the asset….
+		virtual void     		SetData(void *p_data);          // return a pointer to the assetï¿½.
+		virtual void *    		GetData();             			// return a pointer to the assetï¿½.
 		virtual	void			SetPermanent(bool perm);
 
 		void 					SetText(const char *p_text);

@@ -111,7 +111,7 @@ private:
 
 		// These two are needed for the cloning function
 		CCollBSPNode *	GetBasePointer() const { return (CCollBSPNode *) (m_left_child_and_flags & ~0x3); }
-		void			SetBasePointer(CCollBSPNode *p_base) { m_left_child_and_flags = ((uint32) p_base) | (m_left_child_and_flags & 0x3); }
+		void			SetBasePointer(CCollBSPNode *p_base) { m_left_child_and_flags = ((uintptr_t) p_base) | (m_left_child_and_flags & 0x3); }
 
 		bool			IsLeftGreater() const { return m_left_child_and_flags & mLEFT_IS_GREATER; }
 		void			SetLeftGreater(bool greater);
@@ -124,7 +124,7 @@ private:
 			mLEFT_IS_GREATER = 0x01,			// Indicates that the left branch is the greater branch
 		};
 
-		uint32			m_left_child_and_flags; // points to left branch, right branch one node over
+		uintptr_t		m_left_child_and_flags; // points to left branch, right branch one node over
 	};		
 
 protected:

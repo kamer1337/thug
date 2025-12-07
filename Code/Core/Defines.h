@@ -28,6 +28,7 @@
 
 #include <cstddef>
 #include <cstdint>  // For uintptr_t used in pointer alignment macros
+#include <cstdio>   // For printf used in ostream operators
 
 #ifdef __PLAT_WN32__
 //#include <strstream>
@@ -86,7 +87,9 @@ using namespace std;
 	extern "C" int OurPrintf(const char *fmt, ...);
 	#define printf OurPrintf
 #endif
-#else
+#elif !defined(__PLAT_LINUX__) && !defined(__PLAT_MACOS__) && !defined(__linux__) && !defined(__APPLE__)
+	// Only redefine printf on non-PC platforms (PS2, NGC, Xbox)
+	// PC/Linux/Mac use standard printf from <cstdio>
 	extern "C" int OurPrintf(const char *fmt, ...);
 	#define printf OurPrintf
 #endif

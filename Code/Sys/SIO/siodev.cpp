@@ -29,7 +29,11 @@
 #include <core/defines.h>
 #include <sys/sioman.h>
 #include <sys/mem/memman.h>
+
+// PlayStation-specific headers
+#if !defined(__PLAT_WN32__) && !defined(__PLAT_LINUX__) && !defined(__PLAT_MACOS__)
 #include <libpad.h>
+#endif
 
 /*****************************************************************************
 **								  Externals									**

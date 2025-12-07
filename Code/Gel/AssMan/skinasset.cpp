@@ -9,6 +9,8 @@
 
 #include	<gel/assman/skinasset.h>
 
+#include <cstring>
+
 #include	<core/string/stringutils.h>
 						   
 #include	<gel/assman/assettypes.h>

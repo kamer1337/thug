@@ -13,6 +13,18 @@ if(NOT WIN32)
     list(FILTER SYS_SOURCES EXCLUDE REGEX ".*/Wn32/.*")
 endif()
 
+# Exclude SDL2 files unless SDL2 window is explicitly enabled
+if(NOT USE_SDL2_WINDOW)
+    list(FILTER SYS_SOURCES EXCLUDE REGEX ".*/SDL2/.*")
+endif()
+
+# Exclude console-specific SIO files on PC platforms
+# (PC uses Win32/p_siodev.cpp and Win32/p_keyboard.cpp instead)
+if(UNIX OR WIN32)
+    list(FILTER SYS_SOURCES EXCLUDE REGEX ".*/SIO/siodev\\.cpp$")
+    list(FILTER SYS_SOURCES EXCLUDE REGEX ".*/SIO/sioman\\.cpp$")
+endif()
+
 # Create Sys library
 add_library(thug_sys OBJECT ${SYS_SOURCES})
 

@@ -31,6 +31,14 @@
 
 #include <gel/assman/assman.h>
 
+#include <cstring>
+#include <cstdio>
+
+// Platform compatibility for string comparison
+#if defined(__PLAT_LINUX__) || defined(__PLAT_MACOS__) || defined(__linux__) || defined(__APPLE__)
+#define strcmpi strcasecmp
+#endif
+
 #include <core/singleton.h>
 #include <core/string/stringutils.h>
 

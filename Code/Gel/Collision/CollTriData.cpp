@@ -24,6 +24,8 @@
 
 #include <core/defines.h>
 
+#include <cstring>  // For memcpy
+
 #include <gel/collision/collision.h>
 #include <gel/collision/colltridata.h>
 
@@ -279,19 +281,19 @@ CCollBSPNode * CCollBSPNode::clone(bool instance)
 #endif //	__NOPT_ASSERT__
 
 		// Now adjust the pointers by finding the differences
-		int node_address_diff = (int) p_new_bsp_array - (int) this;
-		int face_address_diff = (int) p_new_face_index_array - (int) p_orig_face_index_array;
+		int node_address_diff = (intptr_t) p_new_bsp_array - (intptr_t) this;
+		int face_address_diff = (intptr_t) p_new_face_index_array - (intptr_t) p_orig_face_index_array;
 		for (int i = 0; i < num_nodes; i++)
 		{
 			if (p_new_bsp_array[i].IsNode())
 			{
 				// Adjust branch pointers
-				p_new_bsp_array[i].m_node.m_children.SetBasePointer((CCollBSPNode *)((int) p_new_bsp_array[i].m_node.m_children.GetBasePointer() + node_address_diff));
+				p_new_bsp_array[i].m_node.m_children.SetBasePointer((CCollBSPNode *)((intptr_t) p_new_bsp_array[i].m_node.m_children.GetBasePointer() + node_address_diff));
 			}
 			else
 			{
 				// Adjust face index pointer
-				p_new_bsp_array[i].m_leaf.mp_face_idx_array = (FaceIndex *) ((int) p_new_bsp_array[i].m_leaf.mp_face_idx_array + face_address_diff);
+				p_new_bsp_array[i].m_leaf.mp_face_idx_array = (FaceIndex *) ((intptr_t) p_new_bsp_array[i].m_leaf.mp_face_idx_array + face_address_diff);
 			}
 		}
 
@@ -511,7 +513,7 @@ bool	CCollObjTriData::s_init_tree(CCollBSPNode *p_tree, void *p_base_node_addr, 
 	if (p_tree->IsLeaf())
 	{
 		// Set face index array pointer
-		int face_idx = (int) p_tree->m_leaf.mp_face_idx_array;
+		intptr_t face_idx = (intptr_t) p_tree->m_leaf.mp_face_idx_array;
 		p_tree->m_leaf.mp_face_idx_array = (FaceIndex *) p_base_face_idx_addr;
 		p_tree->m_leaf.mp_face_idx_array += face_idx;
 
@@ -523,7 +525,7 @@ bool	CCollObjTriData::s_init_tree(CCollBSPNode *p_tree, void *p_base_node_addr, 
 	} else {
 		Dbg_MsgAssert(p_tree->GetSplitAxis() < 3, ("BSP split axis is %d", p_tree->GetSplitAxis()));
 		// Set branch pointers
-		p_tree->m_node.m_children.SetBasePointer((CCollBSPNode *)((int) p_tree->m_node.m_children.GetBasePointer() + (int) p_base_node_addr));
+		p_tree->m_node.m_children.SetBasePointer((CCollBSPNode *)((intptr_t) p_tree->m_node.m_children.GetBasePointer() + (intptr_t) p_base_node_addr));
 
 		// And init branches
 		s_init_tree(p_tree->GetLessBranch(), p_base_node_addr, p_base_face_idx_addr);

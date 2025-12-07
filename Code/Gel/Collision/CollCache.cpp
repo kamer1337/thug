@@ -27,7 +27,7 @@
 #include <gel/collision/collision.h>
 #include <gel/collision/movcollman.h>
 #include <gel/collision/collcache.h>
-#include <engine/SuperSector.h>
+#include <sk/engine/SuperSector.h>
 
 #include <gfx/nx.h>
 
